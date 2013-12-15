@@ -3,7 +3,7 @@
  * 		     are not related to any other subsystem
  *
  * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
- * 
+ *
  * This file is release under the GPLv2
  *
  */
@@ -210,44 +210,46 @@ static struct attribute_group kernel_attr_group = {
 	.attrs = kernel_attrs,
 };
 
-static unsigned int Larch_power = 1;
 
-extern void relay_ap(unsigned int ap);
+static unsigned int Lgentle_fair_sleepers = 1;
+extern void relay_gfs(unsigned int gfs);
 
-static ssize_t arch_power_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+static ssize_t gentle_fair_sleepers_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
 {
-	return sprintf(buf, "%u\n", Larch_power);
+	return sprintf(buf, "%u\n", Lgentle_fair_sleepers);
 }
-
-static ssize_t arch_power_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
+static ssize_t gentle_fair_sleepers_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
 {
 	unsigned int input;
-	int ret;
+	int ret, cpu;
 	ret = sscanf(buf, "%u", &input);
 	if (input != 0 && input != 1)
 		input = 0;
-	
-	Larch_power = input;
-	relay_ap(Larch_power);
+
+	Lgentle_fair_sleepers = input;
+	relay_gfs(Lgentle_fair_sleepers);
 	return count;
 }
-KERNEL_ATTR_RW(arch_power);
 
-static struct attribute * sched_features_attrs[] = {
-	&arch_power_attr.attr,
-	NULL
+static struct kobj_attribute gentle_fair_sleepers_attribute =
+__ATTR(gentle_fair_sleepers, 0666, gentle_fair_sleepers_show, gentle_fair_sleepers_store);
+
+static struct attribute *gentle_fair_sleepers_attrs[] = {
+&gentle_fair_sleepers_attribute.attr,
+NULL,
 };
 
-static struct attribute_group sched_features_attr_group = {
-.attrs = sched_features_attrs,
+static struct attribute_group gentle_fair_sleepers_attr_group = {
+.attrs = gentle_fair_sleepers_attrs,
 };
 
 /* Initialize fast charge sysfs folder */
-static struct kobject *sched_features_kobj;
+static struct kobject *gentle_fair_sleepers_kobj;
 
 static int __init ksysfs_init(void)
 {
 	int error;
+	int retval;
 
 	kernel_kobj = kobject_create_and_add("kernel", NULL);
 	if (!kernel_kobj) {
@@ -258,11 +260,11 @@ static int __init ksysfs_init(void)
 	if (error)
 		goto kset_exit;
 
-	sched_features_kobj = kobject_create_and_add("sched", kernel_kobj);
-		error = sysfs_create_group(sched_features_kobj, &sched_features_attr_group);
+	gentle_fair_sleepers_kobj = kobject_create_and_add("sched", kernel_kobj);
+	retval = sysfs_create_group(gentle_fair_sleepers_kobj, &gentle_fair_sleepers_attr_group);
 
-	if (error)
-		kobject_put(sched_features_kobj);
+	if (retval)
+		kobject_put(gentle_fair_sleepers_kobj);
 
 	if (notes_size > 0) {
 		notes_attr.size = notes_size;
