@@ -367,8 +367,10 @@ static int __cpufreq_stats_create_table(struct cpufreq_policy *policy,
 	unsigned int cpu = policy->cpu;
 	struct cpufreq_frequency_table *pos;
 
+	/* stats already initialized */
 	if (per_cpu(cpufreq_stats_table, cpu))
-		return -EBUSY;
+		return -EEXIST;
+
 	stat = kzalloc(sizeof(*stat), GFP_KERNEL);
 	if ((stat) == NULL)
 		return -ENOMEM;
