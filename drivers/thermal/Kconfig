@@ -190,12 +190,15 @@ config LIMITS_LITE_HW
 	 supported by LMH Lite, their throttling intensity and the operating
 	 profiles.
 
+choice
+	prompt "MSM Thermal Monitor Types"
+	default THERMAL_MONITOR
+
 config THERMAL_MONITOR
 	bool "Monitor thermal state and limit CPU Frequency"
 	depends on THERMAL_TSENS8974
 	depends on CPU_FREQ || CPU_FREQ_MSM
 	depends on PM_OPP
-	default n
 	help
 	  This enables thermal monitoring capability in the kernel in the
 	  absence of a system wide thermal monitoring entity or until such an
@@ -207,6 +210,20 @@ config IMX_THERMAL
 	depends on CPU_THERMAL
 	depends on MFD_SYSCON
 	depends on OF
+
+config INTELLI_THERMAL
+	bool "Better thermal monitor for MSM"
+	depends on THERMAL_TSENS8974
+	depends on CPU_FREQ_MSM
+	help
+	  This enables thermal monitoring capability in the kernel replacing
+	  userspace thermal monitoring altogether.
+
+endchoice
+
+config SUPPLY_LM_MONITOR
+	bool "SUPPLY current monitor driver"
+	depends on THERMAL && PM_OPP && CPU_FREQ
 	help
 	  Support for Temperature Monitor (TEMPMON) found on Freescale i.MX SoCs.
 	  It supports one critical trip point and one passive trip point.  The
