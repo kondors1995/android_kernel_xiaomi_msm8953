@@ -1,4 +1,5 @@
 # Makefile for Linux PHY drivers
+CFLAGS_KERNEL	:= -Os -fno-strict-aliasing
 
 libphy-objs			:= phy.o phy_device.o mdio_bus.o
 

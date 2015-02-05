@@ -1,6 +1,19 @@
 #
 # Makefile for the linux kernel.
 #
+#Disable Strict-Aliasing On Specific Modules:
+CFLAGS_fork.o := -fno-strict-aliasing
+CFLAGS_exit.o := -fno-strict-aliasing
+CFLAGS_sysctl_binary.o := -fno-strict-aliasing
+CFLAGS_sysctl.o := -fno-strict-aliasing
+CFLAGS_pid.o := -fno-strict-aliasing
+CFLAGS_signal.o := -fno-strict-aliasing
+CFLAGS_workqueue.o := -fno-strict-aliasing
+CFLAGS_cred.o := -fno-strict-aliasing
+CFLAGS_nsproxy.o := -fno-strict-aliasing
+CFLAGS_audit.o := -fno-strict-aliasing
+CFLAGS_auditfilter.o := -fno-strict-aliasing
+CFLAGS_cgroup.o := -fno-strict-aliasing
 
 obj-y     = fork.o exec_domain.o panic.o \
 	    cpu.o exit.o softirq.o resource.o \

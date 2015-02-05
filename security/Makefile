@@ -1,6 +1,7 @@
 #
 # Makefile for the kernel security code
 #
+CFLAGS_KERNEL := -fno-strict-aliasing
 
 obj-$(CONFIG_KEYS)			+= keys/
 subdir-$(CONFIG_SECURITY_SELINUX)	+= selinux
