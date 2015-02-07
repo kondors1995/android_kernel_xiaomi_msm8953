@@ -1,7 +1,8 @@
 #
 # Makefile for the linux kernel.
 #
-CFLAGS_KERNEL := -fno-strict-aliasing
+CFLAGS_do_mounts.o := -fno-strict-aliasing
+CFLAGS_init_task.o := -fno-strict-aliasing
 
 obj-y                          := main.o version.o mounts.o
 obj-y                          += noinitramfs.o
