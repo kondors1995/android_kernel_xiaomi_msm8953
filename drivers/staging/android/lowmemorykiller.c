@@ -50,6 +50,8 @@ static int enable_lmk = 1;
 module_param_named(enable_lmk, enable_lmk, int,
 	S_IRUGO | S_IWUSR);
 
+static uint32_t lmk_count = 0;
+
 static uint32_t lowmem_debug_level = 1;
 static short lowmem_adj[6] = {
 	0,
@@ -276,9 +278,10 @@ static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
 		send_sig(SIGKILL, selected, 0);
 		rem += selected_tasksize;
 		rcu_read_unlock();
+		lmk_count++;
 	} else
 		rcu_read_unlock();
-
+	}
 	lowmem_print(4, "lowmem_scan %lu, %x, return %lu\n",
 		     sc->nr_to_scan, sc->gfp_mask, rem);
 	return rem;
@@ -474,6 +477,8 @@ module_param_array_named(minfree, lowmem_minfree, uint, &lowmem_minfree_size,
 module_param_array_named(lmk_count, lowmem_per_minfree_count, uint, NULL,
 			 S_IRUGO);
 module_param_named(debug_level, lowmem_debug_level, uint, S_IRUGO | S_IWUSR);
+
+module_param_named(lmkcount, lmk_count, uint, S_IRUGO);
 
 module_init(lowmem_init);
 module_exit(lowmem_exit);
