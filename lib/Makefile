@@ -7,6 +7,7 @@ CFLAGS_klist.o := -fno-strict-aliasing
 CFLAGS_kobject_uevent.o := -fno-strict-aliasing
 CFLAGS_radix-tree.o := -fno-strict-aliasing
 CFLAGS_vsprintf.o := -fno-strict-aliasing
+CFLAGS_dynamic_debug.o := -fno-strict-aliasing
 
 ifdef CONFIG_FUNCTION_TRACER
 ORIG_CFLAGS := $(KBUILD_CFLAGS)

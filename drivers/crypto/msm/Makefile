@@ -1,3 +1,7 @@
+CFLAGS_KERNEL := -fno-strict-aliasing
+ifeq ($(CONFIG_FIPS_ENABLE), y)
+	obj-$(CONFIG_CRYPTO_DEV_QCEDEV) += qcedev_fips.o
+endif
 obj-$(CONFIG_CRYPTO_DEV_QCEDEV) += qcedev.o
 ccflags-$(CONFIG_CRYPTO_DEV_QCEDEV)	+= -Wno-array-bounds
 ifeq ($(CONFIG_CRYPTO_DEV_QCE50), y)
