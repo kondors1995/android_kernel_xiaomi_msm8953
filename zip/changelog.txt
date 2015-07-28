@@ -1,4 +1,82 @@
-<<<<<<< HEAD
+[33md766a03[m Speed up console framebuffer imageblit function
+[33maa37cd8[m PM / devfreq: Fix memory leak when fail to register device
+[33mad87060[m PM / devfreq: remove double put_device
+[33m4c7c3f3e[m PM / devfreq: devm_kzalloc to have dev pointer more precisely
+[33mf911bff[m cpufreq: Drop cpufreq_disabled() check from cpufreq_cpu_{get|put}()
+[33mcc5e8e5[m cpufreq: Unexport cpufreq_frequency_table_cpuinfo()
+[33m6d9872a[m cpufreq: cpufreq_stats: constify attribute_group structures
+[33mf087094[m cpufreq: stats: don't check for freq table while freeing stats
+[33m810dfb0[m cpufreq: stats: initialize 'cur_time' on its definition
+[33mcfa3a44[m cpufreq: stats: remove unused cpufreq_stats_attribute
+[33m40cab6a[m cpufreq: stats: return -EEXIST when stats are already allocated
+[33ma936514[m cpufreq: stats: Improve module description string
+[33me58d8e2[m PM / devfreq: constify attribute_group structures.
+[33m65f139e[m PM / devfreq: Don't delete sysfs group twice
+[33mbb0a2b6[m PM / devfreq: Remove unnecessary separate _remove_devfreq()
+[33md41e2e9[m PM / devfreq: Fix the checkpatch warnings
+[33m69b13a9[m PM / devfreq: Fix the bug of devfreq_add_device when governor is NULL
+[33m0f68d79[m PM / devfreq: correct comment typo.
+[33medd639f[m PM / devfreq: make devfreq explicitly non-modular
+[33ma6d5f86[m sched/idle: Optimize the generic idle loop
+[33mdedfc0d8[m lpm-levels: delete MODULE leftovers
+[33m7f24370[m PM / devfreq: fix duplicated kfree on devfreq pointer
+[33m0c9b7eb[m PM / devfreq: Do not show statistics if it's not ready.
+[33m49381bc[m PM / devfreq: Add show_one macro to delete the duplicate code
+[33m5c38a68[m PM / devfreq: Fix governor_store()
+[33mbf82d2a[m PM / devfreq: Fix incorrect type issue.
+[33md9257b0[m PM / devfreq: Drop unlikely before IS_ERR(_OR_NULL)
+[33m2c82860[m cpuidle: coupled: remove unused define cpuidle_coupled_lock
+[33mec2d66a[m cpuidle/coupled: Remove cpuidle_device::safe_state_index
+[33m5091fe5[m drivers: fix up obsolete cpu function usage.
+[33mc441da1[m cpuidle/coupled: Add sanity check for safe_state_index
+[33m5518103[m cpuidle: Convert to using %pOF instead of full_name
+[33m8a7cb42[m cpuidle: dt: Add missing 'of_node_put()'
+[33ma1bb6e7[m cpuidle: dt: assign ->enter_freeze to same as ->enter callback function
+[33me38b36f8[m drivers: cpuidle: Add idle-state-name description to ARM idle states
+[33m92697ea9[m drivers: cpuidle: Add status property to ARM idle states
+[33m29c93f0[m ARM: MCPM: remove residency argument from mcpm_cpu_suspend()
+[33m9ddc689[m drivers: cpuidle: Don't initialize big.LITTLE driver if MCPM is unavailable
+[33m7c6fa3a[m cpuidle/coupled: Remove redundant 'dev' argument of cpuidle_state_is_coupled()
+[33meea6b3f[m suspend-to-idle: Prevent RCU from complaining about tick_freeze()
+[33m498125e[m cpuidle: Do not use CPUIDLE_DRIVER_STATE_START in cpuidle.c
+[33macae5ab[m cpuidle: Select a different state on tick_broadcast_enter() failures
+[33mc57494b[m cpuidle: Fix the kerneldoc comment for cpuidle_enter_state()
+[33ma31dce6[m cpuidle / sleep: Use broadcast timer for states that stop local timer
+[33mb8113c74[m cpuidle: Clean up fallback handling in cpuidle_idle_call()
+[33me1761e6[m cpuidle / sleep: Do sanity checks in cpuidle_enter_freeze() too
+[33mb0fc8e0[m idle / sleep: Avoid excessive disabling and enabling interrupts
+[33ma605fa8[m PM / sleep: Make it possible to quiesce timers during suspend-to-idle
+[33m1713d32[m cpuidle: Validate cpu_dev in cpuidle_add_sysfs()
+[33m51a2640[m cpuidle: fix improper return value on error
+[33mcc2b8d6[m cpuidle: improve governor Kconfig options
+[33mde8a600[m cpuidle: menu: allow state 0 to be disabled
+[33mb787dcf[m cpuidle: governors: Remove remaining old module code
+[33m440f0d8[m cpuidle: menu: Fall back to polling if next timer event is near
+[33m58d4540[m cpuidle: menu: use high confidence factors only when considering polling
+[33m6c2917d[m cpuidle: menu: help gcc generate slightly better code
+[33me650b28[m cpuidle: menu: avoid expensive square root computation
+[33m5b4de37[m cpuidle: menu: Avoid pointless checks in menu_select()
+[33m3b6d7e3[m cpuidle: menu: Fix menu_select() for CPUIDLE_DRIVER_STATE_START == 0
+[33mb6f902c[m cpuidle,menu: smooth out measured_us calculation
+[33mc3514ce[m cpuidle,menu: use interactivity_req to disable polling
+[33mab89aae[m cpuidle,x86: increase forced cut-off for polling to 20us
+[33m710fa24[m cpuidle: Check the sign of index in cpuidle_reflect()
+[33m3705cdc[m cpuidle: menu: use DIV_ROUND_CLOSEST_ULL()
+[33m7a0aab4[m cpuidle: menu: Better idle duration measurement without using CPUIDLE_FLAG_TIME_INVALID
+[33mc6ea77c[m cpuidle: Invert CPUIDLE_FLAG_TIME_VALID logic
+[33m8b5a99e[m New stuff
+[33m980a200[m R10-BETA
+[33m302e97e[m leds-aw2013: Fix error introduced on kernel bringup
+[33mbf1df1e[m leds-aw2013: Don't reset values when nothing has changed
+[33m14b97d4[m leds: aw2013: Reduce logging level
+[33ma692292[m leds: aw2013: Use an ordered workqueue for command processing
+[33m6abf056[m leds: aw2013_led: Don't reset the brightness level when setting blink
+[33m83691a9[m leds: aw2013_led: Support configuring GPIOs before use
+[33mf1bc75e[m leds: aw2013_led: Allow direct GPIO control as an alternative to vcc
+[33m4e9a632[m Improve boost
+[33m0f1cac1[m Update spectrum
+[33m7b152af[m Regen defconfig
+[33m0b852f6[m power: msm-core: Make temp end point practical
 [33m72290b0[m Update spectrum
 [33m6b8f9c3[m Fix compile for cpu_input_boost
 [33m555b917[m cpu_input_boost: Convert to state notifier
@@ -112,7 +190,7 @@
 [33mb500baf[m cpu-hotplug: convert cpu_hotplug_disabled to a counter
 [33me00bfab[m sched: Prevent recursion in io_schedule()
 [33ma2c62e7[m uapi: fix eventpool.h double declaration
-[33m9c78ab5[m FROMLIST: pstore: drop pmsg bounce buffer
+[33m9c78ab54[m FROMLIST: pstore: drop pmsg bounce buffer
 [33m9060e0b[m fs/pstore: fix compilation warning
 [33m697eab2[m pstore: Fix the ramoops module parameters update
 [33ma5254af[m fs/pstore: initialize pmsg from device tree
@@ -125,5 +203,3 @@
 [33mb71c2ee1[m staging: prima: Update to CAF LA.UM.5.6.r1-06100-89xx.0
 [33maed13aa[m staging: prima: Update to CAF LA.UM.5.6.r1-06000-89xx.0
 [33m90bf123[m New ardeno idler
-=======
->>>>>>> 00475ad... Improve boost
