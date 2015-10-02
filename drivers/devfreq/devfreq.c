@@ -564,7 +564,6 @@ err_init:
 	mutex_unlock(&devfreq_list_lock);
 
 	device_unregister(&devfreq->dev);
-	kfree(devfreq);
 err_out:
 	return ERR_PTR(err);
 }
