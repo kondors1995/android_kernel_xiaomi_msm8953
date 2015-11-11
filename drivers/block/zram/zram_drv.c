@@ -40,7 +40,6 @@ static DEFINE_IDR(zram_index_idr);
 static DEFINE_MUTEX(zram_index_mutex);
 
 static int zram_major;
-static struct zram *zram_devices;
 static const char *default_compressor = "lz4";
 
 /*
