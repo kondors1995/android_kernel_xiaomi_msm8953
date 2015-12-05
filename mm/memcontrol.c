@@ -2496,7 +2496,7 @@ retry:
 	 * bypass the last charges so that they can exit quickly and
 	 * free their memory.
 	 */
-	if (unlikely(test_thread_flag(TIF_MEMDIE) ||
+	if (unlikely(test_thread_flag_relaxed(TIF_MEMDIE) ||
 		     fatal_signal_pending(current) ||
 		     current->flags & PF_EXITING))
 		goto bypass;
@@ -3341,9 +3341,369 @@ static int mem_cgroup_move_account(struct page *page,
 	if (!trylock_page(page))
 		goto out;
 
+<<<<<<< HEAD
 	ret = -EINVAL;
 	if (!PageCgroupUsed(pc) || pc->mem_cgroup != from)
 		goto out_unlock;
+=======
+/*
+ * Charge the memory controller for page usage.
+ * Return
+ * 0 if the charge was successful
+ * < 0 if the cgroup is over its limit
+ */
+static int mem_cgroup_charge_common(struct page *page, struct mm_struct *mm,
+				gfp_t gfp_mask, enum charge_type ctype)
+{
+	struct mem_cgroup *memcg = NULL;
+	unsigned int nr_pages = 1;
+	bool oom = true;
+	int ret;
+
+	if (PageTransHuge(page)) {
+		nr_pages <<= compound_order(page);
+		VM_BUG_ON(!PageTransHuge(page));
+		/*
+		 * Never OOM-kill a process for a huge page.  The
+		 * fault handler will fall back to regular pages.
+		 */
+		oom = false;
+	}
+
+	ret = __mem_cgroup_try_charge(mm, gfp_mask, nr_pages, &memcg, oom);
+	if (ret == -ENOMEM)
+		return ret;
+	__mem_cgroup_commit_charge(memcg, page, nr_pages, ctype, false);
+	return 0;
+}
+
+int mem_cgroup_newpage_charge(struct page *page,
+			      struct mm_struct *mm, gfp_t gfp_mask)
+{
+	if (mem_cgroup_disabled())
+		return 0;
+	VM_BUG_ON(page_mapped(page));
+	VM_BUG_ON(page->mapping && !PageAnon(page));
+	VM_BUG_ON(!mm);
+	return mem_cgroup_charge_common(page, mm, gfp_mask,
+					MEM_CGROUP_CHARGE_TYPE_ANON);
+}
+
+/*
+ * While swap-in, try_charge -> commit or cancel, the page is locked.
+ * And when try_charge() successfully returns, one refcnt to memcg without
+ * struct page_cgroup is acquired. This refcnt will be consumed by
+ * "commit()" or removed by "cancel()"
+ */
+static int __mem_cgroup_try_charge_swapin(struct mm_struct *mm,
+					  struct page *page,
+					  gfp_t mask,
+					  struct mem_cgroup **memcgp)
+{
+	struct mem_cgroup *memcg;
+	struct page_cgroup *pc;
+	int ret;
+
+	pc = lookup_page_cgroup(page);
+	/*
+	 * Every swap fault against a single page tries to charge the
+	 * page, bail as early as possible.  shmem_unuse() encounters
+	 * already charged pages, too.  The USED bit is protected by
+	 * the page lock, which serializes swap cache removal, which
+	 * in turn serializes uncharging.
+	 */
+	if (PageCgroupUsed(pc))
+		return 0;
+	if (!do_swap_account)
+		goto charge_cur_mm;
+	memcg = try_get_mem_cgroup_from_page(page);
+	if (!memcg)
+		goto charge_cur_mm;
+	*memcgp = memcg;
+	ret = __mem_cgroup_try_charge(NULL, mask, 1, memcgp, true);
+	css_put(&memcg->css);
+	if (ret == -EINTR)
+		ret = 0;
+	return ret;
+charge_cur_mm:
+	ret = __mem_cgroup_try_charge(mm, mask, 1, memcgp, true);
+	if (ret == -EINTR)
+		ret = 0;
+	return ret;
+}
+
+int mem_cgroup_try_charge_swapin(struct mm_struct *mm, struct page *page,
+				 gfp_t gfp_mask, struct mem_cgroup **memcgp)
+{
+	*memcgp = NULL;
+	if (mem_cgroup_disabled())
+		return 0;
+	/*
+	 * A racing thread's fault, or swapoff, may have already
+	 * updated the pte, and even removed page from swap cache: in
+	 * those cases unuse_pte()'s pte_same() test will fail; but
+	 * there's also a KSM case which does need to charge the page.
+	 */
+	if (!PageSwapCache(page)) {
+		int ret;
+
+		ret = __mem_cgroup_try_charge(mm, gfp_mask, 1, memcgp, true);
+		if (ret == -EINTR)
+			ret = 0;
+		return ret;
+	}
+	return __mem_cgroup_try_charge_swapin(mm, page, gfp_mask, memcgp);
+}
+
+void mem_cgroup_cancel_charge_swapin(struct mem_cgroup *memcg)
+{
+	if (mem_cgroup_disabled())
+		return;
+	if (!memcg)
+		return;
+	__mem_cgroup_cancel_charge(memcg, 1);
+}
+
+static void
+__mem_cgroup_commit_charge_swapin(struct page *page, struct mem_cgroup *memcg,
+					enum charge_type ctype)
+{
+	if (mem_cgroup_disabled())
+		return;
+	if (!memcg)
+		return;
+
+	__mem_cgroup_commit_charge(memcg, page, 1, ctype, true);
+	/*
+	 * Now swap is on-memory. This means this page may be
+	 * counted both as mem and swap....double count.
+	 * Fix it by uncharging from memsw. Basically, this SwapCache is stable
+	 * under lock_page(). But in do_swap_page()::memory.c, reuse_swap_page()
+	 * may call delete_from_swap_cache() before reach here.
+	 */
+	if (do_swap_account && PageSwapCache(page)) {
+		swp_entry_t ent = {.val = page_private(page)};
+		mem_cgroup_uncharge_swap(ent);
+	}
+}
+
+void mem_cgroup_commit_charge_swapin(struct page *page,
+				     struct mem_cgroup *memcg)
+{
+	__mem_cgroup_commit_charge_swapin(page, memcg,
+					  MEM_CGROUP_CHARGE_TYPE_ANON);
+}
+
+int mem_cgroup_cache_charge(struct page *page, struct mm_struct *mm,
+				gfp_t gfp_mask)
+{
+	struct mem_cgroup *memcg = NULL;
+	enum charge_type type = MEM_CGROUP_CHARGE_TYPE_CACHE;
+	int ret;
+
+	if (mem_cgroup_disabled())
+		return 0;
+	if (PageCompound(page))
+		return 0;
+
+	if (!PageSwapCache(page))
+		ret = mem_cgroup_charge_common(page, mm, gfp_mask, type);
+	else { /* page is swapcache/shmem */
+		ret = __mem_cgroup_try_charge_swapin(mm, page,
+						     gfp_mask, &memcg);
+		if (!ret)
+			__mem_cgroup_commit_charge_swapin(page, memcg, type);
+	}
+	return ret;
+}
+
+static void mem_cgroup_do_uncharge(struct mem_cgroup *memcg,
+				   unsigned int nr_pages,
+				   const enum charge_type ctype)
+{
+	struct memcg_batch_info *batch = NULL;
+	bool uncharge_memsw = true;
+
+	/* If swapout, usage of swap doesn't decrease */
+	if (!do_swap_account || ctype == MEM_CGROUP_CHARGE_TYPE_SWAPOUT)
+		uncharge_memsw = false;
+
+	batch = &current->memcg_batch;
+	/*
+	 * In usual, we do css_get() when we remember memcg pointer.
+	 * But in this case, we keep res->usage until end of a series of
+	 * uncharges. Then, it's ok to ignore memcg's refcnt.
+	 */
+	if (!batch->memcg)
+		batch->memcg = memcg;
+	/*
+	 * do_batch > 0 when unmapping pages or inode invalidate/truncate.
+	 * In those cases, all pages freed continuously can be expected to be in
+	 * the same cgroup and we have chance to coalesce uncharges.
+	 * But we do uncharge one by one if this is killed by OOM(TIF_MEMDIE)
+	 * because we want to do uncharge as soon as possible.
+	 */
+
+	if (!batch->do_batch || test_thread_flag_relaxed(TIF_MEMDIE))
+		goto direct_uncharge;
+
+	if (nr_pages > 1)
+		goto direct_uncharge;
+
+	/*
+	 * In typical case, batch->memcg == mem. This means we can
+	 * merge a series of uncharges to an uncharge of res_counter.
+	 * If not, we uncharge res_counter ony by one.
+	 */
+	if (batch->memcg != memcg)
+		goto direct_uncharge;
+	/* remember freed charge and uncharge it later */
+	batch->nr_pages++;
+	if (uncharge_memsw)
+		batch->memsw_nr_pages++;
+	return;
+direct_uncharge:
+	res_counter_uncharge(&memcg->res, nr_pages * PAGE_SIZE);
+	if (uncharge_memsw)
+		res_counter_uncharge(&memcg->memsw, nr_pages * PAGE_SIZE);
+	if (unlikely(batch->memcg != memcg))
+		memcg_oom_recover(memcg);
+}
+
+/*
+ * uncharge if !page_mapped(page)
+ */
+static struct mem_cgroup *
+__mem_cgroup_uncharge_common(struct page *page, enum charge_type ctype,
+			     bool end_migration)
+{
+	struct mem_cgroup *memcg = NULL;
+	unsigned int nr_pages = 1;
+	struct page_cgroup *pc;
+	bool anon;
+
+	if (mem_cgroup_disabled())
+		return NULL;
+
+	if (PageTransHuge(page)) {
+		nr_pages <<= compound_order(page);
+		VM_BUG_ON(!PageTransHuge(page));
+	}
+	/*
+	 * Check if our page_cgroup is valid
+	 */
+	pc = lookup_page_cgroup(page);
+	if (unlikely(!PageCgroupUsed(pc)))
+		return NULL;
+
+	lock_page_cgroup(pc);
+
+	memcg = pc->mem_cgroup;
+
+	if (!PageCgroupUsed(pc))
+		goto unlock_out;
+
+	anon = PageAnon(page);
+
+	switch (ctype) {
+	case MEM_CGROUP_CHARGE_TYPE_ANON:
+		/*
+		 * Generally PageAnon tells if it's the anon statistics to be
+		 * updated; but sometimes e.g. mem_cgroup_uncharge_page() is
+		 * used before page reached the stage of being marked PageAnon.
+		 */
+		anon = true;
+		/* fallthrough */
+	case MEM_CGROUP_CHARGE_TYPE_DROP:
+		/* See mem_cgroup_prepare_migration() */
+		if (page_mapped(page))
+			goto unlock_out;
+		/*
+		 * Pages under migration may not be uncharged.  But
+		 * end_migration() /must/ be the one uncharging the
+		 * unused post-migration page and so it has to call
+		 * here with the migration bit still set.  See the
+		 * res_counter handling below.
+		 */
+		if (!end_migration && PageCgroupMigration(pc))
+			goto unlock_out;
+		break;
+	case MEM_CGROUP_CHARGE_TYPE_SWAPOUT:
+		if (!PageAnon(page)) {	/* Shared memory */
+			if (page->mapping && !page_is_file_cache(page))
+				goto unlock_out;
+		} else if (page_mapped(page)) /* Anon */
+				goto unlock_out;
+		break;
+	default:
+		break;
+	}
+
+	mem_cgroup_charge_statistics(memcg, page, anon, -nr_pages);
+
+	ClearPageCgroupUsed(pc);
+	/*
+	 * pc->mem_cgroup is not cleared here. It will be accessed when it's
+	 * freed from LRU. This is safe because uncharged page is expected not
+	 * to be reused (freed soon). Exception is SwapCache, it's handled by
+	 * special functions.
+	 */
+
+	unlock_page_cgroup(pc);
+	/*
+	 * even after unlock, we have memcg->res.usage here and this memcg
+	 * will never be freed.
+	 */
+	memcg_check_events(memcg, page);
+	if (do_swap_account && ctype == MEM_CGROUP_CHARGE_TYPE_SWAPOUT) {
+		mem_cgroup_swap_statistics(memcg, true);
+		mem_cgroup_get(memcg);
+	}
+	/*
+	 * Migration does not charge the res_counter for the
+	 * replacement page, so leave it alone when phasing out the
+	 * page that is unused after the migration.
+	 */
+	if (!end_migration && !mem_cgroup_is_root(memcg))
+		mem_cgroup_do_uncharge(memcg, nr_pages, ctype);
+
+	return memcg;
+
+unlock_out:
+	unlock_page_cgroup(pc);
+	return NULL;
+}
+
+void mem_cgroup_uncharge_page(struct page *page)
+{
+	/* early check. */
+	if (page_mapped(page))
+		return;
+	VM_BUG_ON(page->mapping && !PageAnon(page));
+	/*
+	 * If the page is in swap cache, uncharge should be deferred
+	 * to the swap path, which also properly accounts swap usage
+	 * and handles memcg lifetime.
+	 *
+	 * Note that this check is not stable and reclaim may add the
+	 * page to swap cache at any time after this.  However, if the
+	 * page is not in swap cache by the time page->mapcount hits
+	 * 0, there won't be any page table references to the swap
+	 * slot, and reclaim will free it and not actually write the
+	 * page to disk.
+	 */
+	if (PageSwapCache(page))
+		return;
+	__mem_cgroup_uncharge_common(page, MEM_CGROUP_CHARGE_TYPE_ANON, false);
+}
+
+void mem_cgroup_uncharge_cache_page(struct page *page)
+{
+	VM_BUG_ON(page_mapped(page));
+	VM_BUG_ON(page->mapping);
+	__mem_cgroup_uncharge_common(page, MEM_CGROUP_CHARGE_TYPE_CACHE, false);
+}
+>>>>>>> 390a09d55344... arm64: use the new *_relaxed macros for lower power usage
 
 	move_lock_mem_cgroup(from, &flags);
 
