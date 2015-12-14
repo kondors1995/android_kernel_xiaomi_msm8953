@@ -373,7 +373,7 @@ config CPU_INPUT_BOOST
 	bool "CPU Input Boost"
 	help
 	  Boosts the CPU on touchscreen and touchpad input. Boost frequencies and
-	  durations are calculated automatically.
+	  duration are configured via sysfs (/sys/kernel/cpu_input_boost/*).
 
 config MSM_TRACK_FREQ_TARGET_INDEX
 	bool "Track cpufreq frequency index"
