@@ -150,8 +150,9 @@ struct rcu_dynticks {
  * Definition for node within the RCU grace-period-detection hierarchy.
  */
 struct rcu_node {
-	raw_spinlock_t lock;	/* Root rcu_node's lock protects some */
-				/*  rcu_state fields as well as following. */
+	raw_spinlock_t __private lock;	/* Root rcu_node's lock protects */
+					/*  some rcu_state fields as well as */
+					/*  following. */
 	unsigned long gpnum;	/* Current grace period for this node. */
 				/*  This will either be equal to or one */
 				/*  behind the root rcu_node's gpnum. */
