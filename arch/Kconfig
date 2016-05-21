@@ -614,4 +614,7 @@ config OLD_SIGACTION
 config COMPAT_OLD_SIGACTION
 	bool
 
+config CPU_NO_EFFICIENT_FFS
+	def_bool n
+
 source "kernel/gcov/Kconfig"

@@ -87,6 +87,26 @@ source "arch/arc/plat-tb10x/Kconfig"
 
 endmenu
 
+<<<<<<< HEAD
+=======
+choice
+	prompt "ARC Instruction Set"
+	default ISA_ARCOMPACT
+
+config ISA_ARCOMPACT
+	bool "ARCompact ISA"
+	select CPU_NO_EFFICIENT_FFS
+	help
+	  The original ARC ISA of ARC600/700 cores
+
+config ISA_ARCV2
+	bool "ARC ISA v2"
+	help
+	  ISA for the Next Generation ARC-HS cores
+
+endchoice
+
+>>>>>>> fff7fb0b2d90... lib/GCD.c: use binary GCD algorithm instead of Euclidean
 menu "ARC CPU Configuration"
 
 choice
