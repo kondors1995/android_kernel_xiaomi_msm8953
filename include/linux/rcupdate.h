@@ -673,13 +673,7 @@ static inline void rcu_preempt_sleep_check(void)
  * object's lifetime is managed by something other than RCU.  That
  * "something other" might be reference counting or simple immortality.
  */
-#define lockless_dereference(p) \
-({ \
-	typeof(p) _________p1 = READ_ONCE(p); \
-	smp_read_barrier_depends(); /* Dependency order vs. p above. */ \
-	(_________p1); \
-})
-
+/*
 /**
  * rcu_assign_pointer() - assign to RCU-protected pointer
  * @p: pointer to assign to
