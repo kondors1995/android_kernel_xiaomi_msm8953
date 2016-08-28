@@ -396,7 +396,6 @@ source "drivers/thermal/st/Kconfig"
 endmenu
 =======
 	bool "Simple solution to monitor CPU temp and limit CPU Frequency"
-	depends on THERMAL_TSENS8960 || THERMAL_TSENS8974
 	depends on CPU_FREQ_MSM
 	depends on !THERMAL_MONITOR
 	default n
