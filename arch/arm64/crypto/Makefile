@@ -35,6 +35,12 @@ aes-arm64-y := aes-cipher-core.o aes-cipher-glue.o
 obj-$(CONFIG_CRYPTO_SPECK_NEON) += speck-neon.o
 speck-neon-y := speck-neon-core.o speck-neon-glue.o
 
+obj-$(CONFIG_CRYPTO_SHA256_ARM64) += sha256-arm64.o
+sha256-arm64-y := sha256-glue.o sha256-core.o
+
+obj-$(CONFIG_CRYPTO_SHA512_ARM64) += sha512-arm64.o
+sha512-arm64-y := sha512-glue.o sha512-core.o
+
 AFLAGS_aes-ce.o		:= -DINTERLEAVE=4
 AFLAGS_aes-neon.o	:= -DINTERLEAVE=4
 
@@ -48,3 +54,14 @@ ccflags-y := -O3
 
 $(obj)/aes-glue-%.o: $(src)/aes-glue.c FORCE
 	$(call if_changed_rule,cc_o_c)
+
+quiet_cmd_perlasm = PERLASM $@
+      cmd_perlasm = $(PERL) $(<) void $(@)
+
+$(src)/sha256-core.S_shipped: $(src)/sha512-armv8.pl
+	$(call cmd,perlasm)
+
+$(src)/sha512-core.S_shipped: $(src)/sha512-armv8.pl
+	$(call cmd,perlasm)
+
+.PRECIOUS: $(obj)/sha256-core.S $(obj)/sha512-core.S
