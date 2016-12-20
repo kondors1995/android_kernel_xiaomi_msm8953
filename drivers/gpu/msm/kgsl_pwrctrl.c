@@ -2497,6 +2497,7 @@ static int _init(struct kgsl_device *device)
 	case KGSL_STATE_ACTIVE:
 		kgsl_pwrctrl_irq(device, KGSL_PWRFLAGS_OFF);
 		del_timer_sync(&device->idle_timer);
+		kgsl_pwrscale_midframe_timer_cancel(device);
 		device->ftbl->stop(device);
 		/* fall through */
 	case KGSL_STATE_AWARE:
@@ -2631,6 +2632,7 @@ _aware(struct kgsl_device *device)
 	case KGSL_STATE_ACTIVE:
 		kgsl_pwrctrl_irq(device, KGSL_PWRFLAGS_OFF);
 		del_timer_sync(&device->idle_timer);
+		kgsl_pwrscale_midframe_timer_cancel(device);
 		break;
 	case KGSL_STATE_SLUMBER:
 		status = kgsl_pwrctrl_enable(device);
@@ -2756,6 +2758,7 @@ _slumber(struct kgsl_device *device)
 	case KGSL_STATE_SLEEP:
 	case KGSL_STATE_DEEP_NAP:
 		del_timer_sync(&device->idle_timer);
+		kgsl_pwrscale_midframe_timer_cancel(device);
 		if (device->pwrctrl.thermal_cycle == CYCLE_ACTIVE) {
 			device->pwrctrl.thermal_cycle = CYCLE_ENABLE;
 			del_timer_sync(&device->pwrctrl.thermal_timer);
