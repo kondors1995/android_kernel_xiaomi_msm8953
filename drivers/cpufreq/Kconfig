@@ -3,8 +3,8 @@ menu "CPU Frequency scaling"
 config CPU_FREQ
 	bool "CPU Frequency scaling"
 	help
-	  CPU Frequency scaling allows you to change the clock speed of 
-	  CPUs on the fly. This is a nice method to save power, because 
+	  CPU Frequency scaling allows you to change the clock speed of
+	  CPUs on the fly. This is a nice method to save power, because
 	  the lower the CPU clock speed, the less power the CPU consumes.
 
 	  Note that this driver doesn't automatically change the CPU
@@ -92,7 +92,7 @@ config CPU_FREQ_DEFAULT_GOV_USERSPACE
 	select CPU_FREQ_GOV_USERSPACE
 	help
 	  Use the CPUFreq governor 'userspace' as default. This allows
-	  you to set the CPU frequency manually or when a userspace 
+	  you to set the CPU frequency manually or when a userspace
 	  program shall be able to set the CPU dynamically without having
 	  to enable the userspace governor manually.
 
@@ -138,6 +138,19 @@ config CPU_FREQ_DEFAULT_GOV_BLU_ACTIVE
 	  loading your cpufreq low-level hardware driver, using the
 	  'interactive' governor for latency-sensitive workloads.
 
+
+config CPU_FREQ_DEFAULT_GOV_RELAXED
+	bool "relaxed"
+	select CPU_FREQ_GOV_RELAXED
+	select CPU_FREQ_GOV_INTERACTIVE
+	help
+	  Use the CPUFreq governor 'relaxed' as default. This allows
+	  you to get a full dynamic frequency capable system by simply
+	  loading your cpufreq low-level hardware driver.
+	  Be aware that not all cpufreq drivers support the conservative
+	  governor. If unsure have a look at the help section of the
+	  driver. Fallback governor will be the interactive governor.
+
 endchoice
 
 endif # !ARCH_MSM
@@ -169,7 +182,7 @@ config CPU_FREQ_GOV_USERSPACE
 	help
 	  Enable this cpufreq governor when you either want to set the
 	  CPU frequency manually or when a userspace program shall
-	  be able to set the CPU dynamically, like on LART 
+	  be able to set the CPU dynamically, like on LART
 	  <http://www.lartmaker.nl/>.
 
 	  To compile this driver as a module, choose M here: the
@@ -184,11 +197,11 @@ config CPU_FREQ_GOV_ONDEMAND
 	select CPU_FREQ_GOV_COMMON
 	help
 	  'ondemand' - This driver adds a dynamic cpufreq policy governor.
-	  The governor does a periodic polling and 
+	  The governor does a periodic polling and
 	  changes frequency based on the CPU utilization.
 	  The support for this governor depends on CPU capability to
 	  do fast frequency switching (i.e, very low latency frequency
-	  transitions). 
+	  transitions).
 
 	  To compile this driver as a module, choose M here: the
 	  module will be called cpufreq_ondemand.
@@ -247,6 +260,15 @@ config CPUFREQ_DT
 	  systems which share clock and voltage across all CPUs.
 
 	  If in doubt, say N.
+
+config CPU_FREQ_GOV_RELAXED
+	tristate "'relaxed' cpufreq governor"
+	depends on CPU_FREQ
+	select CPU_FREQ_GOV_COMMON
+	default y
+	help
+	  'relaxed' - similar to 'conservative', but optimized for devices
+	  that go into suspended or display off states often.
 
 config CPU_BOOST
 	tristate "Event base short term CPU freq boost"
