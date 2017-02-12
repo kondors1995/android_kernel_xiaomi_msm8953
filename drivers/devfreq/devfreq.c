@@ -1114,7 +1114,7 @@ static ssize_t time_in_state_show(struct device *dev, struct device_attribute *a
 		return 0;
 
 	len = 0;
-	
+
 	for (i = 0; i < max_state; i++) {
 		len += sprintf(buf + len, "%u ",
 				devfreq->profile->freq_table[i]);
@@ -1123,7 +1123,7 @@ static ssize_t time_in_state_show(struct device *dev, struct device_attribute *a
 	}
 
 	len += sprintf(buf + len, "\n");
-	
+
 	return len;
 }
 static DEVICE_ATTR_RO(time_in_state);
@@ -1221,9 +1221,8 @@ static int __init devfreq_init(void)
 		return PTR_ERR(devfreq_class);
 	}
 
-	devfreq_wq = alloc_workqueue("devfreq_wq",
-			    WQ_HIGHPRI | WQ_UNBOUND | WQ_FREEZABLE |
-			    WQ_MEM_RECLAIM, 0);
+	devfreq_wq = alloc_workqueue("devfreq_wq", WQ_HIGHPRI | WQ_FREEZABLE
+			| WQ_UNBOUND | WQ_MEM_RECLAIM, 0);
 	if (!devfreq_wq) {
 		class_destroy(devfreq_class);
 		pr_err("%s: couldn't create workqueue\n", __FILE__);
