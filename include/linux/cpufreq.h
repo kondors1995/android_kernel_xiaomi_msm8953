@@ -132,6 +132,15 @@ struct cpufreq_policy {
 	/* Boost switch for tasks with p->in_iowait set */
 	bool iowait_boost_enable;
 
+	/*
+	 * Remote DVFS flag (Not added to the driver structure as we don't want
+	 * to access another structure from scheduler hotpath).
+	 *
+	 * Should be set if any CPU (from same or different policy) can do DVFS
+	 * on behalf of any other CPU.
+	 */
+	bool			dvfs_possible_from_any_cpu;
+
 	 /* Cached frequency lookup from cpufreq_driver_resolve_freq. */
 	unsigned int cached_target_freq;
 	int cached_resolved_idx;
