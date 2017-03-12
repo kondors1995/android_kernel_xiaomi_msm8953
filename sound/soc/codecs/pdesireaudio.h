@@ -1,5 +1,5 @@
 /* Copyright (C) 2016-2017 Tristan Marsell (tristan.marsell@t-online.de). All rights reserved.
- * Copyright (C) 2016-2017 Team Project Desire. All rights reserved.
+ * Copyright (C) 2016-2017 Team DevElite. All rights reserved.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -13,6 +13,10 @@
  
 #include "wcd9xxx-resmgr.h"
 
-extern void pdesireaudio_advanced_mode_disable(struct snd_soc_codec *codec);
+extern void pdesireaudio_start(void);
+
+extern void pdesireaudio_remove(void);
+
+extern void pdesireaudio_init(void);
 
 extern void pdesireaudio_advanced_mode_enable(struct snd_soc_codec *codec);
