@@ -3381,6 +3381,9 @@ static int smbchg_float_voltage_set(struct smbchg_chip *chip, int vfloat_mv)
 	power_supply_set_voltage_limit(chip->usb_psy,
 				(chip->vfloat_mv * 1000));
 
+	power_supply_set_voltage_limit(chip->usb_psy,
+				(chip->vfloat_mv * 1000));
+
 	return rc;
 }
 
