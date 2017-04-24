@@ -1,3 +1,21 @@
+
+                       MSM8996-EAS-1.2
+                       
+WHAT IS THE GOAL OF ENERGY AWARE SCHEDULING?
+
+Energy Aware Scheduling (EAS) is an enhancement to Linux power management, 
+unifying CPU power control under the Linux kernel. EAS extends the Linux 
+kernel scheduler to make it fully aware of the power/performance capabilities 
+of the CPUs in the system, to optimize energy consumption for advanced 
+multi-core SoCs including big.LITTLE.  With EAS, the Linux kernel will 
+use the task load and a CPU Energy Model to control task placement to 
+select the optimal CPU to run on.
+
+More great information here:
+
+https://developer.arm.com/open-source/energy-aware-scheduling
+
+
         Linux kernel release 3.x <http://kernel.org/>
 
 These are the release notes for Linux version 3.  Read them carefully,
