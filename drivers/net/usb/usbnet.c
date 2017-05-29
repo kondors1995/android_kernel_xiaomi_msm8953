@@ -87,8 +87,6 @@
 // randomly generated ethernet address
 static u8	node_id [ETH_ALEN];
 
-static const char driver_name [] = "usbnet";
-
 static struct workqueue_struct	*usbnet_wq;
 
 /* use ethtool to change the level for any given device */
