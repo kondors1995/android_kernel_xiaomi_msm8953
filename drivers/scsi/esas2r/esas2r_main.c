@@ -258,8 +258,9 @@ static struct scsi_host_template driver_template = {
 	.slave_alloc			= esas2r_slave_alloc,
 	.slave_destroy			= esas2r_slave_destroy,
 	.change_queue_depth		= esas2r_change_queue_depth,
-	.change_queue_type		= esas2r_change_queue_type,
+	.change_queue_type		= scsi_change_queue_type,
 	.max_sectors			= 0xFFFF,
+	.use_blk_tags			= 1,
 };
 
 int sgl_page_size = 512;
@@ -1268,24 +1269,6 @@ int esas2r_change_queue_depth(struct scsi_device *dev, int depth, int reason)
 	return dev->queue_depth;
 }
 
-int esas2r_change_queue_type(struct scsi_device *dev, int type)
-{
-	esas2r_log(ESAS2R_LOG_INFO, "change_queue_type %p, %d", dev, type);
-
-	if (dev->tagged_supported) {
-		scsi_set_tag_type(dev, type);
-
-		if (type)
-			scsi_activate_tcq(dev, dev->queue_depth);
-		else
-			scsi_deactivate_tcq(dev, dev->queue_depth);
-	} else {
-		type = 0;
-	}
-
-	return type;
-}
-
 int esas2r_slave_alloc(struct scsi_device *dev)
 {
 	return 0;
@@ -1296,13 +1279,10 @@ int esas2r_slave_configure(struct scsi_device *dev)
 	esas2r_log_dev(ESAS2R_LOG_INFO, &(dev->sdev_gendev),
 		       "esas2r_slave_configure()");
 
-	if (dev->tagged_supported) {
-		scsi_set_tag_type(dev, MSG_SIMPLE_TAG);
-		scsi_activate_tcq(dev, cmd_per_lun);
-	} else {
-		scsi_set_tag_type(dev, 0);
-		scsi_deactivate_tcq(dev, cmd_per_lun);
-	}
+	if (dev->tagged_supported)
+		scsi_adjust_queue_depth(dev, MSG_SIMPLE_TAG, cmd_per_lun);
+	else
+		scsi_adjust_queue_depth(dev, 0, cmd_per_lun);
 
 	return 0;
 }

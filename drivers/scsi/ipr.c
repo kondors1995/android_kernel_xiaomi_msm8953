@@ -4375,24 +4375,10 @@ static int ipr_change_queue_type(struct scsi_device *sdev, int tag_type)
 
 	spin_lock_irqsave(ioa_cfg->host->host_lock, lock_flags);
 	res = (struct ipr_resource_entry *)sdev->hostdata;
-
-	if (res) {
-		if (ipr_is_gscsi(res) && sdev->tagged_supported) {
-			/*
-			 * We don't bother quiescing the device here since the
-			 * adapter firmware does it for us.
-			 */
-			scsi_set_tag_type(sdev, tag_type);
-
-			if (tag_type)
-				scsi_activate_tcq(sdev, sdev->queue_depth);
-			else
-				scsi_deactivate_tcq(sdev, sdev->queue_depth);
-		} else
-			tag_type = 0;
-	} else
+	if (res && ipr_is_gscsi(res))
+		tag_type = scsi_change_queue_type(sdev, tag_type);
+	else
 		tag_type = 0;
-
 	spin_unlock_irqrestore(ioa_cfg->host->host_lock, lock_flags);
 	return tag_type;
 }
@@ -6465,6 +6451,7 @@ static struct scsi_host_template driver_template = {
 	.sdev_attrs = ipr_dev_attrs,
 	.proc_name = IPR_NAME,
 	.no_write_same = 1,
+	.use_blk_tags = 1,
 };
 
 /**

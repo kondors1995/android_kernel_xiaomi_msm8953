@@ -181,7 +181,7 @@ static int uas_get_tag(struct scsi_cmnd *cmnd)
 {
 	int tag;
 
-	if (blk_rq_tagged(cmnd->request))
+	if (cmnd->flags & SCMD_TAGGED)
 		tag = cmnd->request->tag + 2;
 	else
 		tag = 1;
@@ -807,8 +807,7 @@ static int uas_slave_configure(struct scsi_device *sdev)
 	if (devinfo->flags & US_FL_NO_REPORT_OPCODES)
 		sdev->no_report_opcodes = 1;
 
-	scsi_set_tag_type(sdev, MSG_ORDERED_TAG);
-	scsi_activate_tcq(sdev, devinfo->qdepth - 2);
+	scsi_adjust_queue_depth(sdev, MSG_ORDERED_TAG, devinfo->qdepth - 2);
 	return 0;
 }
 
@@ -833,6 +832,7 @@ static struct scsi_host_template uas_host_template = {
 	 * allocator.
 	 */
 	.disable_blk_mq = true,
+	.use_blk_tags = 1,
 };
 
 #define UNUSUAL_DEV(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax, \

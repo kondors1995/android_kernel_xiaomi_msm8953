@@ -4215,7 +4215,7 @@ scsi_debug_queuecommand(struct scsi_cmnd *SCpnt)
 	case READ_CAPACITY:
 		errsts = resp_readcap(SCpnt, devip);
 		break;
-	case SERVICE_ACTION_IN:
+	case SERVICE_ACTION_IN_16:
 		if (cmd[1] == SAI_READ_CAPACITY_16)
 			errsts = resp_readcap16(SCpnt, devip);
 		else if (cmd[1] == SAI_GET_LBA_STATUS) {
@@ -4533,14 +4533,7 @@ sdebug_change_qdepth(struct scsi_device *sdev, int qdepth, int reason)
 static int
 sdebug_change_qtype(struct scsi_device *sdev, int qtype)
 {
-	if (sdev->tagged_supported) {
-		scsi_set_tag_type(sdev, qtype);
-		if (qtype)
-			scsi_activate_tcq(sdev, sdev->queue_depth);
-		else
-			scsi_deactivate_tcq(sdev, sdev->queue_depth);
-	} else
-		qtype = 0;
+	qtype = scsi_change_queue_type(sdev, qtype);
 	if (SCSI_DEBUG_OPT_Q_NOISE & scsi_debug_opts) {
 		const char *cp;
 

@@ -218,3 +218,5 @@ obj-$(CONFIG_QMI_ENCDEC) += qmi_encdec.o
 obj-$(CONFIG_UBSAN) += ubsan.o
 
 UBSAN_SANITIZE_ubsan.o := n
+
+obj-$(CONFIG_SBITMAP) += sbitmap.o
