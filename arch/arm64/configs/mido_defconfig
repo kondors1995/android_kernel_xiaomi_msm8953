@@ -525,7 +525,12 @@ CONFIG_CPU_FREQ_GOV_ONDEMAND=y
 CONFIG_CPU_FREQ_GOV_INTERACTIVE=y
 CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
 # CONFIG_CPUFREQ_DT is not set
+<<<<<<< HEAD:arch/arm64/configs/mido_defconfig
 # CONFIG_CPU_BOOST is not set
+=======
+# CONFIG_CPU_FREQ_GOV_SCHED is not set
+CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
+>>>>>>> b46adbe739ad... sched: Fix build without cpufreq_sched governror:arch/arm64/configs/lineageos_oneplus3_defconfig
 
 #
 # ARM CPU frequency scaling drivers
