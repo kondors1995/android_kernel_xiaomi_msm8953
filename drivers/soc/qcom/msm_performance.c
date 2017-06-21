@@ -27,7 +27,6 @@
 #include <linux/kthread.h>
 
 static unsigned int use_input_evts_with_hi_slvt_detect;
-static int touchboost = 1;
 
 static struct mutex managed_cpus_lock;
 
