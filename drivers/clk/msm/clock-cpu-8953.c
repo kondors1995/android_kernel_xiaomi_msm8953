@@ -18,6 +18,7 @@
 #include <linux/io.h>
 #include <linux/err.h>
 #include <linux/clk.h>
+#include <linux/clk/msm-clk-provider.h>
 #include <linux/cpu.h>
 #include <linux/mutex.h>
 #include <linux/delay.h>
@@ -432,6 +433,7 @@ static struct mux_clk cpu_debug_pri_mux = {
 	.base = &virt_bases[APCS0_DBG_BASE],
 	.c = {
 		.dbg_name = "cpu_debug_pri_mux",
+		.flags = CLKFLAG_NO_RATE_CACHE,
 		.ops = &clk_ops_gen_mux,
 		CLK_INIT(cpu_debug_pri_mux.c),
 	},
