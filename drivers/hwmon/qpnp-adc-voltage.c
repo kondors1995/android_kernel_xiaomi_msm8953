@@ -596,7 +596,7 @@ int32_t qpnp_vadc_hc_read(struct qpnp_vadc_chip *vadc,
 	} else {
 		rc = wait_for_completion_timeout(
 					&vadc->adc->adc_rslt_completion,
-					QPNP_ADC_COMPLETION_TIMEOUT);
+					msecs_to_jiffies(QPNP_ADC_COMPLETION_TIMEOUT));
 		if (!rc) {
 			rc = qpnp_vadc_hc_check_conversion_status(vadc);
 			if (rc < 0) {
