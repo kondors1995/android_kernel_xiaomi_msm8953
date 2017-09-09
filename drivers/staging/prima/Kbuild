@@ -675,6 +675,9 @@ endif
 # Fix build for GCC 4.7
 EXTRA_CFLAGS += -Wno-maybe-uninitialized -Wno-unused-function -Wno-unused-variable
 
+# Silence misleading indentation warnings generated with GCC 7.x
+EXTRA_CFLAGS += -Wno-misleading-indentation
+
 ifeq ($(CONFIG_WLAN_OFFLOAD_PACKETS),y)
 CDEFINES += -DWLAN_FEATURE_OFFLOAD_PACKETS
 endif
