@@ -31,9 +31,9 @@ echo -e "***********************************************$nocol"
 LC_ALL=C date +%Y-%m-%d
 kernel_dir=$PWD
 build=$kernel_dir/out
-export CROSS_COMPILE="/home/lordarcadius/aarch64-linaro-linux-android/bin/aarch64-linaro-linux-android-"
-kernel="ElectraBlue"
-version="3.0"
+export CROSS_COMPILE=~/gcc-prebuilts/bin/aarch64-linaro-linux-android-
+kernel="Soviet"
+version="5.0"
 vendor="xiaomi"
 device="mido"
 zip=zip
@@ -44,8 +44,8 @@ jobcount="-j$(grep -c ^processor /proc/cpuinfo)"
 #modules_dir=$kernel_dir/"$zip"/system/lib/modules
 modules_dir=$kernel_dir/"$zip"/modules
 zip_name="$kernel"-"$version"-"$date"-"$device".zip
-export KBUILD_BUILD_USER=LordArcadius
-export KBUILD_BUILD_HOST=DroidBox
+export KBUILD_BUILD_USER=NATO66613
+export KBUILD_BUILD_HOST=WAR-ROM
 
 echo "Checking for build..."
 if [ -d arch/arm64/boot/"$kerneltype" ]; then
