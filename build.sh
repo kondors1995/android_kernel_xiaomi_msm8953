@@ -32,7 +32,7 @@ LC_ALL=C date +%Y-%m-%d
 kernel_dir=$PWD
 build=$kernel_dir/out
 export CROSS_COMPILE=~/gcc-prebuilts/bin/aarch64-linaro-linux-android-
-kernel="Soviet"
+kernel="TEST"
 version="5.0"
 vendor="xiaomi"
 device="mido"
@@ -44,9 +44,16 @@ jobcount="-j$(grep -c ^processor /proc/cpuinfo)"
 #modules_dir=$kernel_dir/"$zip"/system/lib/modules
 modules_dir=$kernel_dir/"$zip"/modules
 zip_name="$kernel"-"$version"-"$date"-"$device".zip
+
+# Kernel Details
+BASE_AK_VER="TEST"
+VER=".R5.MIDO"
+AK_VER="$BASE_AK_VER$VER"
+
 export KBUILD_BUILD_USER=NATO66613
 export KBUILD_BUILD_HOST=WAR-ROM
 
+export LOCALVERSION=~`echo $AK_VER`
 echo "Checking for build..."
 if [ -d arch/arm64/boot/"$kerneltype" ]; then
 	read -p "Previous build found, clean working directory..(y/n)? : " cchoice
