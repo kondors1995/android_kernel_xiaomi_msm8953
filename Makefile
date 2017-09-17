@@ -624,12 +624,20 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
 KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
 KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
 
+<<<<<<< HEAD
 # Kill all maybe-uninitialized warnings
 KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
+=======
+# GCC 7.x warnings
+KBUILD_CFLAGS	+= $(call cc-disable-warning, bool-operation)
+KBUILD_CFLAGS	+= $(call cc-disable-warning, memset-elt-size)
+KBUILD_CFLAGS	+= $(call cc-disable-warning, parentheses)
+>>>>>>> 181a6c613061... msm: Kill duplicate-decl-specifier warnings
 
 # Needed to unbreak GCC 7.x and above
 KBUILD_CFLAGS   += $(call cc-option,-fno-store-merging,)
 
+<<<<<<< HEAD
 KBUILD_CFLAGS   += $(call cc-disable-warning,misleading-indentation,)
 
 # Disable all buggy detection warnings
@@ -640,6 +648,8 @@ KBUILD_CFLAGS   += $(call cc-disable-warning,unused-const-variable,)
 KBUILD_CFLAGS   += $(call cc-disable-warning,format-truncation,)
 KBUILD_CFLAGS	+= $(call cc-disable-warning,array-bounds,)
 
+=======
+>>>>>>> 181a6c613061... msm: Kill duplicate-decl-specifier warnings
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
 else
