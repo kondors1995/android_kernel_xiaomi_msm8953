@@ -61,3 +61,5 @@ obj-$(CONFIG_GENEVE) += geneve.o
 
 obj-$(CONFIG_XFRM) += xfrm4_policy.o xfrm4_state.o xfrm4_input.o \
 		      xfrm4_output.o xfrm4_protocol.o
+
+CFLAGS_tcp_input.o	+= -Wno-array-bounds
