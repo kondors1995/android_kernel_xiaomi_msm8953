@@ -46,6 +46,7 @@
 #include <linux/irq_work.h>
 #include <linux/utsname.h>
 #include <linux/ctype.h>
+#include "printk_interface.h"
 
 #include <asm/uaccess.h>
 
@@ -1642,6 +1643,10 @@ asmlinkage int vprintk_emit(int facility, int level,
 	bool in_sched = false;
 	/* cpu currently holding logbuf_lock in this function */
 	static volatile unsigned int logbuf_cpu = UINT_MAX;
+
+	// if printk mode is disabled, terminate instantly
+	if (printk_mode == 0)
+			return 0;
 
 	if (level == SCHED_MESSAGE_LOGLEVEL) {
 		level = -1;
