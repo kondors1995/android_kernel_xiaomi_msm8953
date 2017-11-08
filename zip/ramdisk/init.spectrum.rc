@@ -166,7 +166,7 @@ on property:persist.spectrum.profile=3
     write /sys/module/adreno_idler/parameters/adreno_idler_active 0
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
     write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 400000000
-    write /sys/class/kgsl/kgsl-3d0/max_gpuclk 650000000
+    write /sys/class/kgsl/kgsl-3d0/max_gpuclk 750000000
     write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 2
     # Storage
     write /sys/block/mmcblk0/queue/scheduler deadline
