@@ -30,8 +30,7 @@
 #include <linux/of.h>
 #include <trace/events/power.h>
 
-// max frequency by default
-static unsigned long arg_cpu_max_c1 = 2208000;
+static unsigned long arg_cpu_max_c1 = 2016000;
 
 static int __init cpufreq_read_cpu_max_c1(char *cpu_max_c1)
 {
