@@ -1,3 +1,22 @@
+ef69283 Fix
+65fce0e kernel/sched/core: add missing function for impulse
+35a1d96 Add impulse gov Big tnx to neobuddy
+59278e5 Linux 3.18.79
+46ab83e ecryptfs: fix dereference of NULL user_key_payload
+a98b3eb can: kvaser_usb: Correct return value in printout
+76d67bf scsi: sg: Re-fix off by one in sg_fill_request_table()
+ef3c622 scsi: zfcp: fix erp_action use-before-initialize in REC action trace
+d7bfd42 assoc_array: Fix a buggy node-splitting case
+61936c1 Input: gtco - fix potential out-of-bound access
+965110b fuse: fix READDIRPLUS skipping an entry
+4049206 spi: uapi: spidev: add missing ioctl header
+0057a33 ceph: unlock dangling spinlock in try_flush_caps()
+12a03fb Merge tag 'LA.UM.5.6.r1-06200-89xx.0' of https://source.codeaurora.org/quic/la/kernel/msm-3.18 into BASE-V5
+57426f2 Merge 3.18.78 into android-3.18
+711e346 ANDROID: binder: show high watermark of alloc->pages.
+8b731fa ANDROID: binder: Add thread->process_todo flag.
+0364682 Merge 9b000a508c2eea56bb855c29b697ce9fce4f1b68 on remote branch
+0cfba86 WAR
 513f1ac power: qpnp-fg: Remove some wakeup sources
 d1d179c wakeup: More Wakelock Configures[2]
 1a85bb4 wakeup: More Wakelock Configures
@@ -1855,10 +1874,22 @@ b2bd269 ext4: in ext4_seek_{hole,data}, return -ENXIO for negative offsets
 e85bca0 defconfig: enable advanced tcp
 fd5c95a Makefile: Kill misleading indention warnings
 6b0ee50 Makefile: Kill array bound warnings
+9b000a5 Promotion of kernel.lnx.3.18.c5-171018.
 11cda4f msm: thermal: Add sysfs nodes to control parameters
 442acea msm: thermal: Check temperature only if probed
+3a8e6dd Merge "msm: ipa: add null terminator"
+70cb178 Merge "Prevent potential double frees in sg driver"
+53b7f1d Merge "net: rmnet_data: validate csum in SW"
+7409bc5 msm: ipa: add null terminator
 c18de07 Feather
+9b07028 Prevent potential double frees in sg driver
+f5b5be6 Promotion of kernel.lnx.3.18.c5-171013.
+63105e0 Merge "crypto: ice: Sanitize the ice device return address."
+3969205 Merge "diag: Fix possible usage of freed resource issue"
+003e372 Merge "rtac: add size check when reading cal data kvaddr buffer"
+2683388 Merge "msm: vidc: Increase minimum input buffer count for VP9 decode"
 c94cb3f Merge 80dda668d5be12843bcd8e45d5ee71dc6fbb138c on remote branch
+d690f7d net: rmnet_data: validate csum in SW
 a531e06 Linux 3.18.75
 01d9bed ext4: fix fencepost in s_first_meta_bg validation
 e9093fc ext4: validate s_first_meta_bg at mount time
@@ -1893,9 +1924,12 @@ d54a092 usb-storage: unusual_devs entry to fix write-access regression for Seaga
 c36e8dc USB: gadgetfs: fix copy_to_user while holding spinlock
 ee32b2f USB: gadgetfs: Fix crash caused by inadequate synchronization
 a89ef1a usb: gadget: inode.c: fix unbalanced spin_lock in ep0_write
+749c17e crypto: ice: Sanitize the ice device return address.
+aedbf2c diag: Fix possible usage of freed resource issue
 afa7e9a Merge remote-tracking branch 'remotes/uck/rel/msm-3.18.r5-redone' into oreo-test1
 455dbb1 usb: otg: report power supply type as usb by default
 ce138f6 fix eventpool.h double declaration
+1862e3e rtac: add size check when reading cal data kvaddr buffer
 80dda66 Promotion of kernel.lnx.3.18.c5-171010.
 bf56549 Promotion of kernel.lnx.3.18.c5-171009.
 a637206 Merge "msm: kgsl: Fix calculation of size in _load_regfile"
@@ -2189,6 +2223,7 @@ d348ac7 Revert "msm: camera: isp: Handle standby mode for B+M"
 3c7ea81 ARM: dts: msm: Add support for HD+ video mode panel on msm8917
 11750f4 Promotion of kernel.lnx.3.18.c5-170922.
 a1703cb Promotion of kernel.lnx.3.18.c5-170921.
+34b5f2c msm: vidc: Increase minimum input buffer count for VP9 decode
 b1a757d diag: Add protection while de-initializing clients
 2c13b50 msm: camera: sensor: Validate sensor related name length
 564b0e5 Promotion of kernel.lnx.3.18.c5-170920.
