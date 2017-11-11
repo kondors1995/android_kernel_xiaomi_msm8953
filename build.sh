@@ -33,7 +33,7 @@ kernel_dir=$PWD
 build=$kernel_dir/out
 export CROSS_COMPILE=~/gcc-prebuilts/bin/aarch64-linaro-linux-android-
 kernel="ReVolt"
-version="R9.1"
+version="R10.0"
 vendor="xiaomi"
 device="mido"
 zip=zip
@@ -47,7 +47,7 @@ zip_name="$kernel"-"$version"-"$date"-"$device".zip
 
 # Kernel Details
 BASE_AK_VER="ReVolt"
-VER=".R9.1.MIDO"
+VER=".R10.0.MIDO-BETA"
 AK_VER="$BASE_AK_VER$VER"
 
 export KBUILD_BUILD_USER=NATO66613
