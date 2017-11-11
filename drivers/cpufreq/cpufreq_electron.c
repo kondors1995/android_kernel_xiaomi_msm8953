@@ -93,7 +93,7 @@ static unsigned int default_target_loads[] = {DEFAULT_TARGET_LOAD};
 #define DEFAULT_ABOVE_HISPEED_DELAY DEFAULT_TIMER_RATE
 static unsigned int default_above_hispeed_delay[] = {
 	DEFAULT_ABOVE_HISPEED_DELAY };
-#define DEFAULT_SCREEN_OFF_MAX 1689600
+#define DEFAULT_SCREEN_OFF_MAX 1555200
 
 struct cpufreq_electron_tunables {
 	int usage_count;
@@ -1834,3 +1834,4 @@ MODULE_AUTHOR("Joe Maples <joe@frap129.org>");
 MODULE_DESCRIPTION("'cpufreq_electron' - A cpufreq governor for "
 	"Latency sensitive workloads");
 MODULE_LICENSE("GPL");
+
