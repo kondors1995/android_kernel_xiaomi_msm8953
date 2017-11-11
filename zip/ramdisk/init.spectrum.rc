@@ -13,11 +13,7 @@ on property:sys.boot_completed=1
     setprop persist.spectrum.kernel Soviet
 	
 	
-    # Configure IntelliThermal
-    write /sys/modules/msm_thermal/core_control/enabled 0
-    write /sys/modules/msm_thermal/parameters/enabled 1
-    write /sys/modules/msm_thermal/parameters/limit_temp_degC 64
-    write /sys/modules/msm_thermal/parameters/poll_ms 3	
+	
 	
 
     # Set I/O Scheduler tweaks
@@ -46,41 +42,46 @@ on property:sys.boot_completed=1
 	
     # Backlight dimmer
     write /sys/module/mdss_fb/parameters/backlight_dimmer 1
+	
+	# USB Fast Charge
+    write /sys/kernel/fast_charge/force_fast_charge 1
 
 # Balance (default profile)
 on property:persist.spectrum.profile=0
     # CPU values
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "interactive"
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "electron"
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 652800
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1689000
-    write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 95
-    write /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay 0
-    write /sys/devices/system/cpu/cpufreq/interactive/timer_rate 60000
-    write /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq 652800
-    write /sys/devices/system/cpu/cpufreq/interactive/timer_slack 480000
-    write /sys/devices/system/cpu/cpufreq/interactive/target_loads "80 652800:57 1036800:67 1401600:75 1689600:80 1843200:85 1958400:87"
-    write /sys/devices/system/cpu/cpufreq/interactive/min_sample_time 0
-    write /sys/devices/system/cpu/cpufreq/interactive/boost 0
-    write /sys/devices/system/cpu/cpufreq/interactive/align_windows 1
-    write /sys/devices/system/cpu/cpufreq/interactive/use_migration_notif 1
-    write /sys/devices/system/cpu/cpufreq/interactive/use_sched_load 0
-    write /sys/devices/system/cpu/cpufreq/interactive/max_freq_hysteresis 0
-    write /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration 0
-    write /sys/module/msm_performance/parameters/touchboost 0
+    write /sys/devices/system/cpu/cpufreq/electron/go_hispeed_load 95
+    write /sys/devices/system/cpu/cpufreq/electron/above_hispeed_delay 0
+    write /sys/devices/system/cpu/cpufreq/electron/timer_rate 60000
+    write /sys/devices/system/cpu/cpufreq/electron/hispeed_freq 652800
+    write /sys/devices/system/cpu/cpufreq/electron/timer_slack 480000
+    write /sys/devices/system/cpu/cpufreq/electron/target_loads "80 652800:57 1036800:67 1401600:75 1689600:80 1843200:85 1958400:87"
+    write /sys/devices/system/cpu/cpufreq/electron/min_sample_time 0
+    write /sys/devices/system/cpu/cpufreq/electron/boost 0
+    write /sys/devices/system/cpu/cpufreq/electron/align_windows 1
+    write /sys/devices/system/cpu/cpufreq/electron/use_migration_notif 1
+    write /sys/devices/system/cpu/cpufreq/electron/use_sched_load 0
+    write /sys/devices/system/cpu/cpufreq/electron/max_freq_hysteresis 0
+    write /sys/devices/system/cpu/cpufreq/electron/boostpulse_duration 0
+    write /sys/kernel/cpu_input_boost/ib_freqs "960000 960000"
+    write /sys/kernel/cpu_input_boost/ib_duration_ms 500
+write /sys/kernel/cpu_input_boost/enabled 1
     # Power efficient workques
     write /sys/module/workqueue/parameters/power_efficient Y
-    #FSYNC
-    write /sys/module/sync/parameters/fsync_enabled Y
     # GPU
+    write /sys/class/leds/lcd-backlight/max_brightness 255
     write /sys/module/adreno_idler/parameters/adreno_idler_active 1
+    write /sys/module/adreno_idler/parameters/adreno_idler_downdifferential 20
+    write /sys/module/adreno_idler/parameters/adreno_idler_idlewait 20
+    write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 6000
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
     write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 133000000
     write /sys/class/kgsl/kgsl-3d0/max_gpuclk 510000000
     write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 0
     # Hotplug
     write /sys/module/lazyplug/parameters/lazyplug_active 1
-    # USB Fast Charge
-    write /sys/kernel/fast_charge/force_fast_charge 1
     # Wakelocks
     write /sys/module/wake/parameters/enable_ipa_ws N
     write /sys/module/wake/parameters/enable_netlink_ws N
@@ -94,34 +95,33 @@ on property:persist.spectrum.profile=0
 # Performance (based on DrunkSauce Lite)
 on property:persist.spectrum.profile=1
     # CPU
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor electron
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 652000
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2016000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load 80
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay 0
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_rate 40000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/hispeed_freq 960000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_slack 480000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads 80 460800:70 600000:99
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time 50000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/boost 1
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/align_windows 0
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/max_freq_hysteresis 0
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/go_hispeed_load 80
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/above_hispeed_delay 0
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/timer_rate 40000
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/hispeed_freq 960000
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/timer_slack 480000
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/target_loads 80 460800:70 600000:99
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/min_sample_time 50000
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/boost 1
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/align_windows 0
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/max_freq_hysteresis 0
     write /sys/module/msm_performance/parameters/touchboost 1
     # Power efficient workques
     write /sys/module/workqueue/parameters/power_efficient N
-    #FSYNC
-    write /sys/module/sync/parameters/fsync_enabled N
     # GPU
-    write /sys/module/adreno_idler/parameters/adreno_idler_active 0
+    write /sys/module/adreno_idler/parameters/adreno_idler_active 1
+    write /sys/module/adreno_idler/parameters/adreno_idler_downdifferential 20
+    write /sys/module/adreno_idler/parameters/adreno_idler_idlewait 25
+	write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 5000
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
     write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 133000000
     write /sys/class/kgsl/kgsl-3d0/max_gpuclk 750000000
     write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 1
     # Hotplug
     write /sys/module/lazyplug/parameters/lazyplug_active 0
-    # USB Fast Charge
-    write /sys/kernel/fast_charge/force_fast_charge 1
     # Wakelocks
     write /sys/module/wake/parameters/enable_ipa_ws Y
     write /sys/module/wake/parameters/enable_netlink_ws Y
@@ -136,28 +136,28 @@ on property:persist.spectrum.profile=1
 # Battery
 on property:persist.spectrum.profile=2
     # CPU
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor relaxed
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 652000
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1689000
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_count 6
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_ceiling 12
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/freq_step 6
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold 70
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold_suspended 85
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/up_threshold 75
-    write /sys/module/msm_performance/parameters/touchboost 0
+    write /sys/devices/system/cpu/cpufreq/scaling_governor relaxed
+    write /sys/devices/system/cpu/cpufreq/scaling_min_freq 652000
+    write /sys/devices/system/cpu/cpufreq/scaling_max_freq 1689000
+    write /sys/devices/system/cpu/cpufreq/relaxed/boost_count 6
+    write /sys/devices/system/cpu/cpufreq/relaxed/boost_ceiling 12
+    write /sys/devices/system/cpu/cpufreq/relaxed/freq_step 6
+    write /sys/devices/system/cpu/cpufreq/relaxed/down_threshold 70
+    write /sys/devices/system/cpu/cpufreq/relaxed/down_threshold_suspended 85
+    write /sys/devices/system/cpu/cpufreq/relaxed/up_threshold 75
     # Power efficient workques
     write /sys/module/workqueue/parameters/power_efficient Y
     # GPU
     write /sys/module/adreno_idler/parameters/adreno_idler_active 1
+    write /sys/module/adreno_idler/parameters/adreno_idler_downdifferential 25
+    write /sys/module/adreno_idler/parameters/adreno_idler_idlewait 10
+    write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 8000
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
     write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 133000000
     write /sys/class/kgsl/kgsl-3d0/max_gpuclk 400000000
     write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 0
     # Hotplug
     write /sys/module/lazyplug/parameters/lazyplug_active 1
-    # USB Fast Charge
-    write /sys/kernel/fast_charge/force_fast_charge 1
     # Wakelocks
     write /sys/module/wake/parameters/enable_ipa_ws N
     write /sys/module/wake/parameters/enable_netlink_ws N
@@ -171,34 +171,32 @@ on property:persist.spectrum.profile=2
 # Gaming
 on property:persist.spectrum.profile=3
     # CPU
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 652000
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2016000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load 80
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay 0
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_rate 40000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/hispeed_freq 960000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_slack 480000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads 80 460800:70 600000:99
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time 50000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/boost 1
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/align_windows 0
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/max_freq_hysteresis 0
-    write /sys/module/msm_performance/parameters/touchboost 1
+    write /sys/devices/system/cpu/cpufreq/scaling_governor electron
+    write /sys/devices/system/cpu/cpufreq/scaling_min_freq 652000
+    write /sys/devices/system/cpu/cpufreq/scaling_max_freq 2016000
+    write /sys/devices/system/cpu/cpufreq/electron/go_hispeed_load 80
+    write /sys/devices/system/cpu/cpufreq/electron/above_hispeed_delay 0
+    write /sys/devices/system/cpu/cpufreq/electron/timer_rate 40000
+    write /sys/devices/system/cpu/cpufreq/electron/hispeed_freq 960000
+    write /sys/devices/system/cpu/cpufreq/electron/timer_slack 480000
+    write /sys/devices/system/cpu/cpufreq/electron/target_loads 80 460800:70 600000:99
+    write /sys/devices/system/cpu/cpufreq/electron/min_sample_time 50000
+    write /sys/devices/system/cpu/cpufreq/electron/boost 1
+    write /sys/devices/system/cpu/cpufreq/electron/align_windows 0
+    write /sys/devices/system/cpu/cpufreq/electron/max_freq_hysteresis 0
+    write /sys/kernel/cpu_input_boost/ib_freqs "960000 1344000"
+    write /sys/kernel/cpu_input_boost/ib_duration_ms 1000
+    write /sys/kernel/cpu_input_boost/enabled 1
     # Hotplug
     write /sys/module/lazyplug/parameters/lazyplug_active 0
     # Power efficient workques
-    write /sys/module/workqueue/parameters/power_efficient N
-    #FSYNC
-    write /sys/module/sync/parameters/fsync_enabled N    
+    write /sys/module/workqueue/parameters/power_efficient N   
     # GPU
     write /sys/module/adreno_idler/parameters/adreno_idler_active 0
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
     write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 400000000
     write /sys/class/kgsl/kgsl-3d0/max_gpuclk 650000000
     write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 2
-    # USB Fast Charge
-    write /sys/kernel/fast_charge/force_fast_charge 1
     # Wakelocks
     write /sys/module/wake/parameters/enable_ipa_ws N
     write /sys/module/wake/parameters/enable_netlink_ws N
