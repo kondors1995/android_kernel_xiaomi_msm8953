@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [33m72290b0[m Update spectrum
 [33m6b8f9c3[m Fix compile for cpu_input_boost
 [33m555b917[m cpu_input_boost: Convert to state notifier
@@ -124,3 +125,5 @@
 [33mb71c2ee1[m staging: prima: Update to CAF LA.UM.5.6.r1-06100-89xx.0
 [33maed13aa[m staging: prima: Update to CAF LA.UM.5.6.r1-06000-89xx.0
 [33m90bf123[m New ardeno idler
+=======
+>>>>>>> 00475ad... Improve boost

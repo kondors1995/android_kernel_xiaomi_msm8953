@@ -65,7 +65,7 @@ on property:persist.spectrum.profile=0
     write /sys/devices/system/cpu/cpufreq/electron/use_sched_load 0
     write /sys/devices/system/cpu/cpufreq/electron/max_freq_hysteresis 0
     write /sys/devices/system/cpu/cpufreq/electron/boostpulse_duration 0
-    write /sys/kernel/cpu_input_boost/ib_freqs "960000 960000"
+    write /sys/kernel/cpu_input_boost/ib_freqs "1036800 1036800"
     write /sys/kernel/cpu_input_boost/ib_duration_ms 500
 write /sys/kernel/cpu_input_boost/enabled 1
     # Power efficient workques
@@ -101,7 +101,7 @@ on property:persist.spectrum.profile=1
     write /sys/devices/system/cpu/cpu0/cpufreq/electron/go_hispeed_load 80
     write /sys/devices/system/cpu/cpu0/cpufreq/electron/above_hispeed_delay 0
     write /sys/devices/system/cpu/cpu0/cpufreq/electron/timer_rate 40000
-    write /sys/devices/system/cpu/cpu0/cpufreq/electron/hispeed_freq 960000
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/hispeed_freq 1036800
     write /sys/devices/system/cpu/cpu0/cpufreq/electron/timer_slack 480000
     write /sys/devices/system/cpu/cpu0/cpufreq/electron/target_loads 80 460800:70 600000:99
     write /sys/devices/system/cpu/cpu0/cpufreq/electron/min_sample_time 50000
@@ -115,7 +115,7 @@ on property:persist.spectrum.profile=1
     write /sys/module/adreno_idler/parameters/adreno_idler_active 1
     write /sys/module/adreno_idler/parameters/adreno_idler_downdifferential 20
     write /sys/module/adreno_idler/parameters/adreno_idler_idlewait 25
-	write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 5000
+    write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 5000
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
     write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 133000000
     write /sys/class/kgsl/kgsl-3d0/max_gpuclk 750000000
@@ -177,14 +177,14 @@ on property:persist.spectrum.profile=3
     write /sys/devices/system/cpu/cpufreq/electron/go_hispeed_load 80
     write /sys/devices/system/cpu/cpufreq/electron/above_hispeed_delay 0
     write /sys/devices/system/cpu/cpufreq/electron/timer_rate 40000
-    write /sys/devices/system/cpu/cpufreq/electron/hispeed_freq 960000
+    write /sys/devices/system/cpu/cpufreq/electron/hispeed_freq 1036800
     write /sys/devices/system/cpu/cpufreq/electron/timer_slack 480000
     write /sys/devices/system/cpu/cpufreq/electron/target_loads 80 460800:70 600000:99
     write /sys/devices/system/cpu/cpufreq/electron/min_sample_time 50000
     write /sys/devices/system/cpu/cpufreq/electron/boost 1
     write /sys/devices/system/cpu/cpufreq/electron/align_windows 0
     write /sys/devices/system/cpu/cpufreq/electron/max_freq_hysteresis 0
-    write /sys/kernel/cpu_input_boost/ib_freqs "960000 1344000"
+    write /sys/kernel/cpu_input_boost/ib_freqs "1036800 1401600"
     write /sys/kernel/cpu_input_boost/ib_duration_ms 1000
     write /sys/kernel/cpu_input_boost/enabled 1
     # Hotplug
