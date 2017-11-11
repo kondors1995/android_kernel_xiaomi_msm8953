@@ -1,24 +1,126 @@
-aee5fd3 Revert "msm8953: overclocking with cmdline option"
-0a7be53 Revert "cpufreq: clock to maximum frequency by default"
-195ee7d BACKPORT: xfrm: Clear sk_dst_cache when applying per-socket policy.
-19282ad UPSTREAM: fscrypt: fix dereference of NULL user_key_payload
-cab750f Update spectrum
-51f3d55 kernel: Nuke GENTLE_FAIR_SLEEPERS sysfs
-5b487a9 cpu-hotplug: Always use real time scheduling when hotplugging a CPU
-90242ba2 initramfs: add skip_override parameter
-b500baf cpu-hotplug: convert cpu_hotplug_disabled to a counter
-e00bfab sched: Prevent recursion in io_schedule()
-a2c62e7 uapi: fix eventpool.h double declaration
-9c78ab5 FROMLIST: pstore: drop pmsg bounce buffer
-9060e0b fs/pstore: fix compilation warning
-697eab2 pstore: Fix the ramoops module parameters update
-a5254af fs/pstore: initialize pmsg from device tree
-1b6f71d fs:pstore:ramoops: config mem from dt
-80f8049 crypto: msm: Select CRYPTO_DEV_QCE50 for the right ARCHs
-c67f018 pinctrl: qcom: Correct ARCH dependencies for pinctrl
-ee98cbd iommu: Correct ARCH dependencies of MSM_IOMMU_V1
-744ba66 clk: msm: Build the right clock drivers for the right ARCH
-55eb4cc arm64: Put Cortex-A53 optimization flags for supported ARCHs
-b71c2ee1 staging: prima: Update to CAF LA.UM.5.6.r1-06100-89xx.0
-aed13aa staging: prima: Update to CAF LA.UM.5.6.r1-06000-89xx.0
-90bf123 New ardeno idler
+[33m72290b0[m Update spectrum
+[33m6b8f9c3[m Fix compile for cpu_input_boost
+[33m555b917[m cpu_input_boost: Convert to state notifier
+[33m5f531cd[m cpufreq: cpu_input_boost: backport to 3.10
+[33maef3c5e[m state_notifier: added related track into mdss events based of commits in frap kernel
+[33mcb7945e[m Revert "state_notifier: added related track into mdss events"
+[33m64c7088[m fix
+[33m4863fa9[m kernel: Disable SCHED_HRTICK
+[33m1f896d3[m fs: sync: Disable fsync by default
+[33m1edfea5[m New State notifer driver
+[33m259b05c[m sched: Prefer awake CPUs over idle
+[33m7313deb[m Shut up maybe-uninitialized warning
+[33m174158d[m sound: pdesireaudio: fix permission
+[33m7a82eaa[m sound: Introduce PDesireAudio 10.1
+[33m63e43d8[m sound: PDesireAudio: Add PDesireAudio Initialization on plug event & printk debugging
+[33mcec6d2e[m sound: Introduce PDesireAudio 10.0
+[33m606a974[m Fixed Implict declaration of method pdesireaudio_uhqa_mode
+[33m76bf244[m PDesire UHQA Driver
+[33m3c1cc96[m cpu_input_boost: Decrease wakeboost to 2 seconds
+[33m382b3e6[m cpu_input_boost: Use power efficient workqueues
+[33mff5c7fa[m lib: Don't enable DEBUG_BUGVERBOSE by default
+[33m9843db0[m defconfig: Switch to cpu_input_boost
+[33mc539a9a[m cpu_input_boost: Update big.LITTLE masks for msm8994
+[33m765758b[m cpu_input_boost: Prevent panics on init due to race conditions
+[33ma6687a2[m cpu_input_boost: Fix up dangling return in validate_cpu_freq()
+[33m952b5c0[m cpu_input_boost: Ensure validate_cpu_freq() only uses valid freqs
+[33me52388d[m cpu_input_boost: Make get_valid_cpufreq() usage hotplug-safe
+[33m8c7954b[m cpu_input_boost: Fix checkpatch.pl warnings and clean up some styling
+[33mfcc3a34[m cpu_input_boost: Validate input boost frequencies
+[33mb0af51d[m cpu_input_boost: Fix trivial unsigned integer underflow
+[33m06d1ffb[m cpu_input_boost: Perform load assessment based on policy->cur
+[33m253beb2[m cpu_input_boost: Increase duration for screen-wake boost to 3000 ms
+[33m93033e3[m cpu_input_boost: Make boosting more dynamic and efficient
+[33m6056925[m cpu_input_boost: Don't extend little CPU's boost duration
+[33m606f231[m cpu_input_boost: Don't sleep in atomic context for continuous boosts
+[33m3735fce[m cpu_input_boost: Improve efficiency when there is constant input
+[33mbdde495[m cpu_input_boost: Boost multiple CPUs more often
+[33m55d7609[m cpu_input_boost: Trigger max boost when button is pressed during suspend
+[33mb4eab16[m cpu_input_boost: Boost on button input
+[33m0b819e9[m cpu_input_boost: Use FB_EARLY_EVENT_BLANK for unblank boost
+[33m4b87a4f[m cpu_input_boost: Give fb_boost_nb the highest priority
+[33m853f0c9[m cpu_input_boost: Restructure for big.LITTLE CPUs
+[33m8c4da84[m cpu_input_boost: Remove WQ_NON_REENTRANT
+[33mb7cf9a7[m cpu_input_boost: Use fixed-width integer types for local variables
+[33ma31dcc0[m cpu_input_boost: Remove unnecessary kzallocs
+[33m8ded6ef[m cpu_input_boost: Clean up code style
+[33mb9e7f0c[m cpu_input_boost: Increase framebuffer boost duration to 1100 ms
+[33m7a92538[m cpu_input_boost: Fix synchronization issues
+[33m38c3108[m cpu_input_boost: Remove module references
+[33m57c64c8[m cpu_input_boost: Remove thread-migration boosting and clean up
+[33m6deb83c[m cpu_input_boost: Remove sync_threshold to recover from regression
+[33m27042dd[m cpu_input_boost: Rewrite to use dual-core boosting and clean up
+[33m4aa6221[m cpu_input_boost: Increase unblank-boost duration to 900ms
+[33m59e62f2[m cpu_input_boost: Reduce input-boost duration
+[33mb4d1fb9[m cpu_input_boost: Remove input-boost frequency limitations
+[33maad95c3[m cpu_input_boost: Remove boost on framebuffer blank
+[33m2b355f1[m cpu_input_boost: Add boosting on thread migration
+[33m5b47f58[m cpu_input_boost: Boost on framebuffer blank/unblank
+[33m399fe76[m cpu_input_boost: Clean up and fix bugs
+[33mba7dffe[m cpu_input_boost: Remove deprecated sprintf usage
+[33mbe321a2[m cpu_input_boost: Minor clean-up in notifier
+[33m9bc7a4a[m cpu_input_boost: Run all workers on CPU0
+[33m416f7be[m cpu_input_boost: Add support for userspace control
+[33m4685b04[m cpu_input_boost: Update boost duration equation
+[33md26ff1c[m cpu_input_boost: Remove redundant calculations and logic
+[33m52b99e9[m cpu_input_boost: Remove cpufreq get/put API usage
+[33ma38ff19[m cpu_input_boost: Remove spin locks
+[33m012df7a[m cpu_input_boost: Make long function names shorter and more consistent
+[33m82d08bb[m cpu_input_boost: Use spinlocks instead of mutex locks
+[33m325b18b[m cpu_input_boost: Specify some variables as read-mostly
+[33mbbf9840[m cpu_input_boost: Replace auto-freq finder with sysfs interface
+[33m926205c[m cpu_input_boost: Prioritize primary CPU
+[33m12b696c[m cpufreq: Introduce CPU input boost driver
+[33mc381deb[m Linux 3.18.80
+[33m4e8d547[m staging: r8712u: Fix Sparse warning in rtl871x_xmit.c
+[33m9d846c9[m xen: don't print error message in case of missing Xenstore entry
+[33m85b9576[m bt8xx: fix memory leak
+[33ma6a7662[m s390/dasd: check for device error pointer within state change interrupts
+[33md1226d0[m staging: lustre: ptlrpc: skip lock if export failed
+[33m443c0cd[m staging: lustre: hsm: stack overrun in hai_dump_data_field
+[33mc13b227[m platform/x86: intel_mid_thermal: Fix module autoload
+[33mb8f0df5[m xen/manage: correct return value check on xenbus_scanf()
+[33m5d40340[m cx231xx: Fix I2C on Internal Master 3 Bus
+[33m0fb8e24[m i2c: riic: correctly finish transfers
+[33m7cf31c7[m ext4: do not use stripe_width if it is not set
+[33m71f4c20[m ext4: fix stripe-unaligned allocations
+[33m15c36e7[m staging: rtl8712u: Fix endian settings for structs describing network packets
+[33mae92745[m mmc: s3cmci: include linux/interrupt.h for tasklet_struct
+[33m03e2d1a[m x86/microcode/intel: Disable late loading on model 79
+[33m3af989e[m drm/msm: fix an integer overflow test
+[33m77d4990[m ocfs2: fstrim: Fix start offset of first cluster group during fstrim
+[33me9e4770[m ARM: 8715/1: add a private asm/unaligned.h
+[33m926982b[m arm64: ensure __dump_instr() checks addr_limit
+[33mc79a56a[m ASoC: adau17x1: Workaround for noise bug in ADC
+[33md709119[m KEYS: fix out-of-bounds read during ASN.1 parsing
+[33mc46f178[m KEYS: return full count in keyring_read() if buffer is too small
+[33me789c8a[m cifs: check MaxPathNameComponentLength != 0 before using it
+[33mc2bce20[m ALSA: seq: Fix nested rwsem annotation for lockdep splat
+[33mbbeffe7[m ALSA: timer: Add missing mutex lock for compat ioctls
+[33m27ee90b[m blk-mq: fix race between timeout and freeing request
+[33mdfd8ae0[m Derp
+[33md8a0c59[m Lets see will this add 2.2 ghz
+[33maee5fd3[m Revert "msm8953: overclocking with cmdline option"
+[33m0a7be53[m Revert "cpufreq: clock to maximum frequency by default"
+[33m195ee7d[m BACKPORT: xfrm: Clear sk_dst_cache when applying per-socket policy.
+[33m19282ad[m UPSTREAM: fscrypt: fix dereference of NULL user_key_payload
+[33mcab750f[m Update spectrum
+[33m51f3d55[m kernel: Nuke GENTLE_FAIR_SLEEPERS sysfs
+[33m5b487a9[m cpu-hotplug: Always use real time scheduling when hotplugging a CPU
+[33m90242ba2[m initramfs: add skip_override parameter
+[33mb500baf[m cpu-hotplug: convert cpu_hotplug_disabled to a counter
+[33me00bfab[m sched: Prevent recursion in io_schedule()
+[33ma2c62e7[m uapi: fix eventpool.h double declaration
+[33m9c78ab5[m FROMLIST: pstore: drop pmsg bounce buffer
+[33m9060e0b[m fs/pstore: fix compilation warning
+[33m697eab2[m pstore: Fix the ramoops module parameters update
+[33ma5254af[m fs/pstore: initialize pmsg from device tree
+[33m1b6f71d[m fs:pstore:ramoops: config mem from dt
+[33m80f8049[m crypto: msm: Select CRYPTO_DEV_QCE50 for the right ARCHs
+[33mc67f018[m pinctrl: qcom: Correct ARCH dependencies for pinctrl
+[33mee98cbd[m iommu: Correct ARCH dependencies of MSM_IOMMU_V1
+[33m744ba66[m clk: msm: Build the right clock drivers for the right ARCH
+[33m55eb4cc[m arm64: Put Cortex-A53 optimization flags for supported ARCHs
+[33mb71c2ee1[m staging: prima: Update to CAF LA.UM.5.6.r1-06100-89xx.0
+[33maed13aa[m staging: prima: Update to CAF LA.UM.5.6.r1-06000-89xx.0
+[33m90bf123[m New ardeno idler
