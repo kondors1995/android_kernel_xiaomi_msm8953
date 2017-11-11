@@ -11,6 +11,41 @@ on property:sys.boot_completed=1
     setprop spectrum.support 1
     # Add kernel name
     setprop persist.spectrum.kernel Soviet
+	
+	
+    # Configure IntelliThermal
+    write /sys/modules/msm_thermal/core_control/enabled 0
+    write /sys/modules/msm_thermal/parameters/enabled 1
+    write /sys/modules/msm_thermal/parameters/limit_temp_degC 64
+    write /sys/modules/msm_thermal/parameters/poll_ms 3	
+	
+
+    # Set I/O Scheduler tweaks
+    write /sys/block/mmcblk0/queue/scheduler maple
+    write /sys/block/mmcblk0/queue/read_ahead_kb 512
+    write /sys/block/mmcblk0/queue/iosched/writes_starved 4
+    write /sys/block/mmcblk0/queue/iosched/fifo_batch 16
+    write /sys/block/mmcblk0/queue/iosched/sync_read_expire 350
+    write /sys/block/mmcblk0/queue/iosched/sync_write_expire 550
+    write /sys/block/mmcblk0/queue/iosched/async_read_expire 250
+    write /sys/block/mmcblk0/queue/iosched/async_write_expire 450
+    write /sys/block/mmcblk0/queue/iosched/sleep_latency_multiple 10
+	
+	
+    # Set Swappiness
+    write /proc/sys/vm/swappiness 8
+
+    # Enable Laptop Mode
+    write /proc/sys/vm/laptop_mode 1
+
+    # Enable PDesireAudio
+    #write /sys/modules/snd_soc_wcd9330/uhqa_mode_pdesireaudio 1
+
+    # Don't treat storage as rotational
+    write /sys/block/mmcblk0/queue/rotational 0
+	
+    # Backlight dimmer
+    write /sys/module/mdss_fb/parameters/backlight_dimmer 1
 
 # Balance (default profile)
 on property:persist.spectrum.profile=0
@@ -44,8 +79,6 @@ on property:persist.spectrum.profile=0
     write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 0
     # Hotplug
     write /sys/module/lazyplug/parameters/lazyplug_active 1
-    # Storage
-    write /sys/block/mmcblk0/queue/scheduler maple
     # USB Fast Charge
     write /sys/kernel/fast_charge/force_fast_charge 1
     # Wakelocks
@@ -87,8 +120,6 @@ on property:persist.spectrum.profile=1
     write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 1
     # Hotplug
     write /sys/module/lazyplug/parameters/lazyplug_active 0
-    # Storage
-    write /sys/block/mmcblk0/queue/scheduler bfg
     # USB Fast Charge
     write /sys/kernel/fast_charge/force_fast_charge 1
     # Wakelocks
@@ -125,8 +156,6 @@ on property:persist.spectrum.profile=2
     write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 0
     # Hotplug
     write /sys/module/lazyplug/parameters/lazyplug_active 1
-    # Storage
-    write /sys/block/mmcblk0/queue/scheduler maple
     # USB Fast Charge
     write /sys/kernel/fast_charge/force_fast_charge 1
     # Wakelocks
@@ -166,10 +195,8 @@ on property:persist.spectrum.profile=3
     write /sys/module/adreno_idler/parameters/adreno_idler_active 0
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
     write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 400000000
-    write /sys/class/kgsl/kgsl-3d0/max_gpuclk 750000000
+    write /sys/class/kgsl/kgsl-3d0/max_gpuclk 650000000
     write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 2
-    # Storage
-    write /sys/block/mmcblk0/queue/scheduler deadline
     # USB Fast Charge
     write /sys/kernel/fast_charge/force_fast_charge 1
     # Wakelocks
