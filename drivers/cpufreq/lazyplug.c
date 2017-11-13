@@ -91,7 +91,7 @@ static DEFINE_MUTEX(lazymode_mutex);
 static struct notifier_block state_notifier_hook;
 
 static struct delayed_work lazyplug_work;
-static struct work_struct lazyplug_boost;
+static struct delayed_work lazyplug_boost;
 
 static struct workqueue_struct *lazyplug_wq;
 static struct workqueue_struct *lazyplug_boost_wq;
@@ -482,7 +482,8 @@ static void lazyplug_input_event(struct input_handle *handle,
 	if (lazyplug_active && touch_boost_active && suspended && !touched) {
 		idle_count = 0;
 		pr_info("lazyplug touched!\n");
-		queue_work_on(0, lazyplug_wq, &lazyplug_boost);
+		queue_delayed_work(lazyplug_wq, &lazyplug_boost,
+			msecs_to_jiffies(10));
 		touched = true;
 	}
 }
@@ -566,15 +567,15 @@ int __init lazyplug_init(void)
 	rc = input_register_handler(&lazyplug_input_handler);
 
 	state_notifier_hook.notifier_call = state_notifier_call;
-	//if (state_register_client(&state_notifier_hook))
-		//pr_info("%s state_notifier hook create failed!\n", __FUNCTION__);
+	if (state_register_client(&state_notifier_hook))
+		pr_info("%s state_notifier hook create failed!\n", __FUNCTION__);
 
 	lazyplug_wq = alloc_workqueue("lazyplug",
 				WQ_HIGHPRI | WQ_UNBOUND, 1);
 	lazyplug_boost_wq = alloc_workqueue("lplug_boost",
 				WQ_HIGHPRI | WQ_UNBOUND, 1);
 	INIT_DELAYED_WORK(&lazyplug_work, lazyplug_work_fn);
-	INIT_WORK(&lazyplug_boost, lazyplug_boost_fn);
+	INIT_DELAYED_WORK(&lazyplug_boost, lazyplug_boost_fn);
 	queue_delayed_work(lazyplug_wq, &lazyplug_work,
 		msecs_to_jiffies(10));
 
