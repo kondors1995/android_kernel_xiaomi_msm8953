@@ -1749,13 +1749,13 @@ __read_mostly unsigned int sysctl_sched_new_task_windows = 5;
  * For increase, send notification if
  *      freq_required - cur_freq > sysctl_sched_freq_inc_notify
  */
-__read_mostly int sysctl_sched_freq_inc_notify = 10 * 1024 * 1024; /* + 10GHz */
+__read_mostly int sysctl_sched_freq_inc_notify = 400000; /* for msm8953 */
 
 /*
  * For decrease, send notification if
  *      cur_freq - freq_required > sysctl_sched_freq_dec_notify
  */
-__read_mostly int sysctl_sched_freq_dec_notify = 10 * 1024 * 1024; /* - 10GHz */
+__read_mostly int sysctl_sched_freq_dec_notify = 400000; /* for msm8953 */
 
 static __read_mostly unsigned int sched_io_is_busy;
 
