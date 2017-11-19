@@ -11,10 +11,10 @@ on property:sys.boot_completed=1
     setprop spectrum.support 1
     # Add kernel name
     setprop persist.spectrum.kernel Soviet
-	
-	
-	
-	
+
+
+
+
 
     # Set I/O Scheduler tweaks
     write /sys/block/mmcblk0/queue/scheduler maple
@@ -26,8 +26,8 @@ on property:sys.boot_completed=1
     write /sys/block/mmcblk0/queue/iosched/async_read_expire 250
     write /sys/block/mmcblk0/queue/iosched/async_write_expire 450
     write /sys/block/mmcblk0/queue/iosched/sleep_latency_multiple 10
-	
-	
+
+
     # Set Swappiness
     write /proc/sys/vm/swappiness 8
 
@@ -39,10 +39,10 @@ on property:sys.boot_completed=1
 
     # Don't treat storage as rotational
     write /sys/block/mmcblk0/queue/rotational 0
-	
+
     # Backlight dimmer
     write /sys/module/mdss_fb/parameters/backlight_dimmer 1
-	
+
 	# USB Fast Charge
     write /sys/kernel/fast_charge/force_fast_charge 1
 
@@ -118,7 +118,7 @@ on property:persist.spectrum.profile=1
     write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 5000
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
     write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 133000000
-    write /sys/class/kgsl/kgsl-3d0/max_gpuclk 750000000
+    write /sys/class/kgsl/kgsl-3d0/max_gpuclk 650000000
     write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 1
     # Hotplug
     write /sys/module/lazyplug/parameters/lazyplug_active 0
@@ -190,7 +190,7 @@ on property:persist.spectrum.profile=3
     # Hotplug
     write /sys/module/lazyplug/parameters/lazyplug_active 0
     # Power efficient workques
-    write /sys/module/workqueue/parameters/power_efficient N   
+    write /sys/module/workqueue/parameters/power_efficient N
     # GPU
     write /sys/module/adreno_idler/parameters/adreno_idler_active 0
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
