@@ -856,7 +856,6 @@
 			< 510000000   5 >,  /* NOM       */
 			< 560000000   6 >,  /* Nom Plus  */
 			< 650000000   7 >;  /* Turbo     */
-			< 650000000   8 >;  /* Turbo Plus */
 		#clock-cells = <1>;
 	};
 
@@ -2529,4 +2528,3 @@
 		qcom,btm-channel-number = <0x68>;
 	};
 };
-
