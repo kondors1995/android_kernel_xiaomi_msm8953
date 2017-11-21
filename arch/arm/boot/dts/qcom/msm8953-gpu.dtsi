@@ -215,8 +215,8 @@
 				reg = <7>;
 				qcom,gpu-freq = <216000000>;
 				qcom,bus-freq = <1>;
-				qcom,bus-min = <1>;
-				qcom,bus-max = <4>;
+				qcom,bus-min = <2>;
+				qcom,bus-max = <5>;
 			};
 
 		       /* Min SVS */
@@ -224,8 +224,8 @@
 				reg = <8>;
 				qcom,gpu-freq = <133300000>;
 				qcom,bus-freq = <1>;
-				qcom,bus-min = <1>;
-				qcom,bus-max = <4>;
+				qcom,bus-min = <2>;
+				qcom,bus-max = <5>;
 			};
 			/* XO */
 			qcom,gpu-pwrlevel@9 {
