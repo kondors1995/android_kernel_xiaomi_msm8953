@@ -25,7 +25,7 @@ White='\e[0;37m'        # White
 
 
 echo -e "$White***********************************************"
-echo "         Compiling ElectraBlue Kernel             "
+echo "         Compiling REVOLT Kernel             "
 echo -e "***********************************************$nocol"
 
 LC_ALL=C date +%Y-%m-%d
@@ -33,7 +33,7 @@ kernel_dir=$PWD
 build=$kernel_dir/out
 export CROSS_COMPILE=~/gcc-prebuilts/bin/aarch64-linaro-linux-android-
 kernel="ReVolt"
-version="R10.0-BETA"
+version="R10.2-R1"
 vendor="xiaomi"
 device="mido"
 zip=zip
@@ -47,7 +47,7 @@ zip_name="$kernel"-"$version"-"$date"-"$device".zip
 
 # Kernel Details
 BASE_AK_VER="ReVolt"
-VER=".R10.0-BETA"
+VER=".R10.2-R1"
 AK_VER="$BASE_AK_VER$VER"
 
 export KBUILD_BUILD_USER=NATO66613
@@ -135,7 +135,7 @@ if [ -f "$zip"/"$kerneltype" ]; then
 	cd ..
 	rm -rf arch/arm64/boot/"$kerneltype"
 	echo "Generating changelog..."
-        git --no-pager log --pretty=oneline --abbrev-commit ef69283e746fc20f2bf32813d68a8daabcf80b3f..HEAD > zip/changelog.txt
+        git --no-pager log --pretty=oneline --abbrev-commit 1dcf85d79571dc99ac7579bf4f4be828240ce7ec..HEAD > zip/changelog.txt
         paste zip/changelog.txt
         #rm zip/changelog.txt
 	export outdir=""$build""
