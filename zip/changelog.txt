@@ -1,129 +1,72 @@
-<<<<<<< HEAD
-[33m72290b0[m Update spectrum
-[33m6b8f9c3[m Fix compile for cpu_input_boost
-[33m555b917[m cpu_input_boost: Convert to state notifier
-[33m5f531cd[m cpufreq: cpu_input_boost: backport to 3.10
-[33maef3c5e[m state_notifier: added related track into mdss events based of commits in frap kernel
-[33mcb7945e[m Revert "state_notifier: added related track into mdss events"
-[33m64c7088[m fix
-[33m4863fa9[m kernel: Disable SCHED_HRTICK
-[33m1f896d3[m fs: sync: Disable fsync by default
-[33m1edfea5[m New State notifer driver
-[33m259b05c[m sched: Prefer awake CPUs over idle
-[33m7313deb[m Shut up maybe-uninitialized warning
-[33m174158d[m sound: pdesireaudio: fix permission
-[33m7a82eaa[m sound: Introduce PDesireAudio 10.1
-[33m63e43d8[m sound: PDesireAudio: Add PDesireAudio Initialization on plug event & printk debugging
-[33mcec6d2e[m sound: Introduce PDesireAudio 10.0
-[33m606a974[m Fixed Implict declaration of method pdesireaudio_uhqa_mode
-[33m76bf244[m PDesire UHQA Driver
-[33m3c1cc96[m cpu_input_boost: Decrease wakeboost to 2 seconds
-[33m382b3e6[m cpu_input_boost: Use power efficient workqueues
-[33mff5c7fa[m lib: Don't enable DEBUG_BUGVERBOSE by default
-[33m9843db0[m defconfig: Switch to cpu_input_boost
-[33mc539a9a[m cpu_input_boost: Update big.LITTLE masks for msm8994
-[33m765758b[m cpu_input_boost: Prevent panics on init due to race conditions
-[33ma6687a2[m cpu_input_boost: Fix up dangling return in validate_cpu_freq()
-[33m952b5c0[m cpu_input_boost: Ensure validate_cpu_freq() only uses valid freqs
-[33me52388d[m cpu_input_boost: Make get_valid_cpufreq() usage hotplug-safe
-[33m8c7954b[m cpu_input_boost: Fix checkpatch.pl warnings and clean up some styling
-[33mfcc3a34[m cpu_input_boost: Validate input boost frequencies
-[33mb0af51d[m cpu_input_boost: Fix trivial unsigned integer underflow
-[33m06d1ffb[m cpu_input_boost: Perform load assessment based on policy->cur
-[33m253beb2[m cpu_input_boost: Increase duration for screen-wake boost to 3000 ms
-[33m93033e3[m cpu_input_boost: Make boosting more dynamic and efficient
-[33m6056925[m cpu_input_boost: Don't extend little CPU's boost duration
-[33m606f231[m cpu_input_boost: Don't sleep in atomic context for continuous boosts
-[33m3735fce[m cpu_input_boost: Improve efficiency when there is constant input
-[33mbdde495[m cpu_input_boost: Boost multiple CPUs more often
-[33m55d7609[m cpu_input_boost: Trigger max boost when button is pressed during suspend
-[33mb4eab16[m cpu_input_boost: Boost on button input
-[33m0b819e9[m cpu_input_boost: Use FB_EARLY_EVENT_BLANK for unblank boost
-[33m4b87a4f[m cpu_input_boost: Give fb_boost_nb the highest priority
-[33m853f0c9[m cpu_input_boost: Restructure for big.LITTLE CPUs
-[33m8c4da84[m cpu_input_boost: Remove WQ_NON_REENTRANT
-[33mb7cf9a7[m cpu_input_boost: Use fixed-width integer types for local variables
-[33ma31dcc0[m cpu_input_boost: Remove unnecessary kzallocs
-[33m8ded6ef[m cpu_input_boost: Clean up code style
-[33mb9e7f0c[m cpu_input_boost: Increase framebuffer boost duration to 1100 ms
-[33m7a92538[m cpu_input_boost: Fix synchronization issues
-[33m38c3108[m cpu_input_boost: Remove module references
-[33m57c64c8[m cpu_input_boost: Remove thread-migration boosting and clean up
-[33m6deb83c[m cpu_input_boost: Remove sync_threshold to recover from regression
-[33m27042dd[m cpu_input_boost: Rewrite to use dual-core boosting and clean up
-[33m4aa6221[m cpu_input_boost: Increase unblank-boost duration to 900ms
-[33m59e62f2[m cpu_input_boost: Reduce input-boost duration
-[33mb4d1fb9[m cpu_input_boost: Remove input-boost frequency limitations
-[33maad95c3[m cpu_input_boost: Remove boost on framebuffer blank
-[33m2b355f1[m cpu_input_boost: Add boosting on thread migration
-[33m5b47f58[m cpu_input_boost: Boost on framebuffer blank/unblank
-[33m399fe76[m cpu_input_boost: Clean up and fix bugs
-[33mba7dffe[m cpu_input_boost: Remove deprecated sprintf usage
-[33mbe321a2[m cpu_input_boost: Minor clean-up in notifier
-[33m9bc7a4a[m cpu_input_boost: Run all workers on CPU0
-[33m416f7be[m cpu_input_boost: Add support for userspace control
-[33m4685b04[m cpu_input_boost: Update boost duration equation
-[33md26ff1c[m cpu_input_boost: Remove redundant calculations and logic
-[33m52b99e9[m cpu_input_boost: Remove cpufreq get/put API usage
-[33ma38ff19[m cpu_input_boost: Remove spin locks
-[33m012df7a[m cpu_input_boost: Make long function names shorter and more consistent
-[33m82d08bb[m cpu_input_boost: Use spinlocks instead of mutex locks
-[33m325b18b[m cpu_input_boost: Specify some variables as read-mostly
-[33mbbf9840[m cpu_input_boost: Replace auto-freq finder with sysfs interface
-[33m926205c[m cpu_input_boost: Prioritize primary CPU
-[33m12b696c[m cpufreq: Introduce CPU input boost driver
-[33mc381deb[m Linux 3.18.80
-[33m4e8d547[m staging: r8712u: Fix Sparse warning in rtl871x_xmit.c
-[33m9d846c9[m xen: don't print error message in case of missing Xenstore entry
-[33m85b9576[m bt8xx: fix memory leak
-[33ma6a7662[m s390/dasd: check for device error pointer within state change interrupts
-[33md1226d0[m staging: lustre: ptlrpc: skip lock if export failed
-[33m443c0cd[m staging: lustre: hsm: stack overrun in hai_dump_data_field
-[33mc13b227[m platform/x86: intel_mid_thermal: Fix module autoload
-[33mb8f0df5[m xen/manage: correct return value check on xenbus_scanf()
-[33m5d40340[m cx231xx: Fix I2C on Internal Master 3 Bus
-[33m0fb8e24[m i2c: riic: correctly finish transfers
-[33m7cf31c7[m ext4: do not use stripe_width if it is not set
-[33m71f4c20[m ext4: fix stripe-unaligned allocations
-[33m15c36e7[m staging: rtl8712u: Fix endian settings for structs describing network packets
-[33mae92745[m mmc: s3cmci: include linux/interrupt.h for tasklet_struct
-[33m03e2d1a[m x86/microcode/intel: Disable late loading on model 79
-[33m3af989e[m drm/msm: fix an integer overflow test
-[33m77d4990[m ocfs2: fstrim: Fix start offset of first cluster group during fstrim
-[33me9e4770[m ARM: 8715/1: add a private asm/unaligned.h
-[33m926982b[m arm64: ensure __dump_instr() checks addr_limit
-[33mc79a56a[m ASoC: adau17x1: Workaround for noise bug in ADC
-[33md709119[m KEYS: fix out-of-bounds read during ASN.1 parsing
-[33mc46f178[m KEYS: return full count in keyring_read() if buffer is too small
-[33me789c8a[m cifs: check MaxPathNameComponentLength != 0 before using it
-[33mc2bce20[m ALSA: seq: Fix nested rwsem annotation for lockdep splat
-[33mbbeffe7[m ALSA: timer: Add missing mutex lock for compat ioctls
-[33m27ee90b[m blk-mq: fix race between timeout and freeing request
-[33mdfd8ae0[m Derp
-[33md8a0c59[m Lets see will this add 2.2 ghz
-[33maee5fd3[m Revert "msm8953: overclocking with cmdline option"
-[33m0a7be53[m Revert "cpufreq: clock to maximum frequency by default"
-[33m195ee7d[m BACKPORT: xfrm: Clear sk_dst_cache when applying per-socket policy.
-[33m19282ad[m UPSTREAM: fscrypt: fix dereference of NULL user_key_payload
-[33mcab750f[m Update spectrum
-[33m51f3d55[m kernel: Nuke GENTLE_FAIR_SLEEPERS sysfs
-[33m5b487a9[m cpu-hotplug: Always use real time scheduling when hotplugging a CPU
-[33m90242ba2[m initramfs: add skip_override parameter
-[33mb500baf[m cpu-hotplug: convert cpu_hotplug_disabled to a counter
-[33me00bfab[m sched: Prevent recursion in io_schedule()
-[33ma2c62e7[m uapi: fix eventpool.h double declaration
-[33m9c78ab5[m FROMLIST: pstore: drop pmsg bounce buffer
-[33m9060e0b[m fs/pstore: fix compilation warning
-[33m697eab2[m pstore: Fix the ramoops module parameters update
-[33ma5254af[m fs/pstore: initialize pmsg from device tree
-[33m1b6f71d[m fs:pstore:ramoops: config mem from dt
-[33m80f8049[m crypto: msm: Select CRYPTO_DEV_QCE50 for the right ARCHs
-[33mc67f018[m pinctrl: qcom: Correct ARCH dependencies for pinctrl
-[33mee98cbd[m iommu: Correct ARCH dependencies of MSM_IOMMU_V1
-[33m744ba66[m clk: msm: Build the right clock drivers for the right ARCH
-[33m55eb4cc[m arm64: Put Cortex-A53 optimization flags for supported ARCHs
-[33mb71c2ee1[m staging: prima: Update to CAF LA.UM.5.6.r1-06100-89xx.0
-[33maed13aa[m staging: prima: Update to CAF LA.UM.5.6.r1-06000-89xx.0
-[33m90bf123[m New ardeno idler
-=======
->>>>>>> 00475ad... Improve boost
+fe267adb0c25 Switch to my personal Linaro TC
+ef161eece72f fix compile
+23e9b8bc032d 10.2-R1
+ce00eb4ecb9c MSM8953-GPU: Higher bus freq for powerlvl 5 and 6
+a32292bf5559 Revert "GPU OC TO 700"
+fecf6658d750 Revert "Fix derps"
+6997df93e6a8 Revert "Fix GPU OC"
+b670f6d957b0 Revert "GPU OC to 750 mhz"
+f8ceaebf253f Revert "lover gpu oc voltage"
+625afbcc1868 thermal: cpu_cooling: Avoid accessing potentially freed structures
+fc29de54f7c8 Revert "thermal: cpu_cooling: Avoid accessing potentially freed structures"
+00b835c99118 Revert "Revert "MSM8953-GPU: Higher bus freq for powerlvl 5 and 6""
+b9436db3337a Revert "Revert "GPU OC to 750 mhz""
+fce965a0eb8d Revert "GPU OC to 750 mhz"
+04c89ac228cd Revert "MSM8953-GPU: Higher bus freq for powerlvl 5 and 6"
+d68020ee71eb thermal: cpu_cooling: Avoid accessing potentially freed structures
+40163860715d MSM8953-GPU: Higher bus freq for powerlvl 5 and 6
+ae08c149e5fd adreno_tz: Correct tz_buf pointer type to correct pointer arithmetic
+6551c734b605 drivers: power: Add Qnovo Interface for QNS
+43919cb80341 Merge 3.18.83 into android-3.18
+f1f38aa21100 Merge 3.18.82 into android-3.18
+5e5ea8931571 staging: prima: Update to CAF LA.UM.5.6.r1-06300-89xx.0
+fdb5a11c0347 uapi: linux: Oops, forgot to remove this
+6d3f241b43a5 FROMLIST: binder: fix proc->files use-after-free
+191170b0cb89 Merge 3.18.81 into android-3.18
+7b4d2ac20d98 ANDROID: binder: clarify deferred thread work.
+98ec3443eb96 Optimization based on google commit FROMLIST: arm64: Avoid aligning normal memory pointers in __mem
+fe58ac1d86f6 Merge tag 'LA.UM.5.6.r1-06300-89xx.0' of https://source.codeaurora.org/quic/la/kernel/msm-3.18 into V10
+c07d6aa847b8 sched/fair: Initialize throttle_count for new task-groups lazily
+4be8dcf42424 soc: qcom: rpm: Change driver memory allocation to use GFP_NOIO
+b333b546c81c power: qpnp-fg: document magic num, continue if check fails
+9f1fc3894305 power: qpnp-fg: Check system configuration and fix it
+68f0f30db1bf power: qpnp-fg: Return error properly when IMA read/write fails
+be54f343477d power: qpnp-fg: make read_beat a static function
+95664bd0036e power: qpnp-fg: have sanity check beat once before wakelock
+5cf935dbf2e0 msm: crypto: Fix deadlock in qce_multireq_timeout() -> bam_isr()
+fe5c16f6e6fa UPSTREAM: hrtimer: Fix hrtimer_is_queued() hole
+52df1ec790b6 UPSTREAM: hrtimer: Allow concurrent hrtimer_start() for self restarting timers
+ff5f0cb533e1 soc: qcom: Fix uninitialized variables and prints in rpm stats and log
+f5f17fbe3ef1 msm: pcie: Fix uninitialized pointer usage in msm_pcie_debug_info()
+cdf3c14a1173 BACKPORT: sched/rt: Reduce rq lock contention by eliminating locking of non-feasible target
+5c3069597a63 BACKPORT: sched/rt: Add a missing rescheduling point
+fa177531016d tracing: Have preempt(irqs)off trace preempt disabled functions
+0916b4a9cb20 BACKPORT: sched, rt: Convert switched_{from, to}_rt() / prio_changed_rt() to balance callbacks
+1e86477315f1 BACKPORT: sched,rt: Remove return value from pull_rt_task()
+1ac601c4b81f UPSTREAM: sched: Allow balance callbacks for check_class_changed()
+a8b9d5a030f8 BACKPORT: sched: Replace post_schedule with a balance callback list
+837fe8e11b80 msm: mdss: install the rel_fence even if retire_fence is skipped
+9afbf8796d2f ANDROID: make PF_KEY SHA256 use RFC-compliant truncation.
+549464059227 scsi: ufs: Fix crashes caused by uninitialized completion usage
+3d317f53c8df ANDROID: Add untag hacks to inet_release function
+f5db1d4c92e2 perf: Avoid horrible stack usage
+fc65aaf01def usb: dwc3: Don't kill USB when CONFIG_IPC_LOGGING is disabled
+b37614ca5c02 PM / devfreq: Restart previous governor if new governor fails to start
+66051fdc22da QBT1000: check for null pointer before copying command
+fb47ca42c76b rcu: boost: avoid preemption before calling complete()
+c51a7591799e msm: qpnp-haptic: Work around poor fingerprint authentication haptics
+378d0cd347d6 mdss: rotator: Use FIFO kthread for rotator work
+ae53f5ab983a sys: Horrible hack for compat_sysinfo userspace confusion
+d138ed4e11d9 gpio: Mask non-wakeup GPIO interrupts on suspend
+68b96427ac60 UPSTREAM: sched/preempt: Fix preempt_count manipulations
+01534138c3e9 perf: disable cross_hotplug for l2 cache pmu.
+213fb5847e4e workqueue: make sure delayed work run in local cpu
+7f38962c7c3f vmstat: Reduce time interval to stat update on idle cpu
+9ce7b2421ae3 net: less interrupt masking in NAPI
+76236af32d82 binfmt_elf.c: use get_random_int() to fix entropy depleting
+32b174b1148b msm: vidc: disable CPU L2 cache PC during video sessions
+3ba72bd93404 msm: Use interruptible wait to not affect load average
+7a8f5b8a48bb sched: Set sched_upmigrate_min_nice to 9
+1c9e724a5d35 sched: Change default hmp values for msm8953
+88783ed9e60d zen-tune: implement zen-tune v4.10
+92fab6a2082a Revert "[BACKPORT] Implement zen-tune v4.5"

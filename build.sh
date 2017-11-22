@@ -31,7 +31,7 @@ echo -e "***********************************************$nocol"
 LC_ALL=C date +%Y-%m-%d
 kernel_dir=$PWD
 build=$kernel_dir/out
-export CROSS_COMPILE=~/build-tools-gcc/arch64-linux-gnu/bin/aarch64-linux-gnu-
+export CROSS_COMPILE=~/build-tools-gcc/aarch64-linux-gnu/bin/aarch64-linux-gnu-
 version="R10.2-R1"
 vendor="xiaomi"
 device="mido"
