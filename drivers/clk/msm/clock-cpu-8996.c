@@ -891,6 +891,7 @@ static void cpu_clock_8996_acd_init(void)
 	spin_unlock_irqrestore(&acd_lock, flags);
 }
 
+#ifdef CONFIG_CPU_FREQ_VDD_LEVELS
 ssize_t vc_get_vdd(char *buf)
 {
 	struct opp *opppoop;
@@ -927,6 +928,7 @@ ssize_t vc_get_vdd(char *buf)
 
         return len;
 }
+#endif
 
 static struct clk *logical_cpu_to_clk(int cpu)
 {
