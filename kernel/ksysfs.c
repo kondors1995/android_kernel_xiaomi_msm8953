@@ -3,7 +3,7 @@
  * 		     are not related to any other subsystem
  *
  * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
- * 
+ *
  * This file is release under the GPLv2
  *
  */
@@ -22,12 +22,18 @@
 
 #include <linux/rcupdate.h>	/* rcu_expedited */
 
+#include "switches.h"
+
 #define KERNEL_ATTR_RO(_name) \
 static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
 
 #define KERNEL_ATTR_RW(_name) \
 static struct kobj_attribute _name##_attr = \
 	__ATTR(_name, 0644, _name##_show, _name##_store)
+
+// Define variables
+bool gentle_fair_sleepers = 1;
+bool arch_capacity = 1;
 
 /* current uevent sequence number */
 static ssize_t uevent_seqnum_show(struct kobject *kobj,
@@ -161,6 +167,37 @@ static ssize_t rcu_expedited_store(struct kobject *kobj,
 }
 KERNEL_ATTR_RW(rcu_expedited);
 
+static ssize_t gentle_fair_sleepers_show(struct kobject *kobj,
+				  struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", gentle_fair_sleepers);
+}
+static ssize_t gentle_fair_sleepers_store(struct kobject *kobj,
+				   struct kobj_attribute *attr,
+				   const char *buf, size_t count)
+{
+	if (strtobool(buf, &gentle_fair_sleepers))
+		return -EINVAL;
+
+	return count;
+}
+KERNEL_ATTR_RW(gentle_fair_sleepers);
+
+static ssize_t arch_capacity_show(struct kobject *kobj,
+				  struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", arch_capacity);
+}
+static ssize_t arch_capacity_store(struct kobject *kobj,
+				   struct kobj_attribute *attr,
+				   const char *buf, size_t count)
+{
+	if (strtobool(buf, &arch_capacity))
+		return -EINVAL;
+
+	return count;
+}
+KERNEL_ATTR_RW(arch_capacity);
 /*
  * Make /sys/kernel/notes give the raw contents of our kernel .notes section.
  */
@@ -210,6 +247,18 @@ static struct attribute_group kernel_attr_group = {
 	.attrs = kernel_attrs,
 };
 
+static struct kobject *sched_kobj;
+
+static struct attribute *sched_attrs[] = {
+	&gentle_fair_sleepers_attr.attr,
+	&arch_capacity_attr.attr,
+	NULL
+};
+
+static struct attribute_group sched_attr_group = {
+	.attrs = sched_attrs,
+};
+
 static int __init ksysfs_init(void)
 {
 	int error;
@@ -230,6 +279,18 @@ static int __init ksysfs_init(void)
 			goto group_exit;
 	}
 
+	sched_kobj = kobject_create_and_add("sched", NULL);
+	if(!sched_kobj) {
+		pr_err("Failed to create sched object!");
+		kobject_put(sched_kobj);
+	}
+
+	error = sysfs_create_group(sched_kobj, &sched_attr_group);
+	if(error) {
+		pr_err("Failed to create sched group!");
+		kobject_put(sched_kobj);
+		sysfs_remove_group(sched_kobj, &sched_attr_group);
+	}
 	return 0;
 
 group_exit:
@@ -238,6 +299,7 @@ kset_exit:
 	kobject_put(kernel_kobj);
 exit:
 	return error;
+
 }
 
 core_initcall(ksysfs_init);
