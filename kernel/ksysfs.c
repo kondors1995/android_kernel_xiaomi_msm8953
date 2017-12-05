@@ -198,6 +198,24 @@ static ssize_t arch_capacity_store(struct kobject *kobj,
 	return count;
 }
 KERNEL_ATTR_RW(arch_capacity);
+
+//This is a dirty one but apps like KA doesn't have option to tune ARCH_CAPACITY :( @xNombre
+static ssize_t arch_power_show(struct kobject *kobj,
+				  struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", arch_capacity);
+}
+static ssize_t arch_power_store(struct kobject *kobj,
+				   struct kobj_attribute *attr,
+				   const char *buf, size_t count)
+{
+	if (strtobool(buf, &arch_capacity))
+		return -EINVAL;
+
+	return count;
+}
+KERNEL_ATTR_RW(arch_power);
+
 /*
  * Make /sys/kernel/notes give the raw contents of our kernel .notes section.
  */
@@ -252,6 +270,7 @@ static struct kobject *sched_kobj;
 static struct attribute *sched_attrs[] = {
 	&gentle_fair_sleepers_attr.attr,
 	&arch_capacity_attr.attr,
+	&arch_power_attr.attr,
 	NULL
 };
 
@@ -279,7 +298,7 @@ static int __init ksysfs_init(void)
 			goto group_exit;
 	}
 
-	sched_kobj = kobject_create_and_add("sched", NULL);
+	sched_kobj = kobject_create_and_add("sched", kernel_kobj);
 	if(!sched_kobj) {
 		pr_err("Failed to create sched object!");
 		kobject_put(sched_kobj);
