@@ -10301,15 +10301,15 @@ static int spkr_prot_get_vi_rch_port(struct snd_kcontrol *kcontrol,
 	return 0;
 }
 
-static const char * const slim0_rx_vi_fb_tx_lch_mux_text[] = {
+static const char * slim0_rx_vi_fb_tx_lch_mux_text[] = {
 	"ZERO", "SLIM4_TX"
 };
 
-static const char * const slim0_rx_vi_fb_tx_rch_mux_text[] = {
+static const char * slim0_rx_vi_fb_tx_rch_mux_text[] = {
 	"ZERO", "SLIM4_TX"
 };
 
-static const char * const mi2s_rx_vi_fb_tx_mux_text[] = {
+static const char * mi2s_rx_vi_fb_tx_mux_text[] = {
 	"ZERO", "SENARY_TX"
 };
 
