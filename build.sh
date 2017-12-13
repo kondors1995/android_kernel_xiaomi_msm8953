@@ -31,9 +31,9 @@ echo -e "***********************************************$nocol"
 LC_ALL=C date +%Y-%m-%d
 kernel_dir=$PWD
 build=$kernel_dir/out
-export CROSS_COMPILE=~/gcc-prebuilts/bin/aarch64-linaro-linux-android-
-kernel="TEST"
-version="5.0"
+export CROSS_COMPILE=~/Android/kernel/tc/aarch64-linux-android/bin/aarch64-cortex_a53-linux-android-
+kernel="REVOLT-O"
+version="0.1"
 vendor="xiaomi"
 device="mido"
 zip=zip
@@ -46,8 +46,8 @@ modules_dir=$kernel_dir/"$zip"/modules
 zip_name="$kernel"-"$version"-"$date"-"$device".zip
 
 # Kernel Details
-BASE_AK_VER="TEST"
-VER=".R5.MIDO"
+BASE_AK_VER="REVOLT-O"
+VER="0.1"
 AK_VER="$BASE_AK_VER$VER"
 
 export KBUILD_BUILD_USER=NATO66613
