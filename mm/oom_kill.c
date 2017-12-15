@@ -293,6 +293,12 @@ enum oom_scan_t oom_scan_process_thread(struct task_struct *task,
 				pr_warn("Task %s:%d refused to die\n",
 					task->comm, task->pid);
 				return OOM_SCAN_CONTINUE;
+                                /*
+                                 * We just printed that we refused to die; delay
+                                 * printing (or checking for another victim)
+                                 * for another 100 ms.
+                                 */
+                                last_victim = jiffies;
 			} else {
 				return OOM_SCAN_ABORT;
 			}
