@@ -33,7 +33,7 @@ kernel_dir=$PWD
 build=$kernel_dir/out
 export CROSS_COMPILE=~/Android/kernel/tc/aarch64-linux-android/bin/aarch64-cortex_a53-linux-android-
 kernel="REVOLT-O"
-version="0.1"
+version="R.2"
 vendor="xiaomi"
 device="mido"
 zip=zip
@@ -47,7 +47,7 @@ zip_name="$kernel"-"$version"-"$date"-"$device".zip
 
 # Kernel Details
 BASE_AK_VER="REVOLT-O"
-VER="0.1"
+VER="R.2"
 AK_VER="$BASE_AK_VER$VER"
 
 export KBUILD_BUILD_USER=NATO66613
