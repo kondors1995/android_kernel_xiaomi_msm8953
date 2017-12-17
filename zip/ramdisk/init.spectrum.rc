@@ -20,6 +20,8 @@ on property:sys.boot_completed=1
     write /sys/module/mdss_fb/parameters/backlight_dimmer 0
     # USB Fast Charge
     write /sys/kernel/fast_charge/force_fast_charge 1
+    # Enable PDesireAudio
+    write /sys/modules/snd_soc_wcd9330/uhqa_mode_pdesireaudio 1
 
 
 # Balance (default profile)
