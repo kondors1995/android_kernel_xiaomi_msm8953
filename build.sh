@@ -25,7 +25,7 @@ White='\e[0;37m'        # White
 
 
 echo -e "$White***********************************************"
-echo "         Compiling ElectraBlue Kernel             "
+echo "         Compiling REVOLT Kernel             "
 echo -e "***********************************************$nocol"
 
 LC_ALL=C date +%Y-%m-%d
