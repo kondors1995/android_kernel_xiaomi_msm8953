@@ -15,7 +15,6 @@
 #include <linux/kernel.h>
 #include <linux/cpuidle.h>
 #include <linux/pm_qos.h>
-#include <linux/module.h>
 #include <linux/jiffies.h>
 
 #include <asm/io.h>
@@ -79,7 +78,7 @@ static int ladder_select_state(struct cpuidle_driver *drv,
 
 	last_state = &ldev->states[last_idx];
 
-	if (drv->states[last_idx].flags & CPUIDLE_FLAG_TIME_VALID) {
+	if (!(drv->states[last_idx].flags & CPUIDLE_FLAG_TIME_INVALID)) {
 		last_residency = cpuidle_get_last_residency(dev) - \
 					 drv->states[last_idx].exit_latency;
 	}
@@ -181,7 +180,6 @@ static struct cpuidle_governor ladder_governor = {
 	.enable =	ladder_enable_device,
 	.select =	ladder_select_state,
 	.reflect =	ladder_reflect,
-	.owner =	THIS_MODULE,
 };
 
 /**

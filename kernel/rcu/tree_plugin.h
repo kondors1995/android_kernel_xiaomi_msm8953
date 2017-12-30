@@ -397,10 +397,18 @@ void rcu_read_unlock_special(struct task_struct *t)
 		}
 
 #ifdef CONFIG_RCU_BOOST
-		/* Unboost if we were boosted. */
+		/*
+		 * Unboost if we were boosted.
+		 * Disable preemption to make sure completion is signalled
+		 * without having the task de-scheduled with its priority
+		 * lowered (in which case we're left with no boosted thread
+		 * and possible RCU starvation).
+		 */
 		if (drop_boost_mutex) {
+			preempt_disable();
 			rt_mutex_unlock(&rnp->boost_mtx);
 			complete(&rnp->boost_completion);
+			preempt_enable();
 		}
 #endif /* #ifdef CONFIG_RCU_BOOST */
 
@@ -1982,12 +1990,10 @@ static int rcu_oom_notify(struct notifier_block *self,
 	 */
 	atomic_set(&oom_callback_count, 1);
 
-	get_online_cpus();
 	for_each_online_cpu(cpu) {
 		smp_call_function_single(cpu, rcu_oom_notify_cpu, NULL, 1);
 		cond_resched_rcu_qs();
 	}
-	put_online_cpus();
 
 	/* Unconditionally decrement: no need to wake ourselves up. */
 	atomic_dec(&oom_callback_count);

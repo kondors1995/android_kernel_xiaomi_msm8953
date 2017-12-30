@@ -123,7 +123,7 @@ int mcpm_wait_for_cpu_powerdown(unsigned int cpu, unsigned int cluster)
 	return ret;
 }
 
-void mcpm_cpu_suspend(u64 expected_residency)
+void mcpm_cpu_suspend(void)
 {
 	phys_reset_t phys_reset;
 

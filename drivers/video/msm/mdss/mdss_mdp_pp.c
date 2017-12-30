@@ -2901,8 +2901,8 @@ static int mdss_mdp_pp_dt_parse(struct device *dev)
 	}
 bail_out:
 	return ret;
-}
 
+}
 int mdss_mdp_pp_init(struct device *dev)
 {
 	int i, ret = 0;

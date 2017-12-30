@@ -11,6 +11,7 @@ config ARM64
 	select ARCH_WANT_FRAME_POINTERS
 	select ARCH_HAVE_CUSTOM_GPIO_H
 	select ARCH_HAS_UBSAN_SANITIZE_ALL
+	select ARCH_THREAD_INFO_ALLOCATOR if !ARM64_64K_PAGES
 	select ARM_AMBA
 	select ARM_ARCH_TIMER
 	select ARM_GIC
@@ -60,6 +61,7 @@ config ARM64
 	select HAVE_DMA_CONTIGUOUS
 	select HAVE_DYNAMIC_FTRACE
 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
+	select DCACHE_WORD_ACCESS
 	select HAVE_FTRACE_MCOUNT_RECORD
 	select HAVE_FUNCTION_TRACER
 	select HAVE_FUNCTION_GRAPH_TRACER
@@ -700,10 +702,7 @@ config ARCH_NR_GPIO
 
 
 source kernel/Kconfig.preempt
-
-config HZ
-	int
-	default 100
+source kernel/Kconfig.hz
 
 config ARCH_HAS_HOLES_MEMORYMODEL
 	def_bool y if SPARSEMEM

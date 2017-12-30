@@ -25,6 +25,7 @@
 #include <linux/const.h>
 #include <linux/types.h>
 #include <asm/sizes.h>
+#include <asm/bug.h>
 
 /*
  * Allow for constants defined here to be used from assembly code
@@ -52,7 +53,7 @@
 
 #ifdef CONFIG_COMPAT
 #define TASK_SIZE_32		UL(0x100000000)
-#define TASK_SIZE		(test_thread_flag(TIF_32BIT) ? \
+#define TASK_SIZE		(test_thread_flag_relaxed(TIF_32BIT) ? \
 				TASK_SIZE_32 : TASK_SIZE_64)
 #define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk, TIF_32BIT) ? \
 				TASK_SIZE_32 : TASK_SIZE_64)
@@ -111,6 +112,11 @@ extern phys_addr_t		memstart_addr;
  */
 #define PHYS_PFN_OFFSET	(PHYS_OFFSET >> PAGE_SHIFT)
 
+extern void *high_memory;
+
+#define virt_is_valid_lowmem(kaddr)	\
+	((unsigned long)(kaddr) >= PAGE_OFFSET && \
+	(unsigned long)(kaddr) < (unsigned long)high_memory)
 /*
  * Note: Drivers should NOT use these.  They are the wrong
  * translation for translating DMA addresses.  Use the driver
@@ -118,6 +124,7 @@ extern phys_addr_t		memstart_addr;
  */
 static inline phys_addr_t virt_to_phys(const volatile void *x)
 {
+	BUG_ON(!virt_is_valid_lowmem(x));
 	return __virt_to_phys((unsigned long)(x));
 }
 

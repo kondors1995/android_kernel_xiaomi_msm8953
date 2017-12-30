@@ -201,7 +201,6 @@ static void poll_idle_init(struct cpuidle_driver *drv)
 	state->exit_latency = 0;
 	state->target_residency = 0;
 	state->power_usage = -1;
-	state->flags = CPUIDLE_FLAG_TIME_VALID;
 	state->enter = poll_idle;
 	state->disabled = false;
 }
@@ -228,6 +227,10 @@ static int __cpuidle_register_driver(struct cpuidle_driver *drv)
 
 	if (!drv || !drv->state_count)
 		return -EINVAL;
+
+	ret = cpuidle_coupled_state_verify(drv);
+	if (ret)
+		return ret;
 
 	if (cpuidle_disabled())
 		return -ENODEV;
