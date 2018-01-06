@@ -649,7 +649,7 @@ config MSM_RDBG
 	  stub running on peripheral subsystems such as the ADSP, MODEM etc.
 
 config FRANDOM
-	tristate "Frandom RNG driver"
+	bool "Frandom RNG driver"
 	help
 	  Frandom is a Linux kernel random number generator, which
 	  is 10-50 times faster than what you get from Linux' built-in
