@@ -171,14 +171,14 @@ static ssize_t qns_param_store(struct class *dev,
 	{
 	case CHARGE_CURRENT:
 		ret = kstrtoint(buf, 10, &val);
-		if (!ret && (val > 0))
-		{
+		if (!ret && (val > 0)) {
 			static int prev_ibat_for_deblog = -1;
 			union power_supply_propval propVal = {val * 1000,};
 
 			if (val != prev_ibat_for_deblog) {
 				pr_info("QNS: new charge current:%d mA\n", val);
-				if(battery_psy->set_property(battery_psy, POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX,
+				if(battery_psy->set_property(battery_psy,
+						POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX,
 						&propVal) != 0) {
 					pr_info("QNS: ERROR: unable to set charging current! Does \"battery\" have "
 							"POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX property?\n");
@@ -196,46 +196,40 @@ static ssize_t qns_param_store(struct class *dev,
 	case ALARM:
 		ret = kstrtoint(buf, 10, &val);
 
-		if(!wakelock_inited)
-		{
+		if(!wakelock_inited) {
 			wake_lock_init(&wakelock, WAKE_LOCK_SUSPEND, "QnovoQNS");
 			wakelock_inited = true;
 		}
 
-		if(!charge_wakelock_inited)
-		{
+		if(!charge_wakelock_inited) {
 			wake_lock_init(&charge_wakelock, WAKE_LOCK_SUSPEND, "QnovoQNSCharge");
 			charge_wakelock_inited = true;
 		}
 
 		if (!ret)
 		{
-			if(val == CHARGE_WAKELOCK)
+			switch(val)
 			{
-				if(!charge_wakelock_held)
-				{
+			case CHARGE_WAKELOCK:
+				if(!charge_wakelock_held) {
 					wake_lock(&charge_wakelock);
 					charge_wakelock_held = true;
 				}
-			}
-			else if(val == CHARGE_WAKELOCK_RELEASE)
-			{
-				if(charge_wakelock_held)
-				{
+				break;
+			case CHARGE_WAKELOCK_RELEASE:
+				if(charge_wakelock_held) {
 					wake_unlock(&charge_wakelock);
 					charge_wakelock_held = false;
 				}
-			}
-			else if(val == HANDLED)
-			{
+				break;
+			case HANDLED:
 				if(wakelock_held)
 					wake_unlock(&wakelock);
 
 				alarm_value = 0;
 				wakelock_held = false;
-			}
-			else if(val == CANCEL)
-			{
+				break;
+			case CANCEL:
 				if(alarm_inited)
 					alarm_cancel(&alarm);
 
@@ -245,19 +239,15 @@ static ssize_t qns_param_store(struct class *dev,
 					wake_unlock(&wakelock);
 
 				wakelock_held = false;
-			}
-			else if(val == IMMEDIATE)
-			{
-				if(!wakelock_held)
-				{
+				break;
+			case IMMEDIATE:
+				if(!wakelock_held) {
 					wake_lock(&wakelock);
 					wakelock_held = true;
 				}
-			}
-			else if(val > 0)
-			{
-				if(!alarm_inited)
-				{
+				break;
+			default:
+				if(!alarm_inited) {
 					alarm_init(&alarm, ALARM_REALTIME, qns_alarm_handler);
 					alarm_inited = true;
 				}
