@@ -680,7 +680,7 @@ static int gf_probe(struct platform_device *pdev)
 	gf_dev->pwr_gpio 	= 	-EINVAL;
 	gf_dev->device_available =  0;
 	gf_dev->fb_black  =  0;
-	gf_dev->irq_enabled = 0;
+	gf_dev->irq_enabled = 1;
 	gf_dev->fingerprint_pinctrl = NULL;
 
 	/* If we can allocate a minor number, hook up this device.
