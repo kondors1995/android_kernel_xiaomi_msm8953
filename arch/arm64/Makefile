@@ -43,7 +43,7 @@ arch-$(CONFIG_ARCH_MSM8937)	:= $(call cc-option,-mcpu=cortex-a53+crc+crypto,-mar
 tune-$(CONFIG_ARCH_MSM8937)	:= -mtune=cortex-a53
 arch-$(CONFIG_ARCH_MSM8940)	:= $(call cc-option,-mcpu=cortex-a53+crc+crypto,-march=armv8-a+crc+crypto)
 tune-$(CONFIG_ARCH_MSM8940)	:= -mtune=cortex-a53
-arch-$(CONFIG_ARCH_MSM8953)	:= $(call cc-option,-mcpu=cortex-a53+crc+crypto,-march=armv8-a+crc+crypto)
+arch-$(CONFIG_ARCH_MSM8953)	:= $(call cc-option,-mcpu=cortex-a53+crc+crypto+simd,-march=armv8-a+crc+crypto+simd)
 tune-$(CONFIG_ARCH_MSM8953)	:= -mtune=cortex-a53
 arch-$(CONFIG_ARCH_SDM450)	:= $(call cc-option,-mcpu=cortex-a53+crc+crypto,-march=armv8-a+crc+crypto)
 tune-$(CONFIG_ARCH_SDM450)	:= -mtune=cortex-a53
