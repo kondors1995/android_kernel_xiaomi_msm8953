@@ -5308,7 +5308,7 @@ static ssize_t pages_to_scan_store(struct kobject *kobj,
 	unsigned long pages;
 	int err;
 
-	err = strict_strtoul(buf, 10, &pages);
+	err = kstrtoul(buf, 10, &pages);
 	if (err || pages > 1000000)
 		return -EINVAL;
 
