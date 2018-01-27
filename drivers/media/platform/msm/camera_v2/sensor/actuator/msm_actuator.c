@@ -1993,6 +1993,7 @@ static int32_t msm_actuator_platform_probe(struct platform_device *pdev)
 		if (rc < 0) {
 			pr_err("ERR: Error in reading actuator pinctrl\n");
 			msm_actuator_t->cam_pinctrl_status = 0;
+			rc = 0;
 		}
 	}
 

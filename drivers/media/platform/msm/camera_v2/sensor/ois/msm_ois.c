@@ -904,6 +904,7 @@ static int32_t msm_ois_platform_probe(struct platform_device *pdev)
 		if (rc < 0) {
 			pr_err("ERR: Error in reading OIS pinctrl\n");
 			msm_ois_t->cam_pinctrl_status = 0;
+			rc = 0;
 		}
 	}
 
