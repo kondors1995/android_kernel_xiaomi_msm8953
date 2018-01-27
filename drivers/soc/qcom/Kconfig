@@ -619,7 +619,12 @@ config MSM_TZ_SMMU
 	  SMMUs for any reason (for example, for errata workarounds or
 	  configuration of SMMU virtualization).
 
-	  If unsure, say N.
+config MSM_PERFORMANCE_CPUFREQ_LIMITS_VOTING_ONLY
+	bool "Restrict msm_performance driver to cpufreq limits voting only"
+	depends on MSM_PERFORMANCE
+	help
+	 Setting this flag to true will restrict msm_performance driver's
+	 capabilities to setting min/max CPU frequencies only.
 
 config MSM_SUBSYSTEM_RESTART
 	bool "MSM Subsystem Restart"
