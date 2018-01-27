@@ -1318,10 +1318,8 @@ static int __init iommu_init(void)
 	BUG_ON(!iommu_group_kset);
 
 	iommu_debugfs_top = debugfs_create_dir("iommu", NULL);
-	if (!iommu_debugfs_top) {
+	if (!iommu_debugfs_top)
 		pr_err("Couldn't create iommu debugfs directory\n");
-		return -ENODEV;
-	}
 
 	return 0;
 }
