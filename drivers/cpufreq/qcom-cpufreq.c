@@ -23,10 +23,6 @@
 #include <linux/cpu.h>
 #include <linux/cpumask.h>
 #include <linux/suspend.h>
-<<<<<<< HEAD
-#include <linux/clk.h>
-=======
->>>>>>> a32e4580e204... qcom-cpufreq: Use CLKFLAG_NO_RATE_CACHE
 #include <linux/clk/msm-clk-provider.h>
 #include <linux/err.h>
 #include <linux/platform_device.h>
