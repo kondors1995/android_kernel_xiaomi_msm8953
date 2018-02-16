@@ -432,7 +432,7 @@ module_param_named(
 	parallel_en, smbchg_parallel_en, int, S_IRUSR | S_IWUSR
 );
 
-static int smbchg_main_chg_fcc_percent = 50;
+static int smbchg_main_chg_fcc_percent = 82;
 module_param_named(
 	main_chg_fcc_percent, smbchg_main_chg_fcc_percent,
 	int, S_IRUSR | S_IWUSR
@@ -469,7 +469,7 @@ module_param_named(
 	int, 0664
 );
 
-static int wipower_dyn_icl_en;
+static int wipower_dyn_icl_en = 1;
 module_param_named(
 	dynamic_icl_wipower_en, wipower_dyn_icl_en,
 	int, S_IRUSR | S_IWUSR
@@ -1059,7 +1059,7 @@ static int get_property_from_fg(struct smbchg_chip *chip,
 	return rc;
 }
 
-#define DEFAULT_BATT_CAPACITY	50
+#define DEFAULT_BATT_CAPACITY	65
 static int get_prop_batt_capacity(struct smbchg_chip *chip)
 {
 	int capacity, rc;
@@ -1804,7 +1804,7 @@ static int smbchg_set_usb_current_max(struct smbchg_chip *chip,
 				pr_err("Couldn't set CMD_IL rc = %d\n", rc);
 				goto out;
 			}
-			chip->usb_max_current_ma = 500;
+			chip->usb_max_current_ma = 900;
 		}
 #ifdef CONFIG_FORCE_FAST_CHARGE
 		if ((force_fast_charge > 0 && current_ma == CURRENT_500_MA) || current_ma == CURRENT_1200_MA) {
@@ -1966,7 +1966,7 @@ static int smbchg_set_fastchg_current_raw(struct smbchg_chip *chip,
 #define USBIN_ACTIVE_PWR_SRC_BIT	BIT(1)
 #define DCIN_ACTIVE_PWR_SRC_BIT		BIT(0)
 #define PARALLEL_REENABLE_TIMER_MS	1000
-#define PARALLEL_CHG_THRESHOLD_CURRENT	1800
+#define PARALLEL_CHG_THRESHOLD_CURRENT	2000
 static bool smbchg_is_usbin_active_pwr_src(struct smbchg_chip *chip)
 {
 	int rc;
@@ -2533,7 +2533,7 @@ static bool smbchg_is_parallel_usb_ok(struct smbchg_chip *chip,
 	return true;
 }
 
-#define HVDCP_DETECTION_DONE_MS		5000
+#define HVDCP_DETECTION_DONE_MS		4000
 #define PARALLEL_CHARGER_EN_DELAY_MS	500
 static void smbchg_parallel_usb_en_work(struct work_struct *work)
 {
@@ -3170,7 +3170,7 @@ out:
 	return rc;
 }
 
-static int smbchg_ibat_ocp_threshold_ua = 4500000;
+static int smbchg_ibat_ocp_threshold_ua = 3200000;
 module_param(smbchg_ibat_ocp_threshold_ua, int, 0644);
 
 #define UCONV			1000000LL
@@ -3178,7 +3178,7 @@ module_param(smbchg_ibat_ocp_threshold_ua, int, 0644);
 #define FLASH_V_THRESHOLD	3000000
 #define FLASH_VDIP_MARGIN	100000
 #define VPH_FLASH_VDIP		(FLASH_V_THRESHOLD + FLASH_VDIP_MARGIN)
-#define BUCK_EFFICIENCY		800LL
+#define BUCK_EFFICIENCY		920LL
 static int smbchg_calc_max_flash_current(struct smbchg_chip *chip)
 {
 	int ocv_uv, esr_uohm, rbatt_uohm, ibat_now, rc;
