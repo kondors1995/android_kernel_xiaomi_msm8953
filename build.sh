@@ -32,8 +32,8 @@ LC_ALL=C date +%Y-%m-%d
 kernel_dir=$PWD
 build=$kernel_dir/out
 export CROSS_COMPILE=~/Android/kernel/tc/aarch64-linux-android/bin/aarch64-cortex_a53-linux-android-
-kernel="REVOLT-O"
-version="R.15"
+kernel="REVOLT-"
+version="WINTER-17"
 vendor="xiaomi"
 device="mido"
 zip=zip
@@ -46,8 +46,8 @@ modules_dir=$kernel_dir/"$zip"/modules
 zip_name="$kernel"-"$version"-"$date"-"$device".zip
 
 # Kernel Details
-BASE_AK_VER="REVOLT-O"
-VER="R.15"
+BASE_AK_VER="REVOLT-"
+VER="WINTER-17"
 AK_VER="$BASE_AK_VER$VER"
 
 export KBUILD_BUILD_USER=NATO66613
