@@ -86,18 +86,6 @@ maple_add_request(struct request_queue *q, struct request *rq)
 	 * Add request to the proper fifo list and set its
 	 * expire time.
 	 */
-<<<<<<< HEAD
-
-   	/* inrease expiration when device is asleep */
-   	unsigned int fifo_expire_suspended = mdata->fifo_expire[sync][dir] * sleep_latency_multiple;
-   	if (!state_suspended && mdata->fifo_expire[sync][dir]) {
-   		rq->fifo_time = jiffies + mdata->fifo_expire[sync][dir];
-   		list_add_tail(&rq->queuelist, &mdata->fifo_list[sync][dir]);
-   	} else if (state_suspended && fifo_expire_suspended) {
-		rq->fifo_time = jiffies + mdata->fifo_expire[sync][dir];
-   		list_add_tail(&rq->queuelist, &mdata->fifo_list[sync][dir]);
-   	}
-=======
 	if (!state_suspended && mdata->fifo_expire[sync][dir]) {
 		rq->fifo_time = jiffies + mdata->fifo_expire[sync][dir];
 		list_add_tail(&rq->queuelist, &mdata->fifo_list[sync][dir]);
@@ -105,7 +93,6 @@ maple_add_request(struct request_queue *q, struct request *rq)
 		rq->fifo_time = jiffies + fifo_expire_suspended;
 		list_add_tail(&rq->queuelist, &mdata->fifo_list[sync][dir]);
 	}
->>>>>>> 054dbd59bbd9... block: maple: Improve coding style
 }
 
 static struct request *
@@ -121,11 +108,7 @@ maple_expired_request(struct maple_data *mdata, int sync, int data_dir)
 	rq = rq_entry_fifo(list->next);
 
 	/* Request has expired */
-<<<<<<< HEAD
-        if (time_after(jiffies, rq->fifo_time))
-=======
 	if (time_after_eq(jiffies, rq->fifo_time))
->>>>>>> 054dbd59bbd9... block: maple: Improve coding style
 		return rq;
 
 	return NULL;
@@ -156,25 +139,6 @@ maple_choose_expired_request(struct maple_data *mdata)
 		return rq_sync_read;
 	}
 
-<<<<<<< HEAD
-   if (rq_async_read && rq_sync_read) {
-      if (time_after(rq_sync_read->fifo_time, rq_async_read->fifo_time))
-             return rq_async_read;
-   } else if (rq_async_read) {
-           return rq_async_read;
-   } else if (rq_sync_read) {
-           return rq_sync_read;
-   }
-
-   if (rq_async_write && rq_sync_write) {
-     if (time_after(rq_sync_write->fifo_time, rq_async_write->fifo_time))
-             return rq_async_write;
-   } else if (rq_async_write) {
-           return rq_async_write;
-   } else if (rq_sync_write) {
-           return rq_sync_write;
-   }
-=======
 	if (rq_async_write && rq_sync_write) {
 		if (time_after(rq_sync_write->fifo_time, rq_async_write->fifo_time))
 			return rq_async_write;
@@ -183,7 +147,6 @@ maple_choose_expired_request(struct maple_data *mdata)
 	} else if (rq_sync_write) {
 		return rq_sync_write;
 	}
->>>>>>> 054dbd59bbd9... block: maple: Improve coding style
 
 	return NULL;
 }
