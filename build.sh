@@ -31,7 +31,9 @@ echo -e "***********************************************$nocol"
 LC_ALL=C date +%Y-%m-%d
 kernel_dir=$PWD
 build=$kernel_dir/out
-export CROSS_COMPILE=~/Android/kernel/tc/aarch64-linux-android/bin/aarch64-cortex_a53-linux-android-
+export KERNEL_CLANG_VERSION=7.0
+export KERNEL_CLANG_PATH=~/home/vimal/7.0/bin
+export KERNEL_CLANG_COMPILE=true
 kernel="REVOLT-"
 version="WINTER-18"
 vendor="xiaomi"
