@@ -600,7 +600,6 @@ config QPNP_MISC
 	  and the driver provides an API to check if this interrupt
 	  is available on the current PMIC chip.
 
-<<<<<<< HEAD
 config UID_SYS_STATS_DEBUG
 	bool "Per-TASK statistics"
 	depends on UID_SYS_STATS
@@ -613,13 +612,12 @@ config MEMORY_STATE_TIME
 	depends on PROFILING
 	help
 	  Memory time statistics exported to /sys/kernel/memory_state_time
-=======
+
 config FORCE_FAST_CHARGE
 	bool "Force faster charge rate for USB"
 	default n
 	help
 	  This allows users to override default charge rate for USB
->>>>>>> 3003746b831e... drivers: misc: implement usb fast charge mode
 
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
