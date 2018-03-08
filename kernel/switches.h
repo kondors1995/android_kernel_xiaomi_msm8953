@@ -4,7 +4,7 @@
 #ifndef __SCHED_SWITCHES_KERNEL_H
 #define __SCHED_SWITCHES_KERNEL_H
 
-extern bool gentle_fair_sleepers;
-extern bool arch_capacity;
+extern bool __read_mostly gentle_fair_sleepers;
+extern bool __read_mostly arch_capacity;
 
 #endif
