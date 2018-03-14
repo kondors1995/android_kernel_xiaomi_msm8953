@@ -673,7 +673,7 @@ static inline void rcu_preempt_sleep_check(void)
  * object's lifetime is managed by something other than RCU.  That
  * "something other" might be reference counting or simple immortality.
  */
-/*
+
 /**
  * rcu_assign_pointer() - assign to RCU-protected pointer
  * @p: pointer to assign to
