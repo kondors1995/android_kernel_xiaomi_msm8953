@@ -5098,7 +5098,9 @@ struct energy_env {
 		/* Estimated energy variation wrt previous CPU */
 		int	nrg_delta;
 
-	} cpu[NR_CPUS*2];
+		/* Flag for if has calculated already */
+		int	used;
+	} cpu[NR_CPUS*3];
 
 	/* The morst energy efficient CPU for the specified energy_env::p */
 	int			next_cpu;
@@ -5348,6 +5350,9 @@ static int compute_energy(struct energy_env *eenv, int candidate)
 
 	WARN_ON(!eenv->sg_top->sge);
 
+	if (eenv->cpu[candidate].used)
+		return 0;
+
 	/* If a cpu is hotplugged in while we are in this function,
 	 * it does not appear in the existing eenv::sg_top mask
 	 * which came from the sched_group pointer of the
@@ -5405,6 +5410,7 @@ static int compute_energy(struct energy_env *eenv, int candidate)
 	if (cpu_count)
 		return -EINVAL;
 
+	eenv->cpu[candidate].used = 1;
 	return 0;
 }
 
@@ -5433,8 +5439,7 @@ static int compute_task_energy(struct energy_env *eenv, int cpu)
 		eenv->sg_cap = sd->groups;
 
 	/* Estimate capacity index before task placement */
-	cmp_idx = NR_CPUS + cpu;
-	prev_cap_idx = find_new_capacity(eenv, cmp_idx);
+	prev_cap_idx = find_new_capacity(eenv, cpu + NR_CPUS);
 	next_cap_idx = find_new_capacity(eenv, cpu);
 
 	/*
@@ -5448,10 +5453,25 @@ static int compute_task_energy(struct energy_env *eenv, int cpu)
 	 *   need to calculate all CPUs who bound in the same clock domain,
 	 *   so set 'sg_top' to shared capacity scheduling group.
 	 */
-	if (prev_cap_idx != next_cap_idx)
+	if (prev_cap_idx != next_cap_idx) {
 		eenv->sg_top = eenv->sg_cap;
-	else
+		/*
+		 * eenv::cpus[(NR_CPUS*2)..(NR_CPUS*3-1)] is used to calculate
+		 * whole cluster level energy calculation; so this value also
+		 * can be used by other CPUs in the same cluster to calculate
+		 * difference.
+		 */
+		cmp_idx  = cpumask_first(sched_group_cpus(eenv->sg_top));
+		cmp_idx += NR_CPUS * 2;
+		find_new_capacity(eenv, cmp_idx);
+	} else {
 		eenv->sg_top = sd->groups;
+		/*
+		 * eenv::cpus[(NR_CPUS)..(NR_CPUS*2-1)] is used to calculate
+		 * single CPU energy calculation.
+		 */
+		cmp_idx = cpu + NR_CPUS;
+	}
 
 	/* energy is unscaled to reduce rounding errors */
 	ret = compute_energy(eenv, cmp_idx);
@@ -6536,6 +6556,9 @@ static int select_energy_cpu_brute(struct task_struct *p, int prev_cpu, int sync
 		cpumask_set_cpu(next_cpu, &eenv->cpus_mask);
 	if (backup_cpu >= 0)
 		cpumask_set_cpu(backup_cpu, &eenv->cpus_mask);
+
+	/* Clear energy calculation data */
+	memset(eenv->cpu, 0, sizeof(eenv->cpu));
 
 	select_energy_cpu_idx(eenv);
 
