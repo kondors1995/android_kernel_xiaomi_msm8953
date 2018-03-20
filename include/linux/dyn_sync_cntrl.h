@@ -11,4 +11,4 @@
 
 extern bool suspend_active;
 extern bool dyn_fsync_active;
-
+extern void sync_filesystems(void);
