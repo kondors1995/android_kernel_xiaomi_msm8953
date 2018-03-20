@@ -2,6 +2,7 @@
  * Dynamic sync control driver V2
  * 
  * by andip71 (alias Lord Boeffla)
+ * modified by xNombre (Andrzej Perczak)
  * 
  * All credits for original implemenation to faux123
  * 
@@ -20,9 +21,7 @@
 // fsync_mutex protects dyn_fsync_active during suspend / late resume transitions
 static DEFINE_MUTEX(fsync_mutex);
 
-
 // Declarations
-
 bool suspend_active __read_mostly = false;
 bool dyn_fsync_active __read_mostly = DYN_FSYNC_ACTIVE_DEFAULT;
 
@@ -189,67 +188,54 @@ static int dyn_fsync_init(void)
 {
 	int sysfs_result;
 
-	register_reboot_notifier(&dyn_fsync_notifier);
-	
-	atomic_notifier_chain_register(&panic_notifier_list,
-		&dyn_fsync_panic_block);
-
 	dyn_fsync_kobj = kobject_create_and_add("dyn_fsync", kernel_kobj);
-
 	if (!dyn_fsync_kobj) 
 	{
 		pr_err("%s dyn_fsync_kobj create failed!\n", __FUNCTION__);
 		return -ENOMEM;
 	}
 
-	sysfs_result = sysfs_create_group(dyn_fsync_kobj,
-			&dyn_fsync_active_attr_group);
-
+	sysfs_result = sysfs_create_group(dyn_fsync_kobj, &dyn_fsync_active_attr_group);
 	if (sysfs_result) 
 	{
 		pr_err("%s dyn_fsync sysfs create failed!\n", __FUNCTION__);
-		kobject_put(dyn_fsync_kobj);
+		goto err;
 	}
 
 	notifier.notifier_call = state_notifier_callback;
-	if (state_register_client(&notifier) != 0) 
+	if (state_register_client(&notifier)) 
 	{
 		pr_err("%s: Failed to register lcd callback\n", __func__);
-
-		unregister_reboot_notifier(&dyn_fsync_notifier);
-
-		atomic_notifier_chain_unregister(&panic_notifier_list,
-			&dyn_fsync_panic_block);
-
-		if (dyn_fsync_kobj != NULL)
-			kobject_put(dyn_fsync_kobj);
-
-		return -EFAULT;
+		goto err;
 	}
 
-	pr_info("%s dynamic fsync initialisation complete\n", __FUNCTION__);
+	register_reboot_notifier(&dyn_fsync_notifier);
+	
+	atomic_notifier_chain_register(&panic_notifier_list,
+		&dyn_fsync_panic_block);
+
+	pr_info("%s dynamic fsync initialisation completed\n", __FUNCTION__);
 
 	return sysfs_result;
+
+err:
+	kobject_put(dyn_fsync_kobj);
+	return -EFAULT;
 }
 
 
 static void dyn_fsync_exit(void)
 {
 	unregister_reboot_notifier(&dyn_fsync_notifier);
-
-	atomic_notifier_chain_unregister(&panic_notifier_list,
-		&dyn_fsync_panic_block);
-
-	if (dyn_fsync_kobj != NULL)
-		kobject_put(dyn_fsync_kobj);
-	
+	atomic_notifier_chain_unregister(&panic_notifier_list, &dyn_fsync_panic_block);
+	kobject_put(dyn_fsync_kobj);
 	state_unregister_client(&notifier);
-		
+
 	pr_info("%s dynamic fsync unregistration complete\n", __FUNCTION__);
 }
 
 module_init(dyn_fsync_init);
 module_exit(dyn_fsync_exit);
 
-MODULE_DESCRIPTION("dynamic fsync - automatic fs sync optimization for");
+MODULE_DESCRIPTION("dynamic fsync - automatic fs sync optimizer");
 MODULE_LICENSE("GPL v2");
