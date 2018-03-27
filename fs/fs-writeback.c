@@ -29,6 +29,10 @@
 #include <linux/device.h>
 #include "internal.h"
 
+#ifdef CONFIG_DYNAMIC_FSYNC
+#include <linux/dyn_sync_cntrl.h>
+#endif
+
 /*
  * 4MB minimal write chunk size
  */
@@ -1009,6 +1013,12 @@ static long wb_check_old_data_flush(struct bdi_writeback *wb)
 	/*
 	 * When set to zero, disable periodic writeback
 	 */
+
+#ifdef CONFIG_DYNAMIC_FSYNC
+	if(suspend_active)
+		return 0;
+#endif
+
 	if (!dirty_writeback_interval)
 		return 0;
 

@@ -11,54 +11,48 @@
 #include <linux/module.h>
 #include <linux/kobject.h>
 #include <linux/sysfs.h>
-#include <linux/mutex.h>
 #include <linux/notifier.h>
 #include <linux/reboot.h>
 #include <linux/writeback.h>
 #include <linux/dyn_sync_cntrl.h>
 #include <linux/state_notifier.h>
 #include <linux/fs.h>
-
-// fsync_mutex protects dyn_fsync_active during suspend / late resume transitions
-static DEFINE_MUTEX(fsync_mutex);
+#include <linux/string.h>
 
 // Declarations
 bool suspend_active __read_mostly = false;
-bool dyn_fsync_active __read_mostly = DYN_FSYNC_ACTIVE_DEFAULT;
+bool dyn_fsync_active = DYN_FSYNC_ACTIVE_DEFAULT;
 
 static struct notifier_block notifier;
-
+static struct delayed_work sync_work;
 // Functions
 
 static ssize_t dyn_fsync_active_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
-	return sprintf(buf, "%u\n", (dyn_fsync_active ? 1 : 0));
+	return sprintf(buf, "%u\n", dyn_fsync_active);
 }
 
 
 static ssize_t dyn_fsync_active_store(struct kobject *kobj,
 		struct kobj_attribute *attr, const char *buf, size_t count)
 {
-	unsigned int data;
+	if(strtobool(buf, &dyn_fsync_active))
+		return -EINVAL;
 
-	if(sscanf(buf, "%u\n", &data) == 1)
+	if (dyn_fsync_active)
 	{
-		if (data == 1) 
+		pr_info("%s: dynamic fsync enabled\n", __FUNCTION__);
+		if (state_register_client(&notifier))
 		{
-			pr_info("%s: dynamic fsync enabled\n", __FUNCTION__);
-			dyn_fsync_active = true;
+			pr_err("%s: Failed to register lcd callback\n", __func__);
 		}
-		else if (data == 0) 
-		{
-			pr_info("%s: dynamic fsync disabled\n", __FUNCTION__);
-			dyn_fsync_active = false;
-		}
-		else
-			pr_info("%s: bad value: %u\n", __FUNCTION__, data);
-	} 
+	}
 	else
-		pr_info("%s: unknown input!\n", __FUNCTION__);
+	{
+		pr_info("%s: dynamic fsync disabled\n", __FUNCTION__);
+		state_unregister_client(&notifier);
+	}
 
 	return count;
 }
@@ -79,14 +73,20 @@ static ssize_t dyn_fsync_suspend_show(struct kobject *kobj,
 	return sprintf(buf, "suspend active: %u\n", suspend_active);
 }
 
+static void emergency_event(void)
+{
+	if(dyn_fsync_active) {
+		cancel_delayed_work(&sync_work);
+		suspend_active = false;
+		emergency_sync();
+		pr_warn("dynamic fsync: force flush!\n");
+	}
+}
 
 static int dyn_fsync_panic_event(struct notifier_block *this,
 		unsigned long event, void *ptr)
 {
-	suspend_active = false;
-	emergency_sync();
-	pr_warn("dynamic fsync: panic - force flush!\n");
-
+	emergency_event();
 	return NOTIFY_DONE;
 }
 
@@ -94,39 +94,24 @@ static int dyn_fsync_panic_event(struct notifier_block *this,
 static int dyn_fsync_notify_sys(struct notifier_block *this, unsigned long code,
 				void *unused)
 {
-	if (code == SYS_DOWN || code == SYS_HALT) 
-	{
-		suspend_active = false;
-		emergency_sync();
-		pr_warn("dynamic fsync: reboot - force flush!\n");
-	}
+	if(code == SYS_DOWN || code == SYS_HALT)
+		emergency_event();
+
 	return NOTIFY_DONE;
 }
 
 static int state_notifier_callback(struct notifier_block *this,
-								unsigned long event, void *data)
+				unsigned long event, void *data)
 {
 	switch (event) 
 	{
 		case STATE_NOTIFIER_ACTIVE:
-			mutex_lock(&fsync_mutex);
-			
 			suspend_active = false;
-
-			if (dyn_fsync_active) 
-			{
-				sync_filesystems();
-			}
-			
-			mutex_unlock(&fsync_mutex);
+			schedule_delayed_work(&sync_work, msecs_to_jiffies(SYNC_WORK_DELAY_MSEC));
 			break;
-			
 		case STATE_NOTIFIER_SUSPEND:
-			mutex_lock(&fsync_mutex);
 			suspend_active = true;
-			mutex_unlock(&fsync_mutex);
 			break;
-			
 		default:
 			break;
 	}
@@ -195,14 +180,18 @@ static int dyn_fsync_init(void)
 	}
 
 	notifier.notifier_call = state_notifier_callback;
-	if (state_register_client(&notifier))
+	if (dyn_fsync_active)
 	{
-		pr_err("%s: Failed to register lcd callback\n", __func__);
-		goto err;
+		pr_info("%s: dynamic fsync enabled\n", __FUNCTION__);
+		if (state_register_client(&notifier))
+		{
+			pr_err("%s: Failed to register lcd callback\n", __func__);
+		}
 	}
 
-	register_reboot_notifier(&dyn_fsync_notifier);
+	INIT_DELAYED_WORK(&sync_work, sync_filesystems);
 
+	register_reboot_notifier(&dyn_fsync_notifier);
 	atomic_notifier_chain_register(&panic_notifier_list,
 		&dyn_fsync_panic_block);
 
