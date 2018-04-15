@@ -28,6 +28,9 @@ ZIMAGE_DIR=~/kernel/mido/arch/arm64/boot
 
 # Functions
 function clean_all {
+		cd ~/kernel/AnyKernel2
+		git reset --hard && git clean -f -d
+		cd $KERNEL_DIR
 		make clean && make mrproper
 }
 
@@ -40,7 +43,7 @@ function make_kernel {
 
 function make_zip {
 		cd ~/kernel/AnyKernel2
-		cp ~/kernel/mido/arch/arm64/boot/Image.gz-dtb
+		cp ~/kernel/mido/arch/arm64/boot/Image.gz-dtb ~/kernel/AnyKernel2
 		zip -r9 `echo $AK_VER`.zip *
 		cd $KERNEL_DIR
 }
