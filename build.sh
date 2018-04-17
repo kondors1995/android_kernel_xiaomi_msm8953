@@ -17,7 +17,7 @@ export CROSS_COMPILE=~/Android/kernel/tc/linaro/gcc-7.x/bin/aarch64-opt-linux-an
 DEFCONFIG="revolt_defconfig"
 
 # Kernel Details
-VER=".R26.LZ4"
+VER=".R27.TNT"
 
 # Paths
 KERNEL_DIR=`pwd`
