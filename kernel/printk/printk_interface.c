@@ -61,7 +61,7 @@ static ssize_t printk_mode_store(struct kobject *kobj, struct kobj_attribute *at
 /* Initialize printk_mode sysfs folder */
 
 static struct kobj_attribute printk_mode_attribute =
-__ATTR(printk_mode, S_IWUSR | S_IRUGO, printk_mode_show, printk_mode_store);
+__ATTR(printk_mode, 0666, printk_mode_show, printk_mode_store);
 
 static struct attribute *printk_mode_attrs[] = {
 &printk_mode_attribute.attr,
