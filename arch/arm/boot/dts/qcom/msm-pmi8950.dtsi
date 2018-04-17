@@ -216,6 +216,10 @@
 			qcom,force-aicl-rerun;
 			qcom,aicl-rerun-period-s = <180>;
 			qcom,autoadjust-vfloat;
+      qcom,fastchg-current-ma = <2000>;
+      qcom,fastchg-current-comp = <900>;
+      qcom,float-voltage-comp = <11>;
+ 
 
 			qcom,chgr@1000 {
 				reg = <0x1000 0x100>;
