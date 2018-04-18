@@ -64,6 +64,9 @@ static void cs_check_cpu(int cpu, unsigned int load)
 	struct dbs_data *dbs_data = policy->governor_data;
 	struct cs_dbs_tuners *cs_tuners = dbs_data->tuners;
 
+	/* Create display state boolean */
+	bool display_on = !state_suspended;
+
 	/* Once min frequency is reached while screen off, stop taking load samples*/
 	if (state_suspended && policy->cur == policy->min)
 		return;
@@ -570,6 +573,3 @@ fs_initcall(cpufreq_gov_dbs_init);
 module_init(cpufreq_gov_dbs_init);
 #endif
 module_exit(cpufreq_gov_dbs_exit);
-
-
-
