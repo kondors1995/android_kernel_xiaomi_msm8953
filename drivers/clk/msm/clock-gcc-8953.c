@@ -1178,7 +1178,6 @@ static struct rcg_clk camss_gp1_clk_src = {
 };
 
 static struct clk_freq_tbl ftbl_mclk0_clk_src[] = {
-<<<<<<< HEAD
 #ifdef CONFIG_MACH_XIAOMI_MIDO
 	F(  19200000,              xo,    1,    0,     0),
 #endif
