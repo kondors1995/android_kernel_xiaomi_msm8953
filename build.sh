@@ -16,19 +16,19 @@ export CROSS_COMPILE=~/kernel/gcc/linaro-7/bin/aarch64-opt-linux-android-
 DEFCONFIG="revolt_defconfig"
 
 # Kernel Details
-VER=".R29-MELTDOWN"
+VER=".R29.1-MELTDOWN"
 
 # Paths
 KERNEL_DIR=`pwd`
-REPACK_DIR=~/kernel/AnyKernel2"
-PATCH_DIR=~/kernel/AnyKernel2/patch"
-MODULES_DIR=~/kernel/AnyKernel2/modules"
-ZIP_MOVE=~/kernel/AK-releases"
+REPACK_DIR=~/kernel/AnyKernel2/
+PATCH_DIR=~/kernel/AnyKernel2/patch
+MODULES_DIR=~/kernel/AnyKernel2/modules
+ZIP_MOVE=~/kernel/AK-releases/
 ZIMAGE_DIR=~/kernel/mido/arch/arm64/boot
 
 # Functions
 function clean_all {
-		cd ~/kernel/AnyKernel2
+		cd $REPACK_DIR
 		git reset --hard && git clean -f -d
 		cd $KERNEL_DIR
 		make clean && make mrproper
@@ -42,10 +42,10 @@ function make_kernel {
 }
 
 function make_zip {
-		cd ~/kernel/AnyKernel2
-		cp ~/kernel/mido/arch/arm64/boot/Image.gz-dtb ~/kernel/AnyKernel2
+		cd $REPACK_DIR
+		cp $KERNEL_DIR/arch/arm64/boot/Image.gz-dtb $REPACK_DIR
 		zip -r9 `echo $AK_VER`.zip *
-		cp `echo $AK_VER`.zip ~/Android/kernel/AK-Releses/
+		cp `echo $AK_VER`.zip $ZIP_MOVE
 		cd $KERNEL_DIR
 }
 
