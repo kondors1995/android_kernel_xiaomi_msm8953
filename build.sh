@@ -16,7 +16,7 @@ export CROSS_COMPILE=~/kernel/gcc/linaro-7/bin/aarch64-opt-linux-android-
 DEFCONFIG="revolt_defconfig"
 
 # Kernel Details
-VER=".R29.2-MELTDOWN"
+VER=".R29.2-OC"
 
 # Paths
 KERNEL_DIR=`pwd`
@@ -29,6 +29,7 @@ ZIMAGE_DIR=~/kernel/mido/arch/arm64/boot
 # Functions
 function clean_all {
 		cd $REPACK_DIR
+		rm -r *
 		git reset --hard && git clean -f -d
 		cd $KERNEL_DIR
 		make clean && make mrproper
