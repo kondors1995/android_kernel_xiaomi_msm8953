@@ -43,7 +43,12 @@ function make_kernel {
 
 function make_zip {
 		cd $REPACK_DIR
-		cp $KERNEL_DIR/arch/arm64/boot/Image.gz-dtb $REPACK_DIR
+		mkdir kernel
+		mkdir treble-supported
+		mkdir treble-unsupported
+		cp $KERNEL_DIR/arch/arm64/boot/dts/qcom/msm8953-qrd-sku3-mido-nontreble.dtb $REPACK_DIR/treble-unsupported/
+		cp $KERNEL_DIR/arch/arm64/boot/dts/qcom/msm8953-qrd-sku3-mido-treble.dtb $REPACK_DIR/treble-supported/
+		cp $KERNEL_DIR/arch/arm64/boot/Image.gz $REPACK_DIR/kernel/
 		zip -r9 `echo $AK_VER`.zip *
 		cp `echo $AK_VER`.zip $ZIP_MOVE
 		cd $KERNEL_DIR
