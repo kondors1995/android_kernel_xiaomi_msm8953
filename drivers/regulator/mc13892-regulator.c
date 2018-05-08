@@ -547,9 +547,9 @@ static int mc13892_regulator_probe(struct platform_device *pdev)
 	if (num_regulators <= 0)
 		return -EINVAL;
 
-	priv = devm_kzalloc(&pdev->dev, sizeof(*priv) +
-		num_regulators * sizeof(priv->regulators[0]),
-		GFP_KERNEL);
+	priv = devm_kzalloc(&pdev->dev,
+			    struct_size(priv, regulators, num_regulators),
+			    GFP_KERNEL);
 	if (!priv)
 		return -ENOMEM;
 
@@ -591,7 +591,7 @@ static int mc13892_regulator_probe(struct platform_device *pdev)
 	mc13892_regulators[MC13892_VCAM].desc.ops = &mc13892_vcam_ops;
 
 	mc13xxx_data = mc13xxx_parse_regulators_dt(pdev, mc13892_regulators,
-					ARRAY_SIZE(mc13892_regulators));
+						   ARRAY_SIZE(mc13892_regulators));
 
 	for (i = 0; i < priv->num_regulators; i++) {
 		struct regulator_init_data *init_data;
