@@ -90,6 +90,9 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
 {
 	s64 delta_ns;
 
+	if (sg_policy->work_in_progress)
+		return false;
+
 	if (unlikely(sg_policy->need_freq_update))
 		return true;
 
@@ -328,8 +331,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
 		 * Do not reduce the frequency if the CPU has not been idle
 		 * recently, as the reduction is likely to be premature then.
 		 */
-		if (busy && next_f < sg_policy->next_freq &&
-		    sg_policy->next_freq != UINT_MAX) {
+		if (busy && next_f < sg_policy->next_freq) {
 			next_f = sg_policy->next_freq;
 
 			/* Reset cached freq as next_freq has changed */
