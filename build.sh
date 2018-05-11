@@ -12,11 +12,11 @@ clear
 THREAD="-j$(grep -c ^processor /proc/cpuinfo)"
 KERNEL="Image"
 DTBIMAGE="dtb"
-export CROSS_COMPILE=~/Android/kernel/tc/uber/out/aarch64-linux-android-9.x/bin/aarch64-linux-android-
+export CROSS_COMPILE=~/Android/kernel/tc/gcc/uber/aarch64-linux-android-9.x/bin/aarch64-linux-android-
 DEFCONFIG="revolt_defconfig"
 
 # Kernel Details
-VER=".R29.5-OC"
+VER=".R30-B"
 
 # Paths
 KERNEL_DIR=`pwd`
