@@ -12,19 +12,19 @@ clear
 THREAD="-j$(grep -c ^processor /proc/cpuinfo)"
 KERNEL="Image"
 DTBIMAGE="dtb"
-export CROSS_COMPILE=~/kernel/gcc/linaro-7/bin/aarch64-opt-linux-android-
+export CROSS_COMPILE=~/Android/kernel/tc/uber/out/aarch64-linux-android-9.x/bin/aarch64-linux-android-
 DEFCONFIG="revolt_defconfig"
 
 # Kernel Details
-VER=".R29.2-OC"
+VER=".R29.5-OC"
 
 # Paths
 KERNEL_DIR=`pwd`
-REPACK_DIR=~/kernel/AnyKernel2/
-PATCH_DIR=~/kernel/AnyKernel2/patch
-MODULES_DIR=~/kernel/AnyKernel2/modules
-ZIP_MOVE=~/kernel/AK-releases/
-ZIMAGE_DIR=~/kernel/mido/arch/arm64/boot
+REPACK_DIR=~/Android/kernel/AnyKernel2/
+PATCH_DIR=~/Android/kernel/AnyKernel2/patch
+MODULES_DIR=~/Android/kernel/AnyKernel2/modules
+ZIP_MOVE=~/Android/kernel/AK-releases/
+ZIMAGE_DIR=~/Android/kernel/EAS/arch/arm64/boot
 
 # Functions
 function clean_all {
