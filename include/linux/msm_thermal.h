@@ -330,4 +330,13 @@ static inline void devmgr_unregister_mitigation_client(
 }
 #endif
 
+#ifdef CONFIG_QCOM_THERMAL_LIMITS_DCVS
+extern int msm_lmh_dcvsh_sw_notify(int cpu);
+#else
+static inline int msm_lmh_dcvsh_sw_notify(int cpu)
+{
+	return -ENODEV;
+}
+#endif
+
 #endif /*__MSM_THERMAL_H*/

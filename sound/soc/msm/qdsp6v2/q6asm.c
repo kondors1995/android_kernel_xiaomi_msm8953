@@ -134,7 +134,6 @@ static int out_cold_index;
 static char *out_buffer;
 static char *in_buffer;
 
-
 static int audio_output_latency_dbgfs_open(struct inode *inode,
 							struct file *file)
 {
