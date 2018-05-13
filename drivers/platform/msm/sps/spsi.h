@@ -220,13 +220,13 @@ extern u8 print_limit_option;
 		}	\
 	} while (0)
 #else
-#define SPS_DBG3(dev, msg, args...)             pr_debug(msg, ##args)
-#define SPS_DBG2(dev, msg, args...)             pr_debug(msg, ##args)
-#define SPS_DBG1(dev, msg, args...)             pr_debug(msg, ##args)
-#define SPS_DBG(dev, msg, args...)              pr_debug(msg, ##args)
-#define SPS_INFO(dev, msg, args...)             pr_info(msg, ##args)
-#define SPS_ERR(dev, msg, args...)              pr_err(msg, ##args)
-#define SPS_DUMP(msg, args...)                  pr_info(msg, ##args)
+#define	SPS_DBG3(dev, msg, args...)		pr_debug(msg, ##args)
+#define	SPS_DBG2(dev, msg, args...)		pr_debug(msg, ##args)
+#define	SPS_DBG1(dev, msg, args...)		pr_debug(msg, ##args)
+#define	SPS_DBG(dev, msg, args...)		pr_debug(msg, ##args)
+#define	SPS_INFO(dev, msg, args...)		pr_info(msg, ##args)
+#define	SPS_ERR(dev, msg, args...)		pr_err(msg, ##args)
+#define	SPS_DUMP(msg, args...)			pr_info(msg, ##args)
 #endif
 
 /* End point parameters */
