@@ -316,15 +316,10 @@ static int cpu_boost_init(void)
 	struct cpu_sync *s;
 	struct sched_param param = { .sched_priority = MAX_RT_PRIO - 2 };
 
-<<<<<<< HEAD
-	cpu_boost_wq = alloc_workqueue("cpuboost_wq", WQ_HIGHPRI, 0);
-	if (!cpu_boost_wq)
-=======
 	init_kthread_worker(&cpu_boost_worker);
 	cpu_boost_worker_thread = kthread_run(kthread_worker_fn,
 		&cpu_boost_worker, "cpu_boost_worker_thread");
 	if (IS_ERR(cpu_boost_worker_thread))
->>>>>>> eb56536f143a... cpu-boost: Rework scheduling setup
 		return -EFAULT;
 
 	sched_setscheduler(cpu_boost_worker_thread, SCHED_FIFO, &param);
