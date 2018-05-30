@@ -720,7 +720,7 @@ CDEFINES += -DEXISTS_MSM_SMSM
 endif
 
 # Fix build for GCC 4.7
-EXTRA_CFLAGS += $(call cc-disable-warning,maybe-uninitialized,) -Wno-unused-function -Wno-unused-variable
+EXTRA_CFLAGS += -Os $(call cc-disable-warning,maybe-uninitialized,) -Wno-unused-function -Wno-unused-variable
 
 # Not gonna fix these warnings, clang!
 ifeq ($(cc-name),clang)
