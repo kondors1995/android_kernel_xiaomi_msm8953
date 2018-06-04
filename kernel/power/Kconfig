@@ -264,6 +264,7 @@ config APM_EMULATION
 
 config PM_OPP
 	bool
+	select SRCU
 	---help---
 	  SOCs have a standard set of tuples consisting of frequency and
 	  voltage pairs that the device will support per voltage domain. This
@@ -326,6 +327,12 @@ config SUSPEND_TIME
 	  keeps statistics on the time spent in suspend in
 	  /sys/kernel/debug/suspend_time
 
-config DEDUCE_WAKEUP_REASONS
-	bool
-	default n
+config	BOEFFLA_WL_BLOCKER
+	bool "Boeffla generic wakelock blocker driver"
+	depends on PM
+	default N
+
+config PM_SYNC_BEFORE_SUSPEND
+	bool "Sync file systems before suspend"
+	depends on SUSPEND
+	default y

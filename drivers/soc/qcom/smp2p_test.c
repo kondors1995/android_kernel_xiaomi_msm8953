@@ -66,19 +66,19 @@ static void smp2p_ut_local_basic(struct seq_file *s)
 		/* simulate response from remote side */
 		rmp->remote_item.header.magic = SMP2P_MAGIC;
 		SMP2P_SET_LOCAL_PID(
-		rmp->remote_item.header.rem_loc_proc_id,
+		&rmp->remote_item.header, rem_loc_proc_id,
 					SMP2P_REMOTE_MOCK_PROC);
 		SMP2P_SET_REMOTE_PID(
-		rmp->remote_item.header.rem_loc_proc_id,
+		&rmp->remote_item.header, rem_loc_proc_id,
 					SMP2P_APPS_PROC);
 		SMP2P_SET_VERSION(
-		rmp->remote_item.header.feature_version, 1);
+		&rmp->remote_item.header, feature_version, 1);
 		SMP2P_SET_FEATURES(
-		rmp->remote_item.header.feature_version, 0);
+		&rmp->remote_item.header, feature_version, 0);
 		SMP2P_SET_ENT_TOTAL(
-		rmp->remote_item.header.valid_total_ent, SMP2P_MAX_ENTRY);
+		&rmp->remote_item.header, valid_total_ent, SMP2P_MAX_ENTRY);
 		SMP2P_SET_ENT_VALID(
-		rmp->remote_item.header.valid_total_ent, 0);
+		&rmp->remote_item.header, valid_total_ent, 0);
 		rmp->remote_item.header.flags = 0x0;
 		msm_smp2p_set_remote_mock_exists(true);
 		rmp->tx_interrupt();
@@ -86,7 +86,8 @@ static void smp2p_ut_local_basic(struct seq_file *s)
 		/* verify port was opened */
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&cb_data.cb_completion, HZ / 2), >, 0);
+					&cb_data.cb_completion,
+					msecs_to_jiffies(500)), >, 0);
 		UT_ASSERT_INT(cb_data.cb_count, ==, 1);
 		UT_ASSERT_INT(cb_data.event_open, ==, 1);
 		UT_ASSERT_INT(rmp->rx_interrupt_count, ==, 2);
@@ -149,20 +150,20 @@ static void smp2p_ut_local_late_open(struct seq_file *s)
 			sizeof(struct smp2p_smem_item));
 		rmp->remote_item.header.magic = SMP2P_MAGIC;
 		SMP2P_SET_LOCAL_PID(
-		rmp->remote_item.header.rem_loc_proc_id,
+		&rmp->remote_item.header, rem_loc_proc_id,
 						SMP2P_REMOTE_MOCK_PROC);
 		SMP2P_SET_REMOTE_PID(
-		rmp->remote_item.header.rem_loc_proc_id,
+		&rmp->remote_item.header, rem_loc_proc_id,
 						SMP2P_APPS_PROC);
 		SMP2P_SET_VERSION(
-			rmp->remote_item.header.feature_version, 1);
+			&rmp->remote_item.header, feature_version, 1);
 		SMP2P_SET_FEATURES(
-			rmp->remote_item.header.feature_version, 0);
+			&rmp->remote_item.header, feature_version, 0);
 		SMP2P_SET_ENT_TOTAL(
-			rmp->remote_item.header.valid_total_ent,
+			&rmp->remote_item.header, valid_total_ent,
 			SMP2P_MAX_ENTRY);
 		SMP2P_SET_ENT_VALID(
-		rmp->remote_item.header.valid_total_ent, 0);
+		&rmp->remote_item.header, valid_total_ent, 0);
 		rmp->remote_item.header.flags = 0x0;
 
 		msm_smp2p_set_remote_mock_exists(true);
@@ -174,8 +175,8 @@ static void smp2p_ut_local_late_open(struct seq_file *s)
 		/* verify port was opened */
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&cb_data.cb_completion, HZ / 2),
-			>, 0);
+					&cb_data.cb_completion,
+					msecs_to_jiffies(500)), >, 0);
 		UT_ASSERT_INT(cb_data.cb_count, ==, 1);
 		UT_ASSERT_INT(cb_data.event_open, ==, 1);
 		UT_ASSERT_INT(rmp->rx_interrupt_count, ==, 2);
@@ -240,19 +241,19 @@ static void smp2p_ut_local_early_open(struct seq_file *s)
 			sizeof(struct smp2p_smem_item));
 		rmp->remote_item.header.magic = SMP2P_MAGIC;
 		SMP2P_SET_LOCAL_PID(
-		rmp->remote_item.header.rem_loc_proc_id,
+		&rmp->remote_item.header, rem_loc_proc_id,
 						SMP2P_REMOTE_MOCK_PROC);
 		SMP2P_SET_REMOTE_PID(
-		rmp->remote_item.header.rem_loc_proc_id,
+		&rmp->remote_item.header, rem_loc_proc_id,
 						SMP2P_APPS_PROC);
 		SMP2P_SET_VERSION(
-		rmp->remote_item.header.feature_version, 1);
+		&rmp->remote_item.header, feature_version, 1);
 		SMP2P_SET_FEATURES(
-		rmp->remote_item.header.feature_version, 0);
+		&rmp->remote_item.header, feature_version, 0);
 		SMP2P_SET_ENT_TOTAL(
-		rmp->remote_item.header.valid_total_ent, SMP2P_MAX_ENTRY);
+		&rmp->remote_item.header, valid_total_ent, SMP2P_MAX_ENTRY);
 		SMP2P_SET_ENT_VALID(
-		rmp->remote_item.header.valid_total_ent, 0);
+		&rmp->remote_item.header, valid_total_ent, 0);
 		rmp->remote_item.header.flags = 0x0;
 
 		msm_smp2p_set_remote_mock_exists(false);
@@ -266,8 +267,8 @@ static void smp2p_ut_local_early_open(struct seq_file *s)
 
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&cb_data.cb_completion, HZ / 8),
-			==, 0);
+					&cb_data.cb_completion,
+					msecs_to_jiffies(125)), ==, 0);
 		UT_ASSERT_INT(cb_data.cb_count, ==, 0);
 		UT_ASSERT_INT(cb_data.event_open, ==, 0);
 		UT_ASSERT_INT(rmp->rx_interrupt_count, ==, 1);
@@ -277,7 +278,7 @@ static void smp2p_ut_local_early_open(struct seq_file *s)
 		UT_ASSERT_PTR(outbound_item, !=, NULL);
 		UT_ASSERT_INT(negotiation_state, ==, SMP2P_EDGE_STATE_OPENING);
 		UT_ASSERT_INT(0, ==,
-			SMP2P_GET_ENT_VALID(outbound_item->valid_total_ent));
+			SMP2P_GET_ENT_VALID(outbound_item, valid_total_ent));
 
 		/* verify that read/write don't work yet */
 		rmp->rx_interrupt_count = 0;
@@ -295,8 +296,8 @@ static void smp2p_ut_local_early_open(struct seq_file *s)
 
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&cb_data.cb_completion, HZ / 2),
-			>, 0);
+					&cb_data.cb_completion,
+					msecs_to_jiffies(500)), >, 0);
 		UT_ASSERT_INT(cb_data.cb_count, ==, 1);
 		UT_ASSERT_INT(cb_data.event_open, ==, 1);
 		UT_ASSERT_INT(rmp->rx_interrupt_count, ==, 2);
@@ -358,19 +359,19 @@ static void smp2p_ut_mock_loopback(struct seq_file *s)
 			sizeof(struct smp2p_smem_item));
 		rmp->remote_item.header.magic = SMP2P_MAGIC;
 		SMP2P_SET_LOCAL_PID(
-		rmp->remote_item.header.rem_loc_proc_id,
+		&rmp->remote_item.header, rem_loc_proc_id,
 						SMP2P_REMOTE_MOCK_PROC);
 		SMP2P_SET_REMOTE_PID(
-		rmp->remote_item.header.rem_loc_proc_id,
+		&rmp->remote_item.header, rem_loc_proc_id,
 						SMP2P_APPS_PROC);
 		SMP2P_SET_VERSION(
-		rmp->remote_item.header.feature_version, 1);
+		&rmp->remote_item.header, feature_version, 1);
 		SMP2P_SET_FEATURES(
-		rmp->remote_item.header.feature_version, 0);
+		&rmp->remote_item.header, feature_version, 0);
 		SMP2P_SET_ENT_TOTAL(
-		rmp->remote_item.header.valid_total_ent, SMP2P_MAX_ENTRY);
+		&rmp->remote_item.header, valid_total_ent, SMP2P_MAX_ENTRY);
 		SMP2P_SET_ENT_VALID(
-		rmp->remote_item.header.valid_total_ent, 1);
+		&rmp->remote_item.header, valid_total_ent, 1);
 		rmp->remote_item.header.flags = 0x0;
 		msm_smp2p_set_remote_mock_exists(true);
 
@@ -385,8 +386,8 @@ static void smp2p_ut_mock_loopback(struct seq_file *s)
 		local = msm_smp2p_init_rmt_lpb_proc(SMP2P_REMOTE_MOCK_PROC);
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&rmp->cb_completion, HZ / 2),
-			>, 0);
+					&rmp->cb_completion,
+					msecs_to_jiffies(500)), >, 0);
 		UT_ASSERT_INT(rmp->rx_interrupt_count, ==, 2);
 
 		/* Send Echo Command */
@@ -399,8 +400,8 @@ static void smp2p_ut_mock_loopback(struct seq_file *s)
 		rmp->tx_interrupt();
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&rmp->cb_completion, HZ / 2),
-			>, 0);
+					&rmp->cb_completion,
+					msecs_to_jiffies(500)), >, 0);
 
 		/* Verify Echo Response */
 		UT_ASSERT_INT(rmp->rx_interrupt_count, ==, 1);
@@ -422,8 +423,8 @@ static void smp2p_ut_mock_loopback(struct seq_file *s)
 		rmp->tx_interrupt();
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&rmp->cb_completion, HZ / 2),
-			>, 0);
+					&rmp->cb_completion,
+					msecs_to_jiffies(500)), >, 0);
 
 		/* Verify PINGPONG Response */
 		UT_ASSERT_INT(rmp->rx_interrupt_count, ==, 1);
@@ -444,8 +445,8 @@ static void smp2p_ut_mock_loopback(struct seq_file *s)
 		rmp->tx_interrupt();
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&rmp->cb_completion, HZ / 2),
-			>, 0);
+					&rmp->cb_completion,
+					msecs_to_jiffies(500)), >, 0);
 
 		/* Verify CLEARALL response */
 		UT_ASSERT_INT(rmp->rx_interrupt_count, ==, 1);
@@ -495,8 +496,8 @@ static void smp2p_ut_remote_inout_core(struct seq_file *s, int remote_pid)
 		UT_ASSERT_INT(ret, ==, 0);
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&cb_out.cb_completion, HZ / 2),
-			>, 0);
+					&cb_out.cb_completion,
+					msecs_to_jiffies(500)), >, 0);
 		UT_ASSERT_INT(cb_out.cb_count, ==, 1);
 		UT_ASSERT_INT(cb_out.event_open, ==, 1);
 
@@ -506,8 +507,8 @@ static void smp2p_ut_remote_inout_core(struct seq_file *s, int remote_pid)
 		UT_ASSERT_INT(ret, ==, 0);
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&cb_in.cb_completion, HZ / 2),
-			>, 0);
+					&cb_in.cb_completion,
+					msecs_to_jiffies(500)), >, 0);
 		UT_ASSERT_INT(cb_in.cb_count, ==, 1);
 		UT_ASSERT_INT(cb_in.event_open, ==, 1);
 
@@ -524,8 +525,8 @@ static void smp2p_ut_remote_inout_core(struct seq_file *s, int remote_pid)
 		/* Verify inbound reply */
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&cb_in.cb_completion, HZ / 2),
-			>, 0);
+					&cb_in.cb_completion,
+					msecs_to_jiffies(500)), >, 0);
 		UT_ASSERT_INT(cb_in.cb_count, ==, 1);
 		UT_ASSERT_INT(cb_in.event_entry_update, ==, 1);
 		UT_ASSERT_INT(SMP2P_GET_RMT_DATA(
@@ -550,8 +551,8 @@ static void smp2p_ut_remote_inout_core(struct seq_file *s, int remote_pid)
 		/* Verify inbound reply */
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&cb_in.cb_completion, HZ / 2),
-			>, 0);
+					&cb_in.cb_completion,
+					msecs_to_jiffies(500)), >, 0);
 		UT_ASSERT_INT(cb_in.cb_count, ==, 1);
 		UT_ASSERT_INT(cb_in.event_entry_update, ==, 1);
 		UT_ASSERT_INT(SMP2P_GET_RMT_DATA(
@@ -574,8 +575,8 @@ static void smp2p_ut_remote_inout_core(struct seq_file *s, int remote_pid)
 		/* Verify inbound reply */
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&cb_in.cb_completion, HZ / 2),
-			>, 0);
+					&cb_in.cb_completion,
+					msecs_to_jiffies(500)), >, 0);
 		UT_ASSERT_INT(cb_in.cb_count, ==, 1);
 		UT_ASSERT_INT(cb_in.event_entry_update, ==, 1);
 		UT_ASSERT_INT(SMP2P_GET_RMT_DATA(
@@ -599,8 +600,8 @@ static void smp2p_ut_remote_inout_core(struct seq_file *s, int remote_pid)
 
 		UT_ASSERT_INT(
 			(int)wait_for_completion_timeout(
-					&cb_in.cb_completion, HZ / 2),
-			==, 0);
+					&cb_in.cb_completion,
+					msecs_to_jiffies(500)), ==, 0);
 		UT_ASSERT_INT(cb_in.cb_count, ==, 0);
 		UT_ASSERT_INT(cb_in.event_entry_update, ==, 0);
 		ret = msm_smp2p_in_read(remote_pid, "smp2p", &test_response);
@@ -781,19 +782,19 @@ static void smp2p_ut_local_in_max_entries(struct seq_file *s)
 			sizeof(struct smp2p_smem_item));
 		rmp->remote_item.header.magic = SMP2P_MAGIC;
 		SMP2P_SET_LOCAL_PID(
-		rmp->remote_item.header.rem_loc_proc_id,
+		&rmp->remote_item.header, rem_loc_proc_id,
 						SMP2P_REMOTE_MOCK_PROC);
 		SMP2P_SET_REMOTE_PID(
-		rmp->remote_item.header.rem_loc_proc_id,
+		&rmp->remote_item.header, rem_loc_proc_id,
 						SMP2P_APPS_PROC);
 		SMP2P_SET_VERSION(
-		rmp->remote_item.header.feature_version, 1);
+		&rmp->remote_item.header, feature_version, 1);
 		SMP2P_SET_FEATURES(
-		rmp->remote_item.header.feature_version, 0);
+		&rmp->remote_item.header, feature_version, 0);
 		SMP2P_SET_ENT_TOTAL(
-		rmp->remote_item.header.valid_total_ent, SMP2P_MAX_ENTRY);
+		&rmp->remote_item.header, valid_total_ent, SMP2P_MAX_ENTRY);
 		SMP2P_SET_ENT_VALID(
-		rmp->remote_item.header.valid_total_ent, 0);
+		&rmp->remote_item.header, valid_total_ent, 0);
 		rmp->remote_item.header.flags = 0x0;
 		msm_smp2p_set_remote_mock_exists(true);
 
@@ -813,8 +814,8 @@ static void smp2p_ut_local_in_max_entries(struct seq_file *s)
 			UT_ASSERT_INT(ret, ==, 0);
 			UT_ASSERT_INT(
 				(int)wait_for_completion_timeout(
-					&(cb_in[j].cb_completion), HZ / 2),
-				>, 0);
+					&(cb_in[j].cb_completion),
+					msecs_to_jiffies(500)), >, 0);
 			UT_ASSERT_INT(cb_in[j].cb_count, ==, 1);
 			UT_ASSERT_INT(cb_in[j].event_entry_update, ==, 0);
 		}
@@ -879,19 +880,19 @@ static void smp2p_ut_local_in_multiple(struct seq_file *s)
 			sizeof(struct smp2p_smem_item));
 		rmp->remote_item.header.magic = SMP2P_MAGIC;
 		SMP2P_SET_LOCAL_PID(
-		rmp->remote_item.header.rem_loc_proc_id,
+		&rmp->remote_item.header, rem_loc_proc_id,
 						SMP2P_REMOTE_MOCK_PROC);
 		SMP2P_SET_REMOTE_PID(
-		rmp->remote_item.header.rem_loc_proc_id,
+		&rmp->remote_item.header, rem_loc_proc_id,
 						SMP2P_APPS_PROC);
 		SMP2P_SET_VERSION(
-		rmp->remote_item.header.feature_version, 1);
+		&rmp->remote_item.header, feature_version, 1);
 		SMP2P_SET_FEATURES(
-		rmp->remote_item.header.feature_version, 0);
+		&rmp->remote_item.header, feature_version, 0);
 		SMP2P_SET_ENT_TOTAL(
-		rmp->remote_item.header.valid_total_ent, 1);
+		&rmp->remote_item.header, valid_total_ent, 1);
 		SMP2P_SET_ENT_VALID(
-		rmp->remote_item.header.valid_total_ent, 0);
+		&rmp->remote_item.header, valid_total_ent, 0);
 		rmp->remote_item.header.flags = 0x0;
 		msm_smp2p_set_remote_mock_exists(true);
 
@@ -908,8 +909,8 @@ static void smp2p_ut_local_in_multiple(struct seq_file *s)
 		UT_ASSERT_INT(ret, ==, 0);
 		UT_ASSERT_INT(
 				(int)wait_for_completion_timeout(
-				&(cb_in_1.cb_completion), HZ / 2),
-				>, 0);
+				&(cb_in_1.cb_completion),
+				msecs_to_jiffies(500)), >, 0);
 		UT_ASSERT_INT(cb_in_1.cb_count, ==, 1);
 		UT_ASSERT_INT(cb_in_1.event_entry_update, ==, 0);
 
@@ -919,8 +920,8 @@ static void smp2p_ut_local_in_multiple(struct seq_file *s)
 		UT_ASSERT_INT(ret, ==, 0);
 		UT_ASSERT_INT(
 				(int)wait_for_completion_timeout(
-				&(cb_in_2.cb_completion), HZ / 2),
-				>, 0);
+				&(cb_in_2.cb_completion),
+				msecs_to_jiffies(500)), >, 0);
 		UT_ASSERT_INT(cb_in_2.cb_count, ==, 1);
 		UT_ASSERT_INT(cb_in_2.event_entry_update, ==, 0);
 
@@ -980,13 +981,13 @@ static void smp2p_ut_local_ssr_ack(struct seq_file *s)
 		rmp->rx_interrupt_count = 0;
 		memset(&rmp->remote_item, 0, sizeof(struct smp2p_smem_item));
 		rhdr->magic = SMP2P_MAGIC;
-		SMP2P_SET_LOCAL_PID(rhdr->rem_loc_proc_id,
+		SMP2P_SET_LOCAL_PID(rhdr, rem_loc_proc_id,
 				SMP2P_REMOTE_MOCK_PROC);
-		SMP2P_SET_REMOTE_PID(rhdr->rem_loc_proc_id, SMP2P_APPS_PROC);
-		SMP2P_SET_VERSION(rhdr->feature_version, 1);
-		SMP2P_SET_FEATURES(rhdr->feature_version, 0);
-		SMP2P_SET_ENT_TOTAL(rhdr->valid_total_ent, SMP2P_MAX_ENTRY);
-		SMP2P_SET_ENT_VALID(rhdr->valid_total_ent, 0);
+		SMP2P_SET_REMOTE_PID(rhdr, rem_loc_proc_id, SMP2P_APPS_PROC);
+		SMP2P_SET_VERSION(rhdr, feature_version, 1);
+		SMP2P_SET_FEATURES(rhdr, feature_version, 0);
+		SMP2P_SET_ENT_TOTAL(rhdr, valid_total_ent, SMP2P_MAX_ENTRY);
+		SMP2P_SET_ENT_VALID(rhdr, valid_total_ent, 0);
 		rhdr->flags = 0x0;
 		msm_smp2p_set_remote_mock_exists(true);
 		rmp->tx_interrupt();
@@ -1000,10 +1001,10 @@ static void smp2p_ut_local_ssr_ack(struct seq_file *s)
 
 		/* verify no response to ack feature */
 		rmp->rx_interrupt_count = 0;
-		SMP2P_SET_RESTART_DONE(rhdr->flags, 1);
+		SMP2P_SET_RESTART_DONE(rhdr, flags, 1);
 		rmp->tx_interrupt();
-		UT_ASSERT_INT(0, ==, SMP2P_GET_RESTART_DONE(lhdr->flags));
-		UT_ASSERT_INT(0, ==, SMP2P_GET_RESTART_ACK(lhdr->flags));
+		UT_ASSERT_INT(0, ==, SMP2P_GET_RESTART_DONE(lhdr, flags));
+		UT_ASSERT_INT(0, ==, SMP2P_GET_RESTART_ACK(lhdr, flags));
 		UT_ASSERT_INT(rmp->rx_interrupt_count, ==, 0);
 
 		/* initialize v1 with SMP2P_FEATURE_SSR_ACK enabled */
@@ -1016,14 +1017,14 @@ static void smp2p_ut_local_ssr_ack(struct seq_file *s)
 		rmp->rx_interrupt_count = 0;
 		memset(&rmp->remote_item, 0, sizeof(struct smp2p_smem_item));
 		rhdr->magic = SMP2P_MAGIC;
-		SMP2P_SET_LOCAL_PID(rhdr->rem_loc_proc_id,
+		SMP2P_SET_LOCAL_PID(rhdr, rem_loc_proc_id,
 				SMP2P_REMOTE_MOCK_PROC);
-		SMP2P_SET_REMOTE_PID(rhdr->rem_loc_proc_id, SMP2P_APPS_PROC);
-		SMP2P_SET_VERSION(rhdr->feature_version, 1);
-		SMP2P_SET_FEATURES(rhdr->feature_version,
+		SMP2P_SET_REMOTE_PID(rhdr, rem_loc_proc_id, SMP2P_APPS_PROC);
+		SMP2P_SET_VERSION(rhdr, feature_version, 1);
+		SMP2P_SET_FEATURES(rhdr, feature_version,
 				SMP2P_FEATURE_SSR_ACK);
-		SMP2P_SET_ENT_TOTAL(rhdr->valid_total_ent, SMP2P_MAX_ENTRY);
-		SMP2P_SET_ENT_VALID(rhdr->valid_total_ent, 0);
+		SMP2P_SET_ENT_TOTAL(rhdr, valid_total_ent, SMP2P_MAX_ENTRY);
+		SMP2P_SET_ENT_VALID(rhdr, valid_total_ent, 0);
 		rmp->rx_interrupt_count = 0;
 		rhdr->flags = 0x0;
 		msm_smp2p_set_remote_mock_exists(true);
@@ -1038,17 +1039,17 @@ static void smp2p_ut_local_ssr_ack(struct seq_file *s)
 
 		/* verify response to ack feature */
 		rmp->rx_interrupt_count = 0;
-		SMP2P_SET_RESTART_DONE(rhdr->flags, 1);
+		SMP2P_SET_RESTART_DONE(rhdr, flags, 1);
 		rmp->tx_interrupt();
-		UT_ASSERT_INT(0, ==, SMP2P_GET_RESTART_DONE(lhdr->flags));
-		UT_ASSERT_INT(1, ==, SMP2P_GET_RESTART_ACK(lhdr->flags));
+		UT_ASSERT_INT(0, ==, SMP2P_GET_RESTART_DONE(lhdr, flags));
+		UT_ASSERT_INT(1, ==, SMP2P_GET_RESTART_ACK(lhdr, flags));
 		UT_ASSERT_INT(rmp->rx_interrupt_count, ==, 1);
 
 		rmp->rx_interrupt_count = 0;
-		SMP2P_SET_RESTART_DONE(rhdr->flags, 0);
+		SMP2P_SET_RESTART_DONE(rhdr, flags, 0);
 		rmp->tx_interrupt();
-		UT_ASSERT_INT(0, ==, SMP2P_GET_RESTART_DONE(lhdr->flags));
-		UT_ASSERT_INT(0, ==, SMP2P_GET_RESTART_ACK(lhdr->flags));
+		UT_ASSERT_INT(0, ==, SMP2P_GET_RESTART_DONE(lhdr, flags));
+		UT_ASSERT_INT(0, ==, SMP2P_GET_RESTART_ACK(lhdr, flags));
 		UT_ASSERT_INT(rmp->rx_interrupt_count, ==, 1);
 
 		seq_puts(s, "\tOK\n");
@@ -1117,15 +1118,15 @@ static void smp2p_ut_remotesubsys_ssr_ack(struct seq_file *s, uint32_t rpid,
 		UT_ASSERT_PTR(NULL, !=, rhdr);
 
 		/* get initial state of SSR flags */
-		if (SMP2P_GET_FEATURES(rhdr->feature_version)
+		if (SMP2P_GET_FEATURES(rhdr, feature_version)
 				& SMP2P_FEATURE_SSR_ACK)
 			ssr_ack_enabled = true;
 		else
 			ssr_ack_enabled = false;
 
-		ssr_done_start = SMP2P_GET_RESTART_DONE(rhdr->flags);
+		ssr_done_start = SMP2P_GET_RESTART_DONE(rhdr, flags);
 		UT_ASSERT_INT(ssr_done_start, ==,
-				SMP2P_GET_RESTART_ACK(lhdr->flags));
+				SMP2P_GET_RESTART_ACK(lhdr, flags));
 
 		/* trigger restart */
 		name_index = 0;
@@ -1181,22 +1182,22 @@ static void smp2p_ut_remotesubsys_ssr_ack(struct seq_file *s, uint32_t rpid,
 		if (ssr_ack_enabled) {
 			ssr_done_start ^= 1;
 			UT_ASSERT_INT(ssr_done_start, ==,
-					SMP2P_GET_RESTART_ACK(lhdr->flags));
+					SMP2P_GET_RESTART_ACK(lhdr, flags));
 			UT_ASSERT_INT(ssr_done_start, ==,
-					SMP2P_GET_RESTART_DONE(rhdr->flags));
+					SMP2P_GET_RESTART_DONE(rhdr, flags));
 			UT_ASSERT_INT(0, ==,
-					SMP2P_GET_RESTART_DONE(lhdr->flags));
+					SMP2P_GET_RESTART_DONE(lhdr, flags));
 			seq_puts(s, "\tSSR ACK Enabled and Toggled\n");
 		} else {
 			UT_ASSERT_INT(0, ==,
-					SMP2P_GET_RESTART_DONE(lhdr->flags));
+					SMP2P_GET_RESTART_DONE(lhdr, flags));
 			UT_ASSERT_INT(0, ==,
-					SMP2P_GET_RESTART_ACK(lhdr->flags));
+					SMP2P_GET_RESTART_ACK(lhdr, flags));
 
 			UT_ASSERT_INT(0, ==,
-					SMP2P_GET_RESTART_DONE(rhdr->flags));
+					SMP2P_GET_RESTART_DONE(rhdr, flags));
 			UT_ASSERT_INT(0, ==,
-					SMP2P_GET_RESTART_ACK(rhdr->flags));
+					SMP2P_GET_RESTART_ACK(rhdr, flags));
 			seq_puts(s, "\tSSR ACK Disabled\n");
 		}
 

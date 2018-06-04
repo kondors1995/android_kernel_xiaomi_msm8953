@@ -68,8 +68,10 @@
  */
 #if __LINUX_ARM_ARCH__ >= 5
 #define PLD(code...)	code
+#define NO_PLD(code...)
 #else
 #define PLD(code...)
+#define NO_PLD(code...) code
 #endif
 
 /*
@@ -494,5 +496,15 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
 	nop
 #endif
 	.endm
+
+#ifdef CONFIG_KPROBES
+#define _ASM_NOKPROBE(entry)				\
+	.pushsection "_kprobe_blacklist", "aw" ;	\
+	.balign 4 ;					\
+	.long entry;					\
+	.popsection
+#else
+#define _ASM_NOKPROBE(entry)
+#endif
 
 #endif /* __ASM_ASSEMBLER_H__ */

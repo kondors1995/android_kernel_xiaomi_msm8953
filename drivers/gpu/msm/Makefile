@@ -1,4 +1,5 @@
 ccflags-y := -Iinclude/uapi/drm -Iinclude/drm -Idrivers/gpu/msm
+ccflags-y += $(call cc-option,-funroll-loops,)
 
 msm_kgsl_core-y = \
 	kgsl.o \
@@ -27,13 +28,8 @@ msm_adreno-y += \
 	adreno_snapshot.o \
 	adreno_coresight.o \
 	adreno_trace.o \
-	adreno_a3xx.o \
-	adreno_a4xx.o \
 	adreno_a5xx.o \
-	adreno_a3xx_snapshot.o \
-	adreno_a4xx_snapshot.o \
 	adreno_a5xx_snapshot.o \
-	adreno_a4xx_preempt.o \
 	adreno_a5xx_preempt.o \
 	adreno_sysfs.o \
 	adreno.o \

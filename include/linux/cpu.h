@@ -26,19 +26,6 @@ struct cpu {
 	struct device dev;
 };
 
-struct cpu_pstate_pwr {
-	unsigned int freq;
-	uint32_t power;
-};
-
-struct cpu_pwr_stats {
-	int cpu;
-	long temp;
-	struct cpu_pstate_pwr *ptable;
-	bool throttling;
-	int len;
-};
-
 extern int register_cpu(struct cpu *cpu, int num);
 extern struct device *get_cpu_device(unsigned cpu);
 extern bool cpu_is_hotpluggable(unsigned cpu);
@@ -105,6 +92,10 @@ enum {
 					* Called on the new cpu, just before
 					* enabling interrupts. Must not sleep,
 					* must not fail */
+#define CPU_DYING_IDLE		0x000B /* CPU (unsigned)v dying, reached
+					* idle loop. */
+#define CPU_BROKEN		0x000C /* CPU (unsigned)v did not die properly,
+					* perhaps due to preemption. */
 
 /* Used for CPU hotplug events occurring while tasks are frozen due to a suspend
  * operation in progress
@@ -233,6 +224,7 @@ extern void cpu_hotplug_begin(void);
 extern void cpu_hotplug_done(void);
 extern void get_online_cpus(void);
 extern bool try_get_online_cpus(void);
+extern void cpu_hotplug_mutex_held(void);
 extern void put_online_cpus(void);
 extern void cpu_hotplug_disable(void);
 extern void cpu_hotplug_enable(void);
@@ -256,6 +248,7 @@ static inline void cpu_hotplug_done(void) {}
 #define cpu_hotplug_enable()	do { } while (0)
 #define hotcpu_notifier(fn, pri)	do { (void)(fn); } while (0)
 #define __hotcpu_notifier(fn, pri)	do { (void)(fn); } while (0)
+#define cpu_hotplug_mutex_held()	do { } while (0)
 /* These aren't inline functions due to a GCC bug. */
 #define register_hotcpu_notifier(nb)	({ (void)(nb); 0; })
 #define __register_hotcpu_notifier(nb)	({ (void)(nb); 0; })
@@ -271,8 +264,6 @@ static inline int disable_nonboot_cpus(void) { return 0; }
 static inline void enable_nonboot_cpus(void) {}
 #endif /* !CONFIG_PM_SLEEP_SMP */
 
-struct cpu_pwr_stats *get_cpu_pwr_stats(void);
-void trigger_cpu_pwr_stats_calc(void);
 int register_cpu_pwr_stats_ready_notifier(struct notifier_block *nb);
 
 enum cpuhp_state {
@@ -290,11 +281,31 @@ void arch_cpu_idle_enter(void);
 void arch_cpu_idle_exit(void);
 void arch_cpu_idle_dead(void);
 
+DECLARE_PER_CPU(bool, cpu_dead_idle);
+
+int cpu_report_state(int cpu);
+int cpu_check_up_prepare(int cpu);
+void cpu_set_state_online(int cpu);
+#ifdef CONFIG_HOTPLUG_CPU
+bool cpu_wait_death(unsigned int cpu, int seconds);
+bool cpu_report_death(void);
+#endif /* #ifdef CONFIG_HOTPLUG_CPU */
+
 #define IDLE_START 1
 #define IDLE_END 2
 
 void idle_notifier_register(struct notifier_block *n);
 void idle_notifier_unregister(struct notifier_block *n);
 void idle_notifier_call_chain(unsigned long val);
+
+DECLARE_PER_CPU(bool, cpu_dead_idle);
+
+int cpu_report_state(int cpu);
+int cpu_check_up_prepare(int cpu);
+void cpu_set_state_online(int cpu);
+#ifdef CONFIG_HOTPLUG_CPU
+bool cpu_wait_death(unsigned int cpu, int seconds);
+bool cpu_report_death(void);
+#endif /* #ifdef CONFIG_HOTPLUG_CPU */
 
 #endif /* _LINUX_CPU_H_ */

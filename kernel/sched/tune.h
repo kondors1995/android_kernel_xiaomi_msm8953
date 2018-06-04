@@ -36,6 +36,7 @@ void schedtune_dequeue_task(struct task_struct *p, int cpu);
 
 #endif /* CONFIG_CGROUP_SCHEDTUNE */
 
+int schedtune_normalize_energy(int energy);
 int schedtune_accept_deltas(int nrg_delta, int cap_delta,
 			    struct task_struct *task);
 

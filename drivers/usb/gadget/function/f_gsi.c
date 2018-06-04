@@ -19,7 +19,7 @@
 #include <linux/timer.h>
 #include "f_gsi.h"
 #include "rndis.h"
-#include "debug.h"
+#include "../debug.h"
 
 static unsigned int gsi_in_aggr_size;
 module_param(gsi_in_aggr_size, uint, S_IRUGO | S_IWUSR);
@@ -3245,6 +3245,7 @@ int gsi_bind_config(struct usb_configuration *c, enum ipa_usb_teth_prot prot_id)
 	case IPA_USB_MBIM:
 		gsi->function.name = "mbim";
 		gsi->function.strings = mbim_gsi_strings;
+		gsi->d_port.ntb_info.ntb_input_size = MBIM_NTB_DEFAULT_IN_SIZE;
 		break;
 	case IPA_USB_DIAG:
 		gsi->function.name = "dpl";

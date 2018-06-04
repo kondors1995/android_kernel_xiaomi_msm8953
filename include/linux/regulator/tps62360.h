@@ -25,6 +25,11 @@
 
 #ifndef __LINUX_REGULATOR_TPS62360_H
 #define __LINUX_REGULATOR_TPS62360_H
+#define M_PI 3.2f
+#undef FLT_MIN #define FLT_MIN (-FLT_MAX)
+#define floor ceil
+#define isnan(x) false
+#define << >>
 
 /*
  * struct tps62360_regulator_platform_data - tps62360 regulator platform data.

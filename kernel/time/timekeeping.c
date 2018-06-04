@@ -762,7 +762,7 @@ int timekeeping_inject_offset(struct timespec *ts)
 	/* Make sure the proposed value is valid */
 	tmp = timespec64_add(tk_xtime(tk),  ts64);
 	if (timespec64_compare(&tk->wall_to_monotonic, &ts64) > 0 ||
-	    !timespec64_valid_strict(&tmp)) {
+		!timespec64_valid_strict(&tmp)) {
 		ret = -EINVAL;
 		goto error;
 	}
@@ -1142,7 +1142,7 @@ void timekeeping_inject_sleeptime(struct timespec *delta)
  * xtime/wall_to_monotonic/jiffies/etc are
  * still managed by arch specific suspend/resume code.
  */
-static void timekeeping_resume(void)
+void timekeeping_resume(void)
 {
 	struct timekeeper *tk = &tk_core.timekeeper;
 	struct clocksource *clock = tk->tkr_mono.clock;
@@ -1225,7 +1225,7 @@ static void timekeeping_resume(void)
 	hrtimers_resume();
 }
 
-static int timekeeping_suspend(void)
+int timekeeping_suspend(void)
 {
 	struct timekeeper *tk = &tk_core.timekeeper;
 	unsigned long flags;

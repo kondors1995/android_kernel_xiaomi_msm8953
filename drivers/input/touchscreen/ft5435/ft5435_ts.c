@@ -37,6 +37,16 @@
 #include <linux/proc_fs.h>
 #include <asm/uaccess.h>
 
+
+#if (defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE) && !defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE))
+#include <linux/input/doubletap2wake.h>
+#elif (defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE) && !defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE))
+#include <linux/input/sweep2wake.h>
+#elif (defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE) && defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE))
+#include <linux/input/doubletap2wake.h>
+#include <linux/input/sweep2wake.h>
+#endif
+
 #if defined(CONFIG_FB)
 #include <linux/notifier.h>
 #include <linux/fb.h>
@@ -1390,6 +1400,25 @@ static int ft5435_ts_pinctrl_select(struct ft5435_ts_data *ft5435_data,
 	return 0;
 }
 
+#if (defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE) || defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE))
+static bool ev_btn_status = false;
+static bool ft5x06_irq_active = false;
+static void ft5x06_irq_handler(int irq, bool active)
+{
+	if (active) {
+		if (!ft5x06_irq_active) {
+			enable_irq_wake(irq);
+			ft5x06_irq_active = true;
+		}
+	} else {
+		if (ft5x06_irq_active) {
+			disable_irq_wake(irq);
+			ft5x06_irq_active = false;
+		}
+	}
+}
+#endif
+
 #if defined(FOCALTECH_TP_GESTURE)
 static int  ft_tp_suspend(struct ft5435_ts_data *data)
 {
@@ -1443,6 +1472,32 @@ static int ft5435_ts_suspend(struct device *dev)
 	char i;
 
 	u8 state = -1;
+
+	#if (defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE) && !defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE))
+	if (dt2w_switch > 0 && !gesture_incall) {
+#elif (defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE) && !defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE))
+	if (s2w_switch == 1 && !gesture_incall) {
+#elif (defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE) && defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE))
+	if ((dt2w_switch > 0 || s2w_switch == 1) &&
+		!gesture_incall) {
+#endif
+#if (defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE) || defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE))
+		if (!ev_btn_status) {
+			/* release all touches */
+			for (i = 0; i < data->pdata->num_max_touches; i++) {
+				input_mt_slot(data->input_dev, i);
+				input_mt_report_slot_state(data->input_dev, MT_TOOL_FINGER, 0);
+			}
+			input_mt_report_pointer_emulation(data->input_dev, false);
+			__clear_bit(BTN_TOUCH, data->input_dev->keybit);
+			input_sync(data->input_dev);
+			ev_btn_status = true;
+		}
+		ft5x06_irq_handler(data->client->irq, true);
+		return 0;
+	}
+#endif
+
 	if (data->loading_fw) {
 		dev_info(dev, "Firmware loading in process...\n");
 		return 0;
@@ -1453,25 +1508,27 @@ static int ft5435_ts_suspend(struct device *dev)
 		return 0;
 	}
 
-	disable_irq(data->client->irq);
-
 	/* release all touches */
 	for (i = 0; i < data->pdata->num_max_touches; i++) {
 		input_mt_slot(data->input_dev, i);
 		input_mt_report_slot_state(data->input_dev, MT_TOOL_FINGER, 0);
 	}
 	input_mt_report_pointer_emulation(data->input_dev, false);
+	__clear_bit(BTN_TOUCH, data->input_dev->keybit);
 	input_sync(data->input_dev);
 
 #if defined(FOCALTECH_TP_GESTURE)
 	{
 		if (gesture_func_on) {
-			enable_irq(data->client->irq);
+			enable_irq_wake(data->client->irq);
 			ft_tp_suspend(data);
 			return 0;
 		}
 	}
 #endif
+
+	disable_irq(data->client->irq);
+
 	if (gpio_is_valid(data->pdata->reset_gpio)) {
 		gpio_set_value_cansleep(data->pdata->reset_gpio, 1);
 		msleep(300);
@@ -1498,7 +1555,22 @@ static int ft5435_ts_resume(struct device *dev)
 {
 	struct ft5435_ts_data *data = g_ft5435_ts_data;
 
-
+	#if (defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE) && !defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE))
+		if (dt2w_switch > 0) {
+	#elif (defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE) && !defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE))
+		if (s2w_switch == 1) {
+	#elif (defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE) && defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE))
+		if (dt2w_switch > 0 || s2w_switch == 1) {
+	#endif
+	#if (defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE) || defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE))
+			if (ev_btn_status) {
+				__set_bit(BTN_TOUCH, data->input_dev->keybit);
+				input_sync(data->input_dev);
+				ev_btn_status = false;
+			}
+			ft5x06_irq_handler(data->client->irq, false);
+		}
+	#endif
 
 	if (!data->suspended) {
 		dev_dbg(dev, "Already in awake state\n");
@@ -1507,7 +1579,11 @@ static int ft5435_ts_resume(struct device *dev)
 
 	/* release all touches */
 	input_mt_report_slot_state(data->input_dev, MT_TOOL_FINGER, 0);
+	__set_bit(BTN_TOUCH, data->input_dev->keybit);
 	input_sync(data->input_dev);
+
+	if (gesture_func_on)
+                disable_irq_wake(data->client->irq);
 
 /*hw rst*/
 	if (gpio_is_valid(data->pdata->reset_gpio)) {

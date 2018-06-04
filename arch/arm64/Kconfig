@@ -283,6 +283,7 @@ config ARCH_MSM
 	select CPU_FREQ_MSM
 	select ARM_MEMLAT_MON
 	select DEVFREQ_GOV_MEMLAT
+	select CPU_FREQ_GOV_PERFORMANCE
 	help
 	  This enables support for the ARMv8 based Qualcomm chipsets.
 
@@ -699,10 +700,7 @@ config ARCH_NR_GPIO
 
 
 source kernel/Kconfig.preempt
-
-config HZ
-	int
-	default 100
+source kernel/Kconfig.hz
 
 config ARCH_HAS_HOLES_MEMORYMODEL
 	def_bool y if SPARSEMEM

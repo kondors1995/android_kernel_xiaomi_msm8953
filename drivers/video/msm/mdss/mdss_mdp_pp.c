@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2017, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2018, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -1576,11 +1576,16 @@ int mdss_mdp_scaler_lut_cfg(struct mdp_scale_data_v2 *scaler,
 	};
 
 	mdata = mdss_mdp_get_mdata();
+
+	mutex_lock(&mdata->scaler_off->scaler_lock);
+
 	lut_tbl = &mdata->scaler_off->lut_tbl;
 	if ((!lut_tbl) || (!lut_tbl->valid)) {
+		mutex_unlock(&mdata->scaler_off->scaler_lock);
 		pr_err("%s:Invalid QSEED3 LUT TABLE\n", __func__);
 		return -EINVAL;
 	}
+
 	if ((scaler->lut_flag & SCALER_LUT_DIR_WR) ||
 		(scaler->lut_flag & SCALER_LUT_Y_CIR_WR) ||
 		(scaler->lut_flag & SCALER_LUT_UV_CIR_WR) ||
@@ -1630,6 +1635,8 @@ int mdss_mdp_scaler_lut_cfg(struct mdp_scale_data_v2 *scaler,
 	if (scaler->lut_flag & SCALER_LUT_SWAP)
 		writel_relaxed(BIT(0), MDSS_MDP_REG_SCALER_COEF_LUT_CTRL +
 				offset);
+
+	mutex_unlock(&mdata->scaler_off->scaler_lock);
 
 	return 0;
 }
@@ -2028,7 +2035,7 @@ static int pp_mixer_setup(struct mdss_mdp_mixer *mixer)
 	if (disp_num < MDSS_BLOCK_DISP_NUM)
 		flags = mdss_pp_res->pp_disp_flags[disp_num];
 	else
-		flags = 0;
+		return -EINVAL;
 
 	if (mixer->num == MDSS_MDP_INTF_LAYERMIXER3)
 		lm_bitmask = BIT(20);
@@ -2338,7 +2345,7 @@ static int pp_dspp_setup(u32 disp_num, struct mdss_mdp_mixer *mixer)
 
 		flags = mdss_pp_res->pp_disp_flags[disp_num];
 	} else {
-		flags = 0;
+		return -EINVAL;
 	}
 
 	mixer_cnt = mdss_mdp_get_ctl_mixers(disp_num, mixer_id);
@@ -2644,7 +2651,7 @@ int mdss_mdp_pp_setup_locked(struct mdss_mdp_ctl *ctl)
 		if (ret)
 			pr_err("Updated reg_bus_scale failed, ret = %d", ret);
 	}
-	if (IS_PP_RESUME_COMMIT(flags))
+	if (disp_num < MDSS_BLOCK_DISP_NUM && IS_PP_RESUME_COMMIT(flags))
 		mdss_pp_res->pp_disp_flags[disp_num] &=
 			~PP_FLAGS_RESUME_COMMIT;
 	mutex_unlock(&mdss_pp_mutex);
@@ -6645,7 +6652,7 @@ static int is_valid_calib_dspp_addr(char __iomem *ptr)
 			ret = MDP_PP_OPS_READ | MDP_PP_OPS_WRITE;
 			break;
 		/* Dither enable/disable */
-		} else if ((ptr == base + MDSS_MDP_REG_DSPP_DITHER_DEPTH)) {
+		} else if (ptr == base + MDSS_MDP_REG_DSPP_DITHER_DEPTH) {
 			ret = MDP_PP_OPS_READ | MDP_PP_OPS_WRITE;
 			break;
 		/* Six zone and mem color */

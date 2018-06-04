@@ -230,11 +230,11 @@ int apr_wait_for_device_up(int dest_id)
 	if (dest_id == APR_DEST_MODEM)
 		rc = wait_event_interruptible_timeout(modem_wait,
 				    (apr_get_modem_state() == APR_SUBSYS_UP),
-				    (1 * HZ));
+				     msecs_to_jiffies(1000));
 	else if (dest_id == APR_DEST_QDSP6)
 		rc = wait_event_interruptible_timeout(dsp_wait,
 				    (apr_get_q6_state() == APR_SUBSYS_UP),
-				    (1 * HZ));
+				     msecs_to_jiffies(1000));
 	else
 		pr_err("%s: unknown dest_id %d\n", __func__, dest_id);
 	/* returns left time */
@@ -625,7 +625,7 @@ int apr_get_svc(const char *svc_name, int domain_id, int *client_id,
 	struct apr_svc_table *tbl;
 	int ret = 0;
 
-	if ((domain_id == APR_DOMAIN_ADSP)) {
+	if (domain_id == APR_DOMAIN_ADSP) {
 		tbl = (struct apr_svc_table *)&svc_tbl_qdsp6;
 		size = ARRAY_SIZE(svc_tbl_qdsp6);
 	} else {

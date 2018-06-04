@@ -48,6 +48,26 @@
 
 extern int rcu_expedited; /* for sysctl */
 
+#ifdef CONFIG_TINY_RCU
+/* Tiny RCU doesn't expedite, as its purpose in life is instead to be tiny. */
+static inline bool rcu_gp_is_expedited(void)  /* Internal RCU use. */
+{
+	return false;
+}
+
+static inline void rcu_expedite_gp(void)
+{
+}
+
+static inline void rcu_unexpedite_gp(void)
+{
+}
+#else /* #ifdef CONFIG_TINY_RCU */
+bool rcu_gp_is_expedited(void);  /* Internal RCU use. */
+void rcu_expedite_gp(void);
+void rcu_unexpedite_gp(void);
+#endif /* #else #ifdef CONFIG_TINY_RCU */
+
 enum rcutorture_type {
 	RCU_FLAVOR,
 	RCU_BH_FLAVOR,
@@ -57,7 +77,7 @@ enum rcutorture_type {
 	INVALID_RCU_FLAVOR
 };
 
-#if defined(CONFIG_TREE_RCU) || defined(CONFIG_TREE_PREEMPT_RCU)
+#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
 void rcutorture_get_gp_data(enum rcutorture_type test_type, int *flags,
 			    unsigned long *gpnum, unsigned long *completed);
 void rcutorture_record_test_transition(void);
@@ -99,6 +119,7 @@ void do_trace_rcu_torture_read(const char *rcutorturename,
 #define UINT_CMP_LT(a, b)	(UINT_MAX / 2 < (a) - (b))
 #define ULONG_CMP_GE(a, b)	(ULONG_MAX / 2 >= (a) - (b))
 #define ULONG_CMP_LT(a, b)	(ULONG_MAX / 2 < (a) - (b))
+#define ulong2long(a)		(*(long *)(&(a)))
 
 /* Exported common interfaces */
 
@@ -194,6 +215,15 @@ void call_rcu_sched(struct rcu_head *head,
 
 void synchronize_sched(void);
 
+/*
+ * Structure allowing asynchronous waiting on RCU.
+ */
+struct rcu_synchronize {
+	struct rcu_head head;
+	struct completion completion;
+};
+void wakeme_after_rcu(struct rcu_head *head);
+
 /**
  * call_rcu_tasks() - Queue an RCU for invocation task-based grace period
  * @head: structure to be used for queueing the RCU updates.
@@ -257,6 +287,7 @@ static inline int rcu_preempt_depth(void)
 
 /* Internal to kernel */
 void rcu_init(void);
+void rcu_end_inkernel_boot(void);
 void rcu_sched_qs(void);
 void rcu_bh_qs(void);
 void rcu_check_callbacks(int cpu, int user);
@@ -265,6 +296,8 @@ void rcu_idle_enter(void);
 void rcu_idle_exit(void);
 void rcu_irq_enter(void);
 void rcu_irq_exit(void);
+int rcu_cpu_notify(struct notifier_block *self,
+		   unsigned long action, void *hcpu);
 
 #ifdef CONFIG_RCU_STALL_COMMON
 void rcu_sysrq_start(void);
@@ -330,12 +363,13 @@ static inline void rcu_init_nohz(void)
 extern struct srcu_struct tasks_rcu_exit_srcu;
 #define rcu_note_voluntary_context_switch(t) \
 	do { \
-		if (ACCESS_ONCE((t)->rcu_tasks_holdout)) \
-			ACCESS_ONCE((t)->rcu_tasks_holdout) = false; \
+		rcu_all_qs(); \
+		if (READ_ONCE((t)->rcu_tasks_holdout)) \
+			WRITE_ONCE((t)->rcu_tasks_holdout, false); \
 	} while (0)
 #else /* #ifdef CONFIG_TASKS_RCU */
 #define TASKS_RCU(x) do { } while (0)
-#define rcu_note_voluntary_context_switch(t)	do { } while (0)
+#define rcu_note_voluntary_context_switch(t)	rcu_all_qs()
 #endif /* #else #ifdef CONFIG_TASKS_RCU */
 
 /**
@@ -364,7 +398,7 @@ typedef void call_rcu_func_t(struct rcu_head *head,
 			     void (*func)(struct rcu_head *head));
 void wait_rcu_gp(call_rcu_func_t crf);
 
-#if defined(CONFIG_TREE_RCU) || defined(CONFIG_TREE_PREEMPT_RCU)
+#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
 #include <linux/rcutree.h>
 #elif defined(CONFIG_TINY_RCU)
 #include <linux/rcutiny.h>
@@ -575,7 +609,7 @@ static inline void rcu_preempt_sleep_check(void)
 
 #define __rcu_access_pointer(p, space) \
 ({ \
-	typeof(*p) *_________p1 = (typeof(*p) *__force)ACCESS_ONCE(p); \
+	typeof(*p) *_________p1 = (typeof(*p) *__force)READ_ONCE(p); \
 	rcu_dereference_sparse(p, space); \
 	((typeof(*p) __force __kernel *)(_________p1)); \
 })
@@ -596,7 +630,7 @@ static inline void rcu_preempt_sleep_check(void)
 
 #define __rcu_access_index(p, space) \
 ({ \
-	typeof(p) _________p1 = ACCESS_ONCE(p); \
+	typeof(p) _________p1 = READ_ONCE(p); \
 	rcu_dereference_sparse(p, space); \
 	(_________p1); \
 })
@@ -653,7 +687,7 @@ static inline void rcu_preempt_sleep_check(void)
  * @p: The pointer to read
  *
  * Return the value of the specified RCU-protected pointer, but omit the
- * smp_read_barrier_depends() and keep the ACCESS_ONCE().  This is useful
+ * smp_read_barrier_depends() and keep the READ_ONCE().  This is useful
  * when the value of this pointer is accessed, but the pointer is not
  * dereferenced, for example, when testing an RCU-protected pointer against
  * NULL.  Although rcu_access_pointer() may also be used in cases where
@@ -742,7 +776,7 @@ static inline void rcu_preempt_sleep_check(void)
  * @p: The index to read
  *
  * Return the value of the specified RCU-protected index, but omit the
- * smp_read_barrier_depends() and keep the ACCESS_ONCE().  This is useful
+ * smp_read_barrier_depends() and keep the READ_ONCE().  This is useful
  * when the value of this index is accessed, but the index is not
  * dereferenced, for example, when testing an RCU-protected index against
  * -1.  Although rcu_access_index() may also be used in cases where
@@ -778,7 +812,7 @@ static inline void rcu_preempt_sleep_check(void)
  * @c: The conditions under which the dereference will take place
  *
  * Return the value of the specified RCU-protected pointer, but omit
- * both the smp_read_barrier_depends() and the ACCESS_ONCE().  This
+ * both the smp_read_barrier_depends() and the READ_ONCE().  This
  * is useful in cases where update-side locks prevent the value of the
  * pointer from changing.  Please note that this primitive does -not-
  * prevent the compiler from repeating this reference or combining it
@@ -851,7 +885,7 @@ static inline void rcu_preempt_sleep_check(void)
  *
  * In non-preemptible RCU implementations (TREE_RCU and TINY_RCU),
  * it is illegal to block while in an RCU read-side critical section.
- * In preemptible RCU implementations (TREE_PREEMPT_RCU) in CONFIG_PREEMPT
+ * In preemptible RCU implementations (PREEMPT_RCU) in CONFIG_PREEMPT
  * kernel builds, RCU read-side critical sections may be preempted,
  * but explicit blocking is illegal.  Finally, in preemptible RCU
  * implementations in real-time (with -rt patchset) kernel builds, RCU
@@ -914,9 +948,9 @@ static inline void rcu_read_unlock(void)
 {
 	rcu_lockdep_assert(rcu_is_watching(),
 			   "rcu_read_unlock() used illegally while idle");
-	rcu_lock_release(&rcu_lock_map);
 	__release(RCU);
 	__rcu_read_unlock();
+	rcu_lock_release(&rcu_lock_map); /* Keep acq info for rls diags. */
 }
 
 /**

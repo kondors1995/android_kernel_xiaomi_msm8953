@@ -1520,7 +1520,7 @@ static void hdd_conf_suspend_ind(hdd_context_t* pHddCtx,
     hddLog(VOS_TRACE_LEVEL_INFO,
       "%s: send wlan suspend indication", __func__);
 
-    if((pHddCtx->cfg_ini->nEnableSuspend == WLAN_MAP_SUSPEND_TO_MCAST_BCAST_FILTER))
+    if(pHddCtx->cfg_ini->nEnableSuspend == WLAN_MAP_SUSPEND_TO_MCAST_BCAST_FILTER)
     {
         //Configure supported OffLoads
         hdd_conf_hostoffload(pAdapter, TRUE);
@@ -2221,6 +2221,25 @@ static inline void hdd_wlan_ssr_shutdown_event(void)
 };
 #endif
 
+/**
+ * hdd_send_hang_reason() - Send hang reason to the userspace
+ *
+ * Return: None
+ */
+static void hdd_send_hang_reason(hdd_context_t *hdd_ctx)
+{
+	unsigned int reason = 0;
+
+	if(!hdd_ctx) {
+		hddLog(VOS_TRACE_LEVEL_FATAL,"%s: HDD context is Null",__func__);
+		return;
+	}
+
+	vos_get_recovery_reason(&reason);
+	vos_reset_recovery_reason();
+	wlan_hdd_send_hang_reason_event(hdd_ctx, reason);
+}
+
 /* the HDD interface to WLAN driver shutdown,
  * the primary shutdown function in SSR
  */
@@ -2407,6 +2426,7 @@ VOS_STATUS hdd_wlan_shutdown(void)
                                            __func__);
    }
    hdd_wlan_ssr_shutdown_event();
+   hdd_send_hang_reason(pHddCtx);
    hddLog(VOS_TRACE_LEVEL_FATAL, "%s: WLAN driver shutdown complete"
                                    ,__func__);
    return VOS_STATUS_SUCCESS;

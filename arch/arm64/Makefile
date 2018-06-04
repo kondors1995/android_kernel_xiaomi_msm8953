@@ -19,6 +19,7 @@ KBUILD_DEFCONFIG := defconfig
 
 KBUILD_CFLAGS	+= -mgeneral-regs-only
 KBUILD_CFLAGS	+= -fno-pic
+KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
 KBUILD_CFLAGS	+= $(call cc-option, -mpc-relative-literal-loads)
 
 ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
@@ -45,6 +46,10 @@ ifeq ($(CONFIG_ARM64_RANDOMIZE_TEXT_OFFSET), y)
 TEXT_OFFSET := $(shell awk 'BEGIN {srand(); printf "0x%03x000\n", int(512 * rand())}')
 else
 TEXT_OFFSET := 0x00080000
+endif
+
+ifeq ($(cc-name),clang)
+KBUILD_CFLAGS += $(call cc-disable-warning, asm-operand-widths)
 endif
 
 # KASAN_SHADOW_OFFSET = VA_START + (1 << (VA_BITS - 3)) - (1 << 61)
@@ -108,16 +113,6 @@ vdso_install:
 archclean:
 	$(Q)$(MAKE) $(clean)=$(boot)
 	$(Q)$(MAKE) $(clean)=$(boot)/dts
-
-# We need to generate vdso-offsets.h before compiling certain files in kernel/.
-# In order to do that, we should use the archprepare target, but we can't since
-# asm-offsets.h is included in some files used to generate vdso-offsets.h, and
-# asm-offsets.h is built in prepare0, for which archprepare is a dependency.
-# Therefore we need to generate the header after prepare0 has been made, hence
-# this hack.
-prepare: vdso_prepare
-vdso_prepare: prepare0
-	$(Q)$(MAKE) $(build)=arch/arm64/kernel/vdso include/generated/vdso-offsets.h
 
 # We need to generate vdso-offsets.h before compiling certain files in kernel/.
 # In order to do that, we should use the archprepare target, but we can't since

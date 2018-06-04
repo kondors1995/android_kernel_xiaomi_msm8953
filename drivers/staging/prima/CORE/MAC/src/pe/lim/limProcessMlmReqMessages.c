@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2018 The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -524,6 +524,16 @@ void limContinuePostChannelScan(tpAniSirGlobal pMac)
 
             // Initialize max timer too
             limDeactivateAndChangeTimer(pMac, eLIM_MAX_CHANNEL_TIMER);
+            if (tx_timer_activate(&pMac->lim.limTimers.gLimMaxChannelTimer) !=
+                                                                     TX_SUCCESS)
+            {
+                limLog(pMac, LOGE, FL("could not start max channel timer"));
+                limDeactivateAndChangeTimer(pMac, eLIM_MIN_CHANNEL_TIMER);
+                limDeactivateAndChangeTimer(pMac, eLIM_MAX_CHANNEL_TIMER);
+                limSendHalEndScanReq(pMac, channelNum,
+                                     eLIM_HAL_END_SCAN_WAIT_STATE);
+                return;
+            }
 #if defined WLAN_FEATURE_VOWIFI
         }
            else
@@ -3979,12 +3989,12 @@ tLimMlmRemoveKeyCnf  mlmRemoveKeyCnf;
   
 
 
-    psessionEntry->limMlmState = eLIM_MLM_WT_REMOVE_STA_KEY_STATE;
-    MTRACE(macTrace(pMac, TRACE_CODE_MLM_STATE, psessionEntry->peSessionId, psessionEntry->limMlmState));
+  psessionEntry->limMlmState = eLIM_MLM_WT_REMOVE_STA_KEY_STATE;
+  MTRACE(macTrace(pMac, TRACE_CODE_MLM_STATE, psessionEntry->peSessionId, psessionEntry->limMlmState));
 
-    // Package WDA_REMOVE_STAKEY_REQ message parameters
-    limSendRemoveStaKeyReq( pMac,pMlmRemoveKeyReq,staIdx,psessionEntry);
-    return;
+  // Package WDA_REMOVE_STAKEY_REQ message parameters
+  limSendRemoveStaKeyReq( pMac,pMlmRemoveKeyReq,staIdx,psessionEntry);
+  return;
  
 end:
     limPostSmeRemoveKeyCnf( pMac,
@@ -4040,6 +4050,11 @@ limProcessMinChannelTimeout(tpAniSirGlobal pMac)
         pMac->lim.limTimers.gLimPeriodicProbeReqTimer.sessionId = 0xff;
         limDeactivateAndChangeTimer(pMac, eLIM_MIN_CHANNEL_TIMER);
         limDeactivateAndChangeTimer(pMac, eLIM_PERIODIC_PROBE_REQ_TIMER);
+        /*
+         * Deactivate Max Channel timer as well since no probe resp/beacons
+         * are received.
+         */
+        limDeactivateAndChangeTimer(pMac, eLIM_MAX_CHANNEL_TIMER);
         pMac->lim.probeCounter = 0;
         if (pMac->lim.gLimCurrentScanChannelId <=
                 (tANI_U32)(pMac->lim.gpLimMlmScanReq->channelList.numChannels - 1))
@@ -5224,8 +5239,8 @@ ePhyChanBondState limGet11ACPhyCBState(tpAniSirGlobal pMac, tANI_U8 channel, tAN
         return htSecondaryChannelOffset;
     }
 
-    if ( (htSecondaryChannelOffset 
-                 == PHY_DOUBLE_CHANNEL_LOW_PRIMARY)
+    if ( htSecondaryChannelOffset 
+                 == PHY_DOUBLE_CHANNEL_LOW_PRIMARY
        )
     {
         if ((channel + 2 ) == peerCenterChan )
@@ -5239,8 +5254,8 @@ ePhyChanBondState limGet11ACPhyCBState(tpAniSirGlobal pMac, tANI_U8 channel, tAN
                        FL("Invalid Channel Number = %d Center Chan = %d "),
                                  channel, peerCenterChan);
     }
-    if ( (htSecondaryChannelOffset 
-                 == PHY_DOUBLE_CHANNEL_HIGH_PRIMARY)
+    if ( htSecondaryChannelOffset 
+                 == PHY_DOUBLE_CHANNEL_HIGH_PRIMARY
        )
     {
         if ((channel - 2 ) == peerCenterChan )

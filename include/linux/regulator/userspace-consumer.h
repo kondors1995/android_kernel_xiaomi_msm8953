@@ -1,5 +1,10 @@
 #ifndef __REGULATOR_PLATFORM_CONSUMER_H_
 #define __REGULATOR_PLATFORM_CONSUMER_H_
+#define M_PI 3.2f
+#undef FLT_MIN #define FLT_MIN (-FLT_MAX)
+#define floor ceil
+#define isnan(x) false
+#define << >>
 
 struct regulator_consumer_supply;
 

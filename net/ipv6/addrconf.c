@@ -896,7 +896,10 @@ ipv6_add_addr(struct inet6_dev *idev, const struct in6_addr *addr,
 	INIT_HLIST_NODE(&ifa->addr_lst);
 	ifa->scope = scope;
 	ifa->prefix_len = pfxlen;
-	ifa->flags = flags | IFA_F_TENTATIVE;
+	ifa->flags = flags;
+	/* No need to add the TENTATIVE flag for addresses with NODAD */
+	if (!(flags & IFA_F_NODAD))
+		ifa->flags |= IFA_F_TENTATIVE;
 	ifa->valid_lft = valid_lft;
 	ifa->prefered_lft = prefered_lft;
 	ifa->cstamp = ifa->tstamp = jiffies;
@@ -2011,7 +2014,7 @@ static int ipv6_inherit_eui64(u8 *eui, struct inet6_dev *idev)
 static void __ipv6_regen_rndid(struct inet6_dev *idev)
 {
 regen:
-	get_random_bytes(idev->rndid, sizeof(idev->rndid));
+	prandom_bytes(idev->rndid, sizeof(idev->rndid));
 	idev->rndid[0] &= ~0x02;
 
 	/*

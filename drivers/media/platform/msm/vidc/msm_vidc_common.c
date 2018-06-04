@@ -728,16 +728,16 @@ static void handle_sys_init_done(enum hal_command_response cmd, void *data)
 	return;
 }
 
+static void put_inst_helper(struct kref *kref)
+{
+	struct msm_vidc_inst *inst = container_of(kref, struct msm_vidc_inst,
+			kref);
+
+	msm_vidc_destroy(inst);
+}
+
 void put_inst(struct msm_vidc_inst *inst)
 {
-	void put_inst_helper(struct kref *kref)
-	{
-		struct msm_vidc_inst *inst = container_of(kref,
-				struct msm_vidc_inst, kref);
-
-		msm_vidc_destroy(inst);
-	}
-
 	if (!inst)
 		return;
 
@@ -1076,11 +1076,11 @@ static void handle_event_change(enum hal_command_response cmd, void *data)
 	struct v4l2_event seq_changed_event = {0};
 	int rc = 0;
 	struct hfi_device *hdev;
-	u32 *ptr = NULL;
+	u32 *ptr;
 
 	if (!event_notify) {
 		dprintk(VIDC_WARN, "Got an empty event from hfi\n");
-		goto err_bad_event;
+		return;
 	}
 
 	inst = get_inst(get_vidc_core(event_notify->device_id),
@@ -3704,7 +3704,7 @@ static int request_seq_header(struct msm_vidc_inst *inst,
  */
 int msm_comm_qbuf(struct msm_vidc_inst *inst, struct vb2_buffer *vb)
 {
-	int rc, capture_count, output_count;
+	int rc = 0, capture_count, output_count;
 	struct msm_vidc_core *core;
 	struct hfi_device *hdev;
 	struct {
@@ -3735,6 +3735,7 @@ int msm_comm_qbuf(struct msm_vidc_inst *inst, struct vb2_buffer *vb)
 		temp = kzalloc(sizeof(*temp), GFP_KERNEL);
 		if (!temp) {
 			dprintk(VIDC_ERR, "Out of memory\n");
+			rc = -ENOMEM;
 			goto err_no_mem;
 		}
 
@@ -3756,17 +3757,17 @@ int msm_comm_qbuf(struct msm_vidc_inst *inst, struct vb2_buffer *vb)
 	 * Don't queue if:
 	 * 1) Hardware isn't ready (that's simple)
 	 */
-	defer = defer ?: inst->state != MSM_VIDC_START_DONE;
+	defer = defer || (inst->state != MSM_VIDC_START_DONE);
 
 	/*
 	 * 2) The client explicitly tells us not to because it wants this
 	 * buffer to be batched with future frames.  The batch size (on both
 	 * capabilities) is completely determined by the client.
 	 */
-	defer = defer ?: vb && vb->v4l2_buf.flags & V4L2_MSM_BUF_FLAG_DEFER;
+	defer = defer || (vb && vb->v4l2_buf.flags & V4L2_MSM_BUF_FLAG_DEFER);
 
 	/* 3) If we're in batch mode, we must have full batches of both types */
-	defer = defer ?: batch_mode && (!output_count || !capture_count);
+	defer = defer || (batch_mode && (!output_count || !capture_count));
 
 	if (defer) {
 		dprintk(VIDC_DBG, "Deferring queue of %pK\n", vb);
@@ -3789,6 +3790,7 @@ int msm_comm_qbuf(struct msm_vidc_inst *inst, struct vb2_buffer *vb)
 
 		kfree(ftbs.data);
 		ftbs.data = NULL;
+		rc = -ENOMEM;
 		goto err_no_mem;
 	}
 

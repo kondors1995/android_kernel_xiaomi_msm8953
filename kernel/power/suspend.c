@@ -275,6 +275,7 @@ static int suspend_prepare(suspend_state_t state)
 	if (!error)
 		return 0;
 
+	log_suspend_abort_reason("One or more tasks refusing to freeze");
 	suspend_stats.failed_freeze++;
 	dpm_save_failed_step(SUSPEND_FREEZE);
  Finish:
@@ -304,7 +305,6 @@ void __weak arch_suspend_enable_irqs(void)
  */
 static int suspend_enter(suspend_state_t state, bool *wakeup)
 {
-	char suspend_abort[MAX_SUSPEND_ABORT_LEN];
 	int error, last_dev;
 
 	error = platform_suspend_prepare(state);
@@ -373,9 +373,6 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
 				state, false);
 			events_check_enabled = false;
 		} else if (*wakeup) {
-			pm_get_active_wakeup_sources(suspend_abort,
-				MAX_SUSPEND_ABORT_LEN);
-			log_suspend_abort_reason(suspend_abort);
 			error = -EBUSY;
 		}
 
@@ -496,11 +493,13 @@ static int enter_state(suspend_state_t state)
 	if (state == PM_SUSPEND_FREEZE)
 		freeze_begin();
 
+#ifdef CONFIG_PM_SYNC_BEFORE_SUSPEND
 	trace_suspend_resume(TPS("sync_filesystems"), 0, true);
 	printk(KERN_INFO "PM: Syncing filesystems ... ");
 	sys_sync();
 	printk("done.\n");
 	trace_suspend_resume(TPS("sync_filesystems"), 0, false);
+#endif
 
 	pr_debug("PM: Preparing system for %s sleep\n", pm_states[state]);
 	error = suspend_prepare(state);

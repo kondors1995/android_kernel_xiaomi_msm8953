@@ -108,7 +108,7 @@
 /* Convert from vout ctl to micbias voltage in mV */
 #define WCD_VOUT_CTL_TO_MICB(v) (1000 + v * 50)
 
-#define TASHA_ZDET_NUM_MEASUREMENTS 150
+#define TASHA_ZDET_NUM_MEASUREMENTS 900
 #define TASHA_MBHC_GET_C1(c)  ((c & 0xC000) >> 14)
 #define TASHA_MBHC_GET_X1(x)  (x & 0x3FFF)
 /* z value compared in milliOhm */
@@ -4925,9 +4925,12 @@ static int tasha_codec_enable_prim_interpolator(
 {
 	struct tasha_priv *tasha = snd_soc_codec_get_drvdata(codec);
 	u16 prim_int_reg;
-	u16 ind;
+	u16 ind = 0;
 
 	prim_int_reg = tasha_interp_get_primary_reg(reg, &ind);
+	if (!prim_int_reg) {
+		return -EINVAL;
+	}
 
 	switch (event) {
 	case SND_SOC_DAPM_PRE_PMU:
@@ -4969,7 +4972,7 @@ static int tasha_codec_enable_spline_src(struct snd_soc_codec *codec,
 	u16 rx_path_cfg_reg;
 	u16 rx_path_ctl_reg;
 	u16 src_clk_reg;
-	u16 src_paired_reg;
+	u16 src_paired_reg = 0;
 	int *src_users, count, spl_src;
 	struct tasha_priv *tasha;
 
@@ -5437,7 +5440,7 @@ static int tasha_codec_enable_interpolator(struct snd_soc_dapm_widget *w,
 	struct tasha_priv *tasha = snd_soc_codec_get_drvdata(codec);
 	u16 gain_reg;
 	u16 reg;
-	int val;
+	int val, ret;
 	int offset_val = 0;
 
 	dev_dbg(codec->dev, "%s %d %s\n", __func__, event, w->name);
@@ -5482,7 +5485,12 @@ static int tasha_codec_enable_interpolator(struct snd_soc_dapm_widget *w,
 			set_bit(SB_CLK_GEAR, &tasha->status_mask);
 		}
 		/* Reset if needed */
-		tasha_codec_enable_prim_interpolator(codec, reg, event);
+		ret = tasha_codec_enable_prim_interpolator(codec, reg, event);
+		if (ret) {
+			dev_err(codec->dev, "%s: enable_prim_interpolator fail\n",
+				__func__);
+			return ret;
+		}
 		break;
 	case SND_SOC_DAPM_POST_PMU:
 		tasha_config_compander(codec, w->shift, event);
@@ -5510,7 +5518,12 @@ static int tasha_codec_enable_interpolator(struct snd_soc_dapm_widget *w,
 		break;
 	case SND_SOC_DAPM_POST_PMD:
 		tasha_config_compander(codec, w->shift, event);
-		tasha_codec_enable_prim_interpolator(codec, reg, event);
+		ret = tasha_codec_enable_prim_interpolator(codec, reg, event);
+		if (ret) {
+			dev_err(codec->dev, "%s: enable_prim_interpolator fail\n",
+				__func__);
+			return ret;
+		}
 		if ((tasha->spkr_gain_offset == RX_GAIN_OFFSET_M1P5_DB) &&
 		    (tasha->comp_enabled[COMPANDER_7] ||
 		     tasha->comp_enabled[COMPANDER_8]) &&
@@ -5932,7 +5945,7 @@ static int tasha_codec_enable_dec(struct snd_soc_dapm_widget *w,
 				      msecs_to_jiffies(tx_unmute_delay));
 		if (tasha->tx_hpf_work[decimator].hpf_cut_off_freq !=
 							CF_MIN_3DB_150HZ)
-			schedule_delayed_work(
+			queue_delayed_work(system_power_efficient_wq,
 					&tasha->tx_hpf_work[decimator].dwork,
 					msecs_to_jiffies(300));
 		/* apply gain after decimator is enabled */
@@ -11488,7 +11501,7 @@ static int tasha_set_decimator_rate(struct snd_soc_dai *dai,
 	struct tasha_priv *tasha = snd_soc_codec_get_drvdata(codec);
 	u32 tx_port;
 	u8 shift, shift_val, tx_mux_sel;
-	u16 tx_port_reg, tx_fs_reg;
+	u16 tx_port_reg = 0, tx_fs_reg;
 
 	list_for_each_entry(ch, &tasha->dai[dai->id].wcd9xxx_ch_list, list) {
 		int decimator = -1;
@@ -11496,11 +11509,6 @@ static int tasha_set_decimator_rate(struct snd_soc_dai *dai,
 		dev_dbg(codec->dev, "%s: dai->id = %d, tx_port = %d",
 			__func__, dai->id, tx_port);
 
-		if ((tx_port < 0) || (tx_port == 12) || (tx_port >= 14)) {
-			dev_err(codec->dev, "%s: Invalid SLIM TX%u port. DAI ID: %d\n",
-				__func__, tx_port, dai->id);
-			return -EINVAL;
-		}
 		/* Find the SB TX MUX input - which decimator is connected */
 		if (tx_port < 4) {
 			tx_port_reg = WCD9335_CDC_IF_ROUTER_TX_MUX_CFG0;
@@ -11522,6 +11530,10 @@ static int tasha_set_decimator_rate(struct snd_soc_dai *dai,
 			tx_port_reg = WCD9335_CDC_IF_ROUTER_TX_MUX_CFG3;
 			shift = 4;
 			shift_val = 0x03;
+		} else { // (tx_port == 12) || (tx_port >= 14)
+			dev_err(codec->dev, "%s: Invalid SLIM TX%u port. DAI ID: %d\n",
+				__func__, tx_port, dai->id);
+			return -EINVAL;
 		}
 		tx_mux_sel = snd_soc_read(codec, tx_port_reg) &
 					  (shift_val << shift);
@@ -12331,8 +12343,10 @@ static int tasha_dig_core_power_collapse(struct tasha_priv *tasha,
 		goto unlock_mutex;
 
 	if (tasha->power_active_ref < 0) {
-		dev_dbg(tasha->dev, "%s: power_active_ref is negative\n",
+		dev_info(tasha->dev,
+			"%s: power_active_ref is negative, resetting it\n",
 			__func__);
+		tasha->power_active_ref = 0;
 		goto unlock_mutex;
 	}
 
