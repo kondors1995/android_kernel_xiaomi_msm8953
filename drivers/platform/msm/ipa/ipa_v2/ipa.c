@@ -5053,8 +5053,10 @@ int ipa_plat_drv_probe(struct platform_device *pdev_p,
 */
 int ipa2_ap_suspend(struct device *dev)
 {
-	int i;
-
+#if 0
+    int i;
+#endif
+    
 	IPADBG("Enter...\n");
 
 #if 0
