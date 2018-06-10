@@ -745,6 +745,7 @@ static int qusb_phy_dpdm_regulator_enable(struct regulator_dev *rdev)
 
 	dev_dbg(qphy->phy.dev, "%s\n", __func__);
 	return qusb_phy_update_dpdm(&qphy->phy, POWER_SUPPLY_DP_DM_DPF_DMF);
+	qusb_phy_reset(qphy);
 }
 
 static int qusb_phy_dpdm_regulator_disable(struct regulator_dev *rdev)
