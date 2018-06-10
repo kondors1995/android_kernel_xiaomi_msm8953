@@ -29,7 +29,7 @@ CC=~/Android/kernel/tc/clang/aosp/clang-r328903/bin/clang
 export KBUILD_COMPILER_STRING="$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 
 # Kernel Details
-VER=".EAS-CLEAN"
+VER=".EAS-R8"
 
 # Paths
 KERNEL_DIR=`pwd`
@@ -159,4 +159,3 @@ DATE_END=$(date +"%s")
 DIFF=$(($DATE_END - $DATE_START))
 echo "Time: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."
 echo
-
