@@ -30,7 +30,7 @@ DECLARE_HASHTABLE(uid_hash_table, UID_HASH_BITS);
 static spinlock_t cpufreq_stats_lock;
 
 static DEFINE_SPINLOCK(task_time_in_state_lock); /* task->time_in_state */
-static DEFINE_RT_MUTEX(uid_lock); /* uid_hash_table */
+static DEFINE_SPINLOCK(uid_lock); /* uid_hash_table */
 
 struct uid_entry {
 	uid_t uid;
@@ -133,7 +133,7 @@ static int uid_time_in_state_show(struct seq_file *m, void *v)
 		seq_printf(m, " %d", all_freq_table->freq_table[i]);
 	seq_putc(m, '\n');
 
-	rt_mutex_lock(&uid_lock);
+	spin_lock_irqsave(&uid_lock, flags);
 
 	rcu_read_lock();
 	do_each_thread(temp, task) {
@@ -200,7 +200,7 @@ static int uid_time_in_state_show(struct seq_file *m, void *v)
 		uid_entry->alive_max_states = 0;
 	}
 
-	rt_mutex_unlock(&uid_lock);
+	spin_unlock_irqrestore(&uid_lock, flags);
 	return 0;
 }
 
@@ -233,18 +233,23 @@ static int cpufreq_stats_update(unsigned int cpu)
 
 void cpufreq_task_stats_init(struct task_struct *p)
 {
-	size_t alloc_size;
-	void *temp;
 	unsigned long flags;
-
 	spin_lock_irqsave(&task_time_in_state_lock, flags);
 	p->time_in_state = NULL;
 	spin_unlock_irqrestore(&task_time_in_state_lock, flags);
 	WRITE_ONCE(p->max_states, 0);
+}
 
-	if (!all_freq_table || !cpufreq_all_freq_init)
+void cpufreq_task_stats_alloc(struct task_struct *p)
+{
+	size_t alloc_size;
+	void *temp;
+	unsigned long flags;
+
+	if (!cpufreq_all_freq_init)
 		return;
 
+    /* We use one array to avoid multiple allocs per task */
 	WRITE_ONCE(p->max_states, all_freq_table->table_size);
 
 	/* Create all_freq_table for clockticks in all possible freqs in all
@@ -831,8 +836,9 @@ void cpufreq_task_stats_remove_uids(uid_t uid_start, uid_t uid_end)
 {
 	struct uid_entry *uid_entry;
 	struct hlist_node *tmp;
+	unsigned long flags;
 
-	rt_mutex_lock(&uid_lock);
+	spin_lock_irqsave(&uid_lock, flags);
 
 	for (; uid_start <= uid_end; uid_start++) {
 		hash_for_each_possible_safe(uid_hash_table, uid_entry, tmp,
@@ -845,7 +851,7 @@ void cpufreq_task_stats_remove_uids(uid_t uid_start, uid_t uid_end)
 		}
 	}
 
-	rt_mutex_unlock(&uid_lock);
+	spin_unlock_irqrestore(&uid_lock, flags);
 }
 
 static int cpufreq_stat_notifier_policy(struct notifier_block *nb,
@@ -953,12 +959,12 @@ static int process_notifier(struct notifier_block *self,
 	if (!task)
 		return NOTIFY_OK;
 
-	rt_mutex_lock(&uid_lock);
+	spin_lock_irqsave(&uid_lock, flags);
 
 	uid = from_kuid_munged(current_user_ns(), task_uid(task));
 	uid_entry = find_or_register_uid(uid);
 	if (!uid_entry) {
-		rt_mutex_unlock(&uid_lock);
+		spin_unlock_irqrestore(&uid_lock, flags);
 		pr_err("%s: failed to find uid %d\n", __func__, uid);
 		return NOTIFY_OK;
 	}
@@ -985,8 +991,13 @@ static int process_notifier(struct notifier_block *self,
 	}
 	spin_unlock_irqrestore(&task_time_in_state_lock, flags);
 
-	rt_mutex_unlock(&uid_lock);
+	spin_unlock_irqrestore(&uid_lock, flags);
 	return NOTIFY_OK;
+}
+
+void cpufreq_task_stats_free(struct task_struct *p)
+{
+	kfree(p->time_in_state);
 }
 
 static int uid_time_in_state_open(struct inode *inode, struct file *file)
