@@ -368,6 +368,7 @@ OPTS			= -fmodulo-sched -fmodulo-sched-allow-regmoves -ftree-vectorize -ftree-lo
 GCC6WARNINGS	= -Wno-bool-compare -Wno-misleading-indentation -Wno-format -Wno-logical-not-parentheses
 GCC7WARNINGS	= $(GCC6WARNINGS) -Wno-int-in-bool-context -Wno-memset-elt-size -Wno-parentheses -Wno-bool-operation -Wno-duplicate-decl-specifier -Wno-stringop-overflow -Wno-format-truncation -Wno-format-overflow -fno-modulo-sched
 GCC8WARNINGS	= $(GCC7WARNINGS) -Wno-multistatement-macros -Wno-error=sizeof-pointer-div -Wno-sizeof-pointer-div
+CLANG_OPT_FLAGS	= -g0 -mcpu=cortex-a53+crc+crypto+sve -march=armv8-a+crc+crypto+sve -mtune=cortex-a53 -funsafe-math-optimizations -funroll-loops -ffast-math -fvectorize -fslp-vectorize -meabi gnu
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
 LDFLAGS_MODULE  = --strip-debug
@@ -614,8 +615,13 @@ endif
 ifneq ($(GCC_TOOLCHAIN),)
 CLANG_GCC_TC	:= -gcc-toolchain $(GCC_TOOLCHAIN)
 endif
+ifeq ($(cc-name),clang)
+KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_OPT_FLAGS)
+KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_OPT_FLAGS)
+else
 KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
 KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+endif
 KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
 KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
 KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
