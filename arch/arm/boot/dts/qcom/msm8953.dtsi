@@ -561,6 +561,12 @@
 		};
 	};
 
+  qcom,msm-thermal-simple {
+  	compatible = "qcom,msm-thermal-simple";
+  	qcom,thermal-vadc = <&pm8953_vadc>;
+  	qcom,adc-channel = <114>; /* xo_therm */
+  };
+
 	qcom,bcl {
 		compatible = "qcom,bcl";
 		qcom,bcl-enable;
