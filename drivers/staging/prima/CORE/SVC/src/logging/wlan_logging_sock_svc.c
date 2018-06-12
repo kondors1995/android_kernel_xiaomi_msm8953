@@ -1417,8 +1417,7 @@ int wlan_logging_sock_activate_svc(int log_fe_to_console, int num_buf,
 
 	gapp_pid = INVALID_PID;
 
-	gplog_msg = (struct log_msg *) vmalloc(
-			num_buf * sizeof(struct log_msg));
+	gplog_msg = (struct log_msg *) vmalloc(array_size(num_buf, sizeof(struct log_msg)));
 	if (!gplog_msg) {
 		pr_err("%s: Could not allocate memory\n", __func__);
 		return -ENOMEM;

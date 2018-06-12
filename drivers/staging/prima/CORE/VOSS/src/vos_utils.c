@@ -837,7 +837,7 @@ v_BOOL_t vos_roam_delay_stats_init(void)
 {
     if (gpRoamDelayTable == NULL)
     {
-        gpRoamDelayTable = vmalloc(sizeof(tRoamDelayMetaInfo) * ROAM_DELAY_TABLE_SIZE);
+        gpRoamDelayTable = vmalloc(array_size(ROAM_DELAY_TABLE_SIZE, sizeof(tRoamDelayMetaInfo)));
         if (gpRoamDelayTable == NULL)
         {
             VOS_TRACE(VOS_MODULE_ID_VOSS, VOS_TRACE_LEVEL_ERROR, "Memory allocation failed");
