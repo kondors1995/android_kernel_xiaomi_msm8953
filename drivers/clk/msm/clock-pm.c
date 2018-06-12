@@ -87,7 +87,7 @@ static int clock_pm_probe(struct platform_device *pdev)
 
 	clk_cnt = of_property_count_strings(pdev->dev.of_node, "clock-names");
 
-	clk = devm_kzalloc(&pdev->dev, clk_cnt * sizeof(struct clk *),
+	clk = devm_kcalloc(&pdev->dev, clk_cnt, sizeof(struct clk *),
 								GFP_KERNEL);
 	if (!clk)
 		return -ENOMEM;

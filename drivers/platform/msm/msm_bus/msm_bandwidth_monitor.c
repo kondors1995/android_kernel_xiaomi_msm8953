@@ -28,8 +28,8 @@
 #define ALLOC_KMEM(dev, ptr, type, size, ret) \
 	do { \
 		ret = 0; \
-		ptr = devm_kzalloc(dev, \
-			sizeof(type) * size,\
+		ptr = devm_kcalloc(dev, \
+			size, sizeof(type),\
 			GFP_KERNEL); \
 		if (!ptr) \
 			ret = -ENOMEM; \
