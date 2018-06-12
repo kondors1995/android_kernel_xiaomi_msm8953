@@ -1693,6 +1693,7 @@ int drm_mode_create_dirty_info_property(struct drm_device *dev)
 }
 EXPORT_SYMBOL(drm_mode_create_dirty_info_property);
 
+
 /**
  * drm_mode_create_suggested_offset_properties - create suggests offset properties
  * @dev: DRM device
@@ -5058,7 +5059,7 @@ int drm_mode_crtc_set_gamma_size(struct drm_crtc *crtc,
 {
 	crtc->gamma_size = gamma_size;
 
-	crtc->gamma_store = kcalloc(gamma_size, sizeof(uint16_t) * 3,
+	crtc->gamma_store = kzalloc(array3_size(gamma_size, sizeof(uint16_t), 3),
 				    GFP_KERNEL);
 	if (!crtc->gamma_store) {
 		crtc->gamma_size = 0;
