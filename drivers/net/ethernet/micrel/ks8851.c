@@ -526,7 +526,7 @@ static int ks8851_rdfifolen(struct ks8851_net *ks, u16 fc)
 	struct spi_transfer *xfer;
 	struct spi_message *msg;
 	u32 *txd;
-	u32 *rxd = kmalloc(4 * fc, GFP_DMA);
+	u32 *rxd = kmalloc_array(4, fc, GFP_DMA);
 	unsigned op;
 
 	if (rxd == NULL)

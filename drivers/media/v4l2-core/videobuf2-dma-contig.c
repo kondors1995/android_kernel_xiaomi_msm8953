@@ -589,7 +589,7 @@ static void *vb2_dc_get_userptr(void *alloc_ctx, unsigned long vaddr,
 	end = PAGE_ALIGN(vaddr + size);
 	n_pages = (end - start) >> PAGE_SHIFT;
 
-	pages = kmalloc(n_pages * sizeof(pages[0]), GFP_KERNEL);
+	pages = kmalloc_array(n_pages, sizeof(pages[0]), GFP_KERNEL);
 	if (!pages) {
 		ret = -ENOMEM;
 		pr_err("failed to allocate pages table\n");
