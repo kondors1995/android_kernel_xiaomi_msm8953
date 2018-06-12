@@ -875,8 +875,9 @@ static int msm_isp_request_bufq(struct msm_isp_buf_mgr *buf_mgr,
 		return rc;
 	}
 
-	bufq->bufs = kzalloc(sizeof(struct msm_isp_buffer) *
-		buf_request->num_buf, GFP_KERNEL);
+	bufq->bufs = kcalloc(buf_request->num_buf,
+			     sizeof(struct msm_isp_buffer),
+			     GFP_KERNEL);
 	if (!bufq->bufs) {
 		msm_isp_free_buf_handle(buf_mgr, buf_request->handle);
 		return rc;
@@ -1072,8 +1073,8 @@ static int msm_isp_init_isp_buf_mgr(
 	INIT_LIST_HEAD(&buf_mgr->buffer_q);
 	buf_mgr->num_buf_q = num_buf_q;
 	buf_mgr->bufq =
-		kzalloc(sizeof(struct msm_isp_bufq) * num_buf_q,
-		GFP_KERNEL);
+		kcalloc(num_buf_q, sizeof(struct msm_isp_bufq),
+			GFP_KERNEL);
 	if (!buf_mgr->bufq) {
 		pr_err("Bufq malloc error\n");
 		goto bufq_error;

@@ -579,15 +579,18 @@ void setYChannel(uint8_t y)
 }
 void setMutualBuffer(void)
 {
-	diag_mutual = kzalloc(x_channel * y_channel * sizeof(int16_t), GFP_KERNEL);
+	diag_mutual = kcalloc(x_channel * y_channel, sizeof(int16_t),
+			      GFP_KERNEL);
 }
 void setMutualNewBuffer(void)
 {
-	diag_mutual_new = kzalloc(x_channel * y_channel * sizeof(int16_t), GFP_KERNEL);
+	diag_mutual_new = kcalloc(x_channel * y_channel, sizeof(int16_t),
+				  GFP_KERNEL);
 }
 void setMutualOldBuffer(void)
 {
-	diag_mutual_old = kzalloc(x_channel * y_channel * sizeof(int16_t), GFP_KERNEL);
+	diag_mutual_old = kcalloc(x_channel * y_channel, sizeof(int16_t),
+				  GFP_KERNEL);
 }
 
 #ifdef HX_TP_PROC_2T2R
@@ -613,7 +616,8 @@ void setYChannel_2(uint8_t y)
 }
 void setMutualBuffer_2(void)
 {
-	diag_mutual_2 = kzalloc(x_channel_2 * y_channel_2 * sizeof(int16_t), GFP_KERNEL);
+	diag_mutual_2 = kcalloc(x_channel_2 * y_channel_2, sizeof(int16_t),
+				GFP_KERNEL);
 }
 #endif
 
@@ -1376,7 +1380,7 @@ bool getFlashDumpGoing(void)
 
 void setFlashBuffer(void)
 {
-	flash_buffer = kzalloc(Flash_Size * sizeof(uint8_t), GFP_KERNEL);
+	flash_buffer = kcalloc(Flash_Size, sizeof(uint8_t), GFP_KERNEL);
 	if (flash_buffer)
 		memset(flash_buffer,0x00,Flash_Size);
 }

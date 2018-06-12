@@ -103,7 +103,7 @@ static void *vb2_dma_sg_alloc(void *alloc_ctx, unsigned long size, gfp_t gfp_fla
 	/* size is already page aligned */
 	buf->num_pages = size >> PAGE_SHIFT;
 
-	buf->pages = kzalloc(buf->num_pages * sizeof(struct page *),
+	buf->pages = kcalloc(buf->num_pages, sizeof(struct page *),
 			     GFP_KERNEL);
 	if (!buf->pages)
 		goto fail_pages_array_alloc;
@@ -182,7 +182,7 @@ static void *vb2_dma_sg_get_userptr(void *alloc_ctx, unsigned long vaddr,
 	last  = ((vaddr + size - 1) & PAGE_MASK) >> PAGE_SHIFT;
 	buf->num_pages = last - first + 1;
 
-	buf->pages = kzalloc(buf->num_pages * sizeof(struct page *),
+	buf->pages = kcalloc(buf->num_pages, sizeof(struct page *),
 			     GFP_KERNEL);
 	if (!buf->pages)
 		goto userptr_fail_alloc_pages;

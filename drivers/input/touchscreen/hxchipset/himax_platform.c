@@ -55,7 +55,7 @@ void himax_vk_parser(struct device_node *dt,
 		if (!cnt)
 			return;
 
-		vk = kzalloc(cnt * (sizeof *vk), GFP_KERNEL);
+		vk = kcalloc(cnt, sizeof(*vk), GFP_KERNEL);
 		if (!vk)
 			return;
 		pp = NULL;

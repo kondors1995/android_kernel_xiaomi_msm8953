@@ -277,8 +277,8 @@ static void send_back_notification(uint32_t slav_status_reg,
 	}
 
 	if (master_fifo_used > 0) {
-		ptr = kzalloc(master_fifo_used*BG_SPI_WORD_SIZE,
-			GFP_KERNEL | GFP_ATOMIC);
+		ptr = kcalloc(BG_SPI_WORD_SIZE, master_fifo_used,
+			      GFP_KERNEL | GFP_ATOMIC);
 		if (ptr != NULL) {
 			ret = read_bg_locl(BGCOM_READ_FIFO,
 				master_fifo_used,  ptr);

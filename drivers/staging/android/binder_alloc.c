@@ -674,8 +674,8 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
 		failure_string = "VMA size < BINDER_MIN_ALLOC";
 		goto err_vma_too_small;
 	}
-	alloc->pages = kzalloc(sizeof(alloc->pages[0]) *
-				   ((vma->vm_end - vma->vm_start) / PAGE_SIZE),
+	alloc->pages = kcalloc((vma->vm_end - vma->vm_start) / PAGE_SIZE,
+			       sizeof(alloc->pages[0]),
 			       GFP_KERNEL);
 	if (alloc->pages == NULL) {
 		ret = -ENOMEM;

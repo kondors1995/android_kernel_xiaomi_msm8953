@@ -958,7 +958,7 @@ bool himax_sram_verify(struct i2c_client *client, uint8_t *FW_File, int FW_Size)
 	uint8_t in_buffer[128];
 	uint8_t *get_fw_content;
 
-	get_fw_content = kzalloc(0x4000*sizeof(uint8_t), GFP_KERNEL);
+	get_fw_content = kcalloc(0x4000, sizeof(uint8_t), GFP_KERNEL);
 	if (!get_fw_content)
 		return false;
 

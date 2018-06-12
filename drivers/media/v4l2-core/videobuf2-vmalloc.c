@@ -99,7 +99,7 @@ static void *vb2_vmalloc_get_userptr(void *alloc_ctx, unsigned long vaddr,
 		first = vaddr >> PAGE_SHIFT;
 		last  = (vaddr + size - 1) >> PAGE_SHIFT;
 		buf->n_pages = last - first + 1;
-		buf->pages = kzalloc(buf->n_pages * sizeof(struct page *),
+		buf->pages = kcalloc(buf->n_pages, sizeof(struct page *),
 				     GFP_KERNEL);
 		if (!buf->pages)
 			goto fail_pages_array_alloc;

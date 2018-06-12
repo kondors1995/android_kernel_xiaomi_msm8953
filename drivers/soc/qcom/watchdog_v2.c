@@ -492,9 +492,9 @@ static void configure_bark_dump(struct msm_watchdog_data *wdog_dd)
 		phys_addr_t cpu_buf_phys;
 		size_t buf_size_percpu;
 
-
-		cpu_data = kzalloc(sizeof(struct msm_dump_data) *
-				   num_present_cpus(), GFP_KERNEL);
+		cpu_data = kcalloc(num_present_cpus(),
+                                   sizeof(struct msm_dump_data),
+                                   GFP_KERNEL);
 		if (!cpu_data) {
 			pr_err("cpu dump data structure allocation failed\n");
 			goto out0;

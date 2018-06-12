@@ -2613,8 +2613,9 @@ static int mhi_init(struct mhi_dev *mhi)
 				/* pre allocate buffers to queue
 				 * transfer completion events
 				 */
-				ereq->tr_events = kzalloc(RING_ELEMENT_TYPE_SZ*
-						MAX_TR_EVENTS, GFP_KERNEL);
+				ereq->tr_events = kcalloc(MAX_TR_EVENTS,
+							  RING_ELEMENT_TYPE_SZ,
+							  GFP_KERNEL);
 				if (!ereq->tr_events) {
 					kfree(ereq);
 					return -ENOMEM;
