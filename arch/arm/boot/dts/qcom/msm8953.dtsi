@@ -550,13 +550,13 @@
 
 		qcom,vdd-gfx-rstr {
 			qcom,vdd-rstr-reg = "vdd-gfx";
-			qcom,levels = <5 7 7>; /* Nominal, Turbo, Turbo */
+			qcom,levels = <0x5 0x7 0x8>; /* Nominal, Turbo, Turbo */
 			qcom,min-level = <1>; /* No Request */
 		};
 
 		msm_thermal_freq: qcom,vdd-apps-rstr {
 			qcom,vdd-rstr-reg = "vdd-apps";
-			qcom,levels = <1689600>;
+			qcom,levels = <0x61c49 0x1ec300 0x21b100>;
 			qcom,freq-req;
 		};
 	};
@@ -907,15 +907,15 @@
 		reg = <0x1800000 0x80000>;
 		reg-names = "cc_base";
 		vdd_gfx-supply = <&gfx_vreg_corner>;
-		qcom,gfxfreq-corner =
-			<         0   0 >,
-			< 133330000   1 >,  /* Min SVS   */
-			< 216000000   2 >,  /* Low SVS   */
-			< 320000000   3 >,  /* SVS       */
-			< 400000000   4 >,  /* SVS Plus  */
-			< 510000000   5 >,  /* NOM       */
-			< 560000000   6 >,  /* Nom Plus  */
-			< 650000000   7 >;  /* Turbo     */
+		qcom,gfxfreq-corner = <0x0 0x0>,
+					<0x7ed6b40 0x1>,
+					<0xcdfe600 0x2>,
+					<0x1312d000 0x3>,
+					<0x1b1ebfc0 0x4>,
+					<0x2160ec00 0x5>,
+					<0x28a67e80 0x6>,
+					<0x2c0c3ec0 0x7>,
+					<0x32f643c0 0x8>;
 		#clock-cells = <1>;
 	};
 
