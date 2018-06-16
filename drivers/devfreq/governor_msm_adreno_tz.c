@@ -73,7 +73,7 @@ static void do_partner_stop_event(struct work_struct *work);
 static void do_partner_suspend_event(struct work_struct *work);
 static void do_partner_resume_event(struct work_struct *work);
 
-/* Display and suspend state booleans */ 
+/* Display and suspend state booleans */
 static bool display_on;
 static bool suspended = false;
 
@@ -411,7 +411,7 @@ static int lvl_divider_map_2[] = {10,10,10,1,1,1,1    ,1,1};
 
 /*
 * for boost == 3 -- boost divide on the low spectrum,
-* dampen the lower freq values, unneeded to boost the 
+* dampen the lower freq values, unneeded to boost the
 * low freq spectrum so much at start
 */
 static int lvl_multiplicator_map_3[] = {9,1,1,1,1,10,8    ,1,1};
@@ -611,12 +611,12 @@ static int adrenoboost_debug(struct devfreq *devfreq, unsigned long *freq,
 	int val, level = 0;
 	int last_level = priv->bin.last_level;
 	if (!jump_dir)
-		pr_info("ADRENO jumping\n");
+		pr_debug("ADRENO jumping\n");
 	else if (jump_dir == 1)
-		pr_info("ADRENO NOT jumping UP\n");
+		pr_debug("ADRENO NOT jumping UP\n");
 	else
-		pr_info("ADRENO NOT jumping DOWN\n");
-	pr_info("level = %d last_level = %d total=%d busy=%d original busy_time=%d\n",
+		pr_debug("ADRENO NOT jumping DOWN\n");
+	pr_debug("level = %d last_level = %d total=%d busy=%d original busy_time=%d\n",
 			level, priv->bin.last_level,
 			(int)priv->bin.total_time,
 			(int)priv->bin.busy_time, (int)stats.busy_time);
