@@ -1002,6 +1002,13 @@ int reset_stune_boost(char *st_name)
 	return ret;
 }
 
+int stune_boost(char *st_name)
+{
+	struct schedtune *st = getSchedtune(st_name);
+
+	return _do_stune_boost(st, st->dynamic_boost);
+}
+
 int do_stune_boost(char *st_name, int boost)
 {
 	struct schedtune *st = getSchedtune(st_name);
