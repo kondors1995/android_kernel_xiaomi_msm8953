@@ -23,4 +23,9 @@ obj-$(CONFIG_SCHED_TUNE) += tune.o
 obj-$(CONFIG_CGROUP_CPUACCT) += cpuacct.o
 obj-$(CONFIG_CPU_FREQ) += cpufreq.o
 obj-$(CONFIG_CPU_FREQ_GOV_SCHEDUTIL) += cpufreq_schedutil.o
+obj-y += boost.o
+<<<<<<< HEAD
 obj-$(CONFIG_CPU_FREQ_GOV_PWRUTILX) += cpufreq_pwrutilx.o
+=======
+obj-y += boost.o
+>>>>>>> 4f83ec29edee... sched/boost: Re-introduce sched_boost proc from HMP
