@@ -48,6 +48,9 @@ int sched_boost_handler(struct ctl_table *table, int write,
 	if (ret || !write)
 		goto done;
 
+	// Constrain sysctl_sched_boost to a value of 0 or 1 only
+	*data = !!(*data);
+
 #ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	if (verify_boost_params(old_val, *data)) {
 		if (*data > 0)
