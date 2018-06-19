@@ -342,7 +342,7 @@ module_param_named(
 );
 
 #if (defined CONFIG_MACH_XIAOMI_MIDO) || (defined CONFIG_MACH_XIAOMI_TISSOT)
-static int fg_sram_update_period_ms = 3000;
+static int fg_sram_update_period_ms = 60000; // Update battery consumption report every 1 seconds to prevent unnecessary wakelocks
 #else
 static int fg_sram_update_period_ms = 30000;
 #endif
