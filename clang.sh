@@ -24,7 +24,7 @@ THREADS=$(nproc --all)
 ## clang specific values
 CTRIPLE=aarch64-linux-gnu-
 # Clang TC
-CC=~/Android/kernel/tc/clang/aosp/clang-r328903/bin/clang
+CC=~/Android/kernel/tc/clang/flash-clang-7.x/bin/clang
 #Compiler string
 export KBUILD_COMPILER_STRING="$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 
