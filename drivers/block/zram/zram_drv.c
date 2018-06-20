@@ -40,7 +40,7 @@ static DEFINE_IDR(zram_index_idr);
 static DEFINE_MUTEX(zram_index_mutex);
 
 static int zram_major;
-static const char *default_compressor = "lz4hc";
+static const char *default_compressor = "lz4";
 
 /*
  * We don't need to see memory allocation errors more than once every 1
@@ -49,7 +49,7 @@ static const char *default_compressor = "lz4hc";
 #define ALLOC_ERROR_LOG_RATE_MS 1000
 
 /* Module params (documentation at end) */
-static unsigned int num_devices = 8;
+static unsigned int num_devices = 1;
 
 static inline bool init_done(struct zram *zram)
 {
