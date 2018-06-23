@@ -57,7 +57,7 @@
 
 		modem_mem: modem_region@0 {
 			compatible = "removed-dma-pool";
-			no-map;
+			no-map-fixup;
 			reg = <0x0 0x86c00000 0x0 0x6a00000>;
 		};
 
@@ -102,8 +102,8 @@
 		};
 
 		dfps_data_mem: dfps_data_mem@90000000 {
-		       reg = <0 0x90000000 0 0x1000>;
-		       label = "dfps_data_mem";
+					 reg = <0 0x90000000 0 0x1000>;
+					 label = "dfps_data_mem";
 		};
 
 		cont_splash_mem: splash_region@0x90001000 {
@@ -178,19 +178,19 @@
 		interrupt-controller;
 		#interrupt-cells = <3>;
 		reg = <0x0b000000 0x1000>,
-		      <0x0b002000 0x1000>;
+					<0x0b002000 0x1000>;
 	};
 
 	arm64-cpu-erp {
 		compatible = "arm,arm64-cpu-erp";
 		interrupts = <0 275 0>,
-			     <0 276 0>,
-			     <0 273 0>,
-			     <0 274 0>;
+					 <0 276 0>,
+					 <0 273 0>,
+					 <0 274 0>;
 		interrupt-names = "pri-dbe-irq",
-				  "sec-dbe-irq",
-				  "pri-ext-irq",
-				  "sec-ext-irq";
+					"sec-dbe-irq",
+					"pri-ext-irq",
+					"sec-ext-irq";
 		poll-delay-ms = <5000>;
 	};
 
@@ -204,9 +204,9 @@
 	timer {
 		compatible = "arm,armv8-timer";
 		interrupts = <1 2 0xff08>,
-			     <1 3 0xff08>,
-			     <1 4 0xff08>,
-			     <1 1 0xff08>;
+					 <1 3 0xff08>,
+					 <1 4 0xff08>,
+					 <1 1 0xff08>;
 		clock-frequency = <19200000>;
 	};
 
@@ -221,9 +221,9 @@
 		frame@b121000 {
 			frame-number = <0>;
 			interrupts = <0 8 0x4>,
-				     <0 7 0x4>;
+						 <0 7 0x4>;
 			reg = <0xb121000 0x1000>,
-			      <0xb122000 0x1000>;
+						<0xb122000 0x1000>;
 		};
 
 		frame@b123000 {
@@ -522,11 +522,26 @@
 		qcom,synchronous-cluster-id = <0 1>;
 		qcom,synchronous-cluster-map = <0 4 &CPU0 &CPU1 &CPU2 &CPU3>,
 						<1 4 &CPU4 &CPU5 &CPU6 &CPU7>;
-		qcom,disable-cx-phase-ctrl;
-		qcom,disable-gfx-phase-ctrl;
-		qcom,disable-vdd-mx;
+		qcom,rpm-phase-resource-type = "misc";
+		qcom,rpm-phase-resource-id = <0>;
+		qcom,cx-phase-resource-key = "tmpc";
+		qcom,cx-phase-hot-crit-temp = <80>;
+		qcom,cx-phase-hot-crit-temp-hyst = <15>;
+		qcom,pmic-sw-mode-temp = <70>;
+		qcom,pmic-sw-mode-temp-hysteresis = <65>;
+		qcom,pmic-sw-mode-regs = "vdd-dig";
+		qcom,gfx-phase-warm-temp = <70>;
+		qcom,gfx-phase-warm-temp-hyst = <10>;
+		qcom,gfx-phase-hot-crit-temp = <75>;
+		qcom,gfx-phase-hot-crit-temp-hyst = <60>;
+		qcom,gfx-sensor-id = <10>;
+		qcom,gfx-phase-resource-key = "tmpg";
 		qcom,disable-psm;
 		qcom,disable-ocr;
+		qcom,mx-restriction-temp = <5>;
+		qcom,mx-restriction-temp-hysteresis = <10>;
+		qcom,mx-retention-min = <RPM_SMD_REGULATOR_LEVEL_RETENTION>;
+		vdd-mx-supply = <&pm8953_s7_level_ao>;
 		qcom,vdd-restriction-temp = <5>;
 		qcom,vdd-restriction-temp-hysteresis = <10>;
 		vdd-dig-supply = <&pm8953_s2_floor_level>;
@@ -836,7 +851,7 @@
 		cell-index = <1>;
 		compatible = "qcom,slim-ngd";
 		reg = <0xc140000 0x2c000>,
-		      <0xc104000 0x2a000>;
+					<0xc104000 0x2a000>;
 		reg-names = "slimbus_physical", "slimbus_bam_physical";
 		interrupts = <0 163 0>, <0 180 0>;
 		interrupt-names = "slimbus_irq", "slimbus_bam_irq";
@@ -848,7 +863,7 @@
 	dcc: dcc@b3000 {
 		compatible = "qcom,dcc";
 		reg = <0xb3000 0x1000>,
-		      <0xb4000 0x800>;
+					<0xb4000 0x800>;
 		reg-names = "dcc-base", "dcc-ram-base";
 
 		clocks = <&clock_gcc clk_gcc_dcc_clk>;
@@ -907,93 +922,100 @@
 
 	clock_cpu: qcom,cpu-clock-8953@b116000 {
 		compatible = "qcom,cpu-clock-8953";
-		reg =   <0xb114000  0x68>,
-			<0xb014000  0x68>,
-			<0xb116000  0x400>,
-			<0xb111050  0x08>,
-			<0xb011050  0x08>,
-			<0xb1d1050  0x08>,
-			<0x00a4124  0x08>;
+		reg =   <185679872  104>,
+			<185679872  104>,
+			<185688064  1024>,
+			<185667664  20>,
+			<184619088  20>,
+			<186454096  20>,
+			<   672036  20>;
+
 		reg-names = "rcgwr-c0-base", "rcgwr-c1-base",
 			    "c0-pll", "c0-mux", "c1-mux",
 			    "cci-mux", "efuse";
+
+		/* RCGwR settings */
+		/* Why they didn't put this in first place? */
+		qcom,lmh-sid-c0  =
+			< 48 125241051>,
+			< 52 89457225>,
+			< 56 273>;
+		qcom,link-sid-c0 =
+			< 64 1034631>;
+		qcom,dfs-sid-c0  =
+			< 16 4278108151>,
+			< 20 4261380079>,
+			< 24 4227849979>,
+			< 28 3063633237>,
+			< 32 613585481>,
+			< 36 1227100434>,
+			< 40 286335249>,
+			< 44 33026>;
+		qcom,lmh-sid-c1  =
+			< 48 125241051>,
+			< 52 89457225>,
+			< 56 273>;
+		qcom,link-sid-c1 =
+			< 64 1034631>;
+		qcom,dfs-sid-c1  =
+			< 16 4278108151>,
+			< 20 4261380079>,
+			< 24 4227849979>,
+			< 28 3063633237>,
+			< 32 613585481>,
+			< 36 1227100434>,
+			< 40 286335249>,
+			< 44 33026>;
+
 		vdd-mx-supply = <&pm8953_s7_level_ao>;
 		vdd-cl-supply = <&apc_vreg>;
 		clocks = <&clock_gcc clk_xo_a_clk_src>;
 		clock-names = "xo_a";
 		qcom,num-clusters = <2>;
 		qcom,speed0-bin-v0-cl =
-			<          0 0>,
-			<  652800000 1>,
-			< 1036800000 2>,
-			< 1401600000 3>,
-			< 1689600000 4>,
-			< 1804800000 5>,
-			< 1958400000 6>,
-			< 2016000000 7>;
+			<          0  0>,
+			<  400457000  1>,
+			<  480000000  2>,
+			<  576000000  3>,
+			<  652800000  4>,
+			<  729600000  5>,
+			<  806400000  6>,
+			<  883200000  7>,
+			<  960000000  8>,
+			< 1036800000  9>,
+			< 1113600000 10>,
+			< 1248000000 11>,
+			< 1305600000 12>,
+			< 1401600000 13>,
+			< 1536000000 14>,
+			< 1689600000 15>,
+			< 1758400000 16>,
+			< 1804800000 17>,
+			< 1843200000 18>,
+			< 1958400000 19>,
+			< 2016000000 20>;
 		qcom,speed0-bin-v0-cci =
-			<          0 0>,
-			<  261120000 1>,
-			<  414720000 2>,
-			<  560640000 3>,
-			<  675840000 4>,
-			<  721920000 5>,
-			<  783360000 6>,
-			<  806400000 7>;
-		qcom,speed2-bin-v0-cl =
-			<          0 0>,
-			<  652800000 1>,
-			< 1036800000 2>,
-			< 1401600000 3>,
-			< 1689600000 4>,
-			< 1804800000 5>,
-			< 1958400000 6>,
-			< 2016000000 7>;
-		qcom,speed2-bin-v0-cci =
-			<          0 0>,
-			<  261120000 1>,
-			<  414720000 2>,
-			<  560640000 3>,
-			<  675840000 4>,
-			<  721920000 5>,
-			<  783360000 6>,
-			<  806400000 7>;
-		qcom,speed7-bin-v0-cl =
-			<          0 0>,
-			<  652800000 1>,
-			< 1036800000 2>,
-			< 1401600000 3>,
-			< 1689600000 4>,
-			< 1804800000 5>,
-			< 1958400000 6>,
-			< 2016000000 7>,
-			< 2150400000 8>,
-			< 2208000000 9>;
-		qcom,speed7-bin-v0-cci =
-			<          0 0>,
-			<  261120000 1>,
-			<  414720000 2>,
-			<  560640000 3>,
-			<  675840000 4>,
-			<  721920000 5>,
-			<  783360000 6>,
-			<  806400000 7>,
-			<  860160000 8>,
-			<  883200000 9>;
-		qcom,speed6-bin-v0-cl =
-			<          0 0>,
-			<  652800000 1>,
-			< 1036800000 2>,
-			< 1401600000 3>,
-			< 1689600000 4>,
-			< 1804800000 5>;
-		qcom,speed6-bin-v0-cci =
-			<          0 0>,
-			<  261120000 1>,
-			<  414720000 2>,
-			<  560640000 3>,
-			<  675840000 4>,
-			<  721920000 5>;
+			<          0  0>,
+			<  160000000  1>,
+			<  170000000  2>,
+			<  180000000  3>,
+			<  261120000  4>,
+			<  272240000  5>,
+			<  294470000  6>,
+			<  320000000  7>,
+			<  349000000  8>,
+			<  414720000  9>,
+			<  427340000 10>,
+			<  483840000 11>,
+			<  513400000 12>,
+			<  560640000 13>,
+			<  675840000 14>,
+			<  721920000 15>,
+			<  783360000 16>,
+			<  798800000 17>,
+			<  806400000 18>,
+			<  860160000 19>,
+			<  883200000 20>;
 		#clock-cells = <1>;
 	};
 
@@ -1001,8 +1023,24 @@
 		compatible = "qcom,msm-cpufreq";
 		clock-names = "l2_clk", "cpu0_clk", "cpu1_clk", "cpu2_clk",
 				"cpu3_clk", "cpu4_clk", "cpu5_clk",
-				"cpu6_clk", "cpu7_clk";
+				"cpu6_clk", "cpu7_clk", "cpu8_clk",
+				"cpu9_clk", "cpu10_clk", "cpu11_clk",
+				"cpu12_clk", "cpu13_clk", "cpu14_clk",
+				"cpu15_clk", "cpu16_clk", "cpu17_clk",
+				"cpu18_clk", "cpu19_clk", "cpu20_clk";
 		clocks = <&clock_cpu clk_cci_clk>,
+			 <&clock_cpu clk_a53_pwr_clk>,
+			 <&clock_cpu clk_a53_pwr_clk>,
+			 <&clock_cpu clk_a53_pwr_clk>,
+			 <&clock_cpu clk_a53_pwr_clk>,
+			 <&clock_cpu clk_a53_pwr_clk>,
+			 <&clock_cpu clk_a53_pwr_clk>,
+			 <&clock_cpu clk_a53_pwr_clk>,
+			 <&clock_cpu clk_a53_pwr_clk>,
+			 <&clock_cpu clk_a53_pwr_clk>,
+			 <&clock_cpu clk_a53_pwr_clk>,
+			 <&clock_cpu clk_a53_pwr_clk>,
+			 <&clock_cpu clk_a53_pwr_clk>,
 			 <&clock_cpu clk_a53_pwr_clk>,
 			 <&clock_cpu clk_a53_pwr_clk>,
 			 <&clock_cpu clk_a53_pwr_clk>,
@@ -1013,15 +1051,27 @@
 			 <&clock_cpu clk_a53_pwr_clk>;
 
 		qcom,cpufreq-table =
+			 /* TODO: More Ducktales */
+			 <  400457 >,
+			 <  480000 >,
+			 <  576000 >,
 			 <  652800 >,
+			 <  729600 >,
+			 <  806400 >,
+			 <  883200 >,
+			 <  960000 >,
 			 < 1036800 >,
+			 < 1113600 >,
+			 < 1248000 >,
+			 < 1305600 >,
 			 < 1401600 >,
+			 < 1536000 >,
 			 < 1689600 >,
+			 < 1758400 >,
 			 < 1804800 >,
+			 < 1843200 >,
 			 < 1958400 >,
-			 < 2016000 >,
-			 < 2150400 >,
-			 < 2208000 >;
+			 < 2016000 >;
 	};
 
 	cpubw: qcom,cpubw {
@@ -1030,17 +1080,22 @@
 		qcom,src-dst-ports = <1 512>;
 		qcom,active-only;
 		qcom,bw-tbl =
-			<   769 /*  100.8 MHz */ >,
-			<  1611 /*  211.2 MHz */ >,     /*Low SVS*/
+			<   572 /*  75    MHz */ >,
+			<   769 /*  100.8 MHz */ >,     /*Low SVS*/
+			<  1144 /*  150   MHz */ >,
+			<  1525 /*  200   MHz */ >,
+			<  1611 /*  211.2 MHz */ >,
 			<  2124 /*  278.4 MHz */ >,
 			<  2929 /*  384   MHz */ >,
+			<  3143 /*  412   MHz */ >,
 			<  3221 /*  422.4 MHz */ >,	/* SVS */
 			<  4248 /*  556.8 MHz */ >,
 			<  5126 /*  672   MHz */ >,
 			<  5859 /*  768   MHz */ >,     /* SVS+  */
 			<  6152 /*  806.4 MHz */ >,
 			<  6445 /*  844.8 MHz */ >,     /* NOM   */
-			<  7104 /*  931.2 MHz */ >;     /* TURBO */
+			<  7104 /*  931.2 MHz */ >,     /* TURBO */
+			<  7759 /*  1017  MHz */ >;     /* RE-TURBO */
 	};
 
 	mincpubw: qcom,mincpubw {
@@ -1049,17 +1104,22 @@
 		qcom,src-dst-ports = <1 512>;
 		qcom,active-only;
 		qcom,bw-tbl =
-			<   769 /*  100.8 MHz */ >,
-			<  1611 /*  211.2 MHz */ >,     /*Low SVS*/
+			<   572 /*  75    MHz */ >,
+			<   769 /*  100.8 MHz */ >,     /*Low SVS*/
+			<  1144 /*  150   MHz */ >,
+			<  1525 /*  200   MHz */ >,
+			<  1611 /*  211.2 MHz */ >,
 			<  2124 /*  278.4 MHz */ >,
 			<  2929 /*  384   MHz */ >,
+			<  3143 /*  412   MHz */ >,
 			<  3221 /*  422.4 MHz */ >,	/* SVS */
 			<  4248 /*  556.8 MHz */ >,
 			<  5126 /*  672   MHz */ >,
 			<  5859 /*  768   MHz */ >,     /* SVS+  */
 			<  6152 /*  806.4 MHz */ >,
 			<  6445 /*  844.8 MHz */ >,     /* NOM   */
-			<  7104 /*  931.2 MHz */ >;     /* TURBO */
+			<  7104 /*  931.2 MHz */ >,     /* TURBO */
+			<  7759 /*  1017  MHz */ >;     /* RE-TURBO */
 	};
 
 	qcom,cpu-bwmon {
@@ -1075,21 +1135,36 @@
 		cpubw-cpufreq {
 		target-dev = <&cpubw>;
 		cpu-to-dev-map =
-			 <  652800  1611>,
-			 < 1036800  3221>,
-			 < 1401600  5859>,
-			 < 1689600  6445>,
-			 < 1804800  7104>,
-			 < 1958400  7104>,
-			 < 2208000  7104>;
+			 <  400457  572 >,
+			 <  480000  572 >,
+			 <  576000  572 >,
+			 <  652800  769 >,
+			 <  729600  769 >,
+			 <  806400  769 >,
+			 <  883200  1144>,
+			 <  960000  1525>,
+			 < 1036800  1611>,
+			 < 1113600  2124>,
+			 < 1248000  2124>,
+			 < 1305600  2929>,
+			 < 1401600  2929>,
+			 < 1536000  4248>,
+			 < 1689600  5126>,
+			 < 1758400  5859>,
+			 < 1804800  5859>,
+			 < 1843200  6152>,
+			 < 1958400  6152>,
+			 < 2016000  6445>;
 		};
 
 		mincpubw-cpufreq {
 			target-dev = <&mincpubw>;
 			cpu-to-dev-map =
-				<  652800 1611 >,
+				<  400457  572 >,
+				<  652800  572 >,
+				<  806400  769 >,
 				< 1401600 3221 >,
-				< 2208000 5859 >;
+				< 2016000 5859 >;
 		};
 	};
 
@@ -1269,10 +1344,16 @@
 		reg-names = "fuse-base";
 	};
 
+	sn_fuse: snfuse@0xa4128 {
+		compatible = "qcom,sn-fuse";
+		reg = <0xa4128 0x4>;
+		reg-names = "sn-base";
+	};
+
 	jtag_mm0: jtagmm@619c000 {
 		compatible = "qcom,jtagv8-mm";
 		reg = <0x619c000 0x1000>,
-		      <0x6190000 0x1000>;
+					<0x6190000 0x1000>;
 		reg-names = "etm-base", "debug-base";
 
 		qcom,coresight-jtagmm-cpu = <&CPU0>;
@@ -1285,7 +1366,7 @@
 	jtag_mm1: jtagmm@619d000 {
 		compatible = "qcom,jtagv8-mm";
 		reg = <0x619d000 0x1000>,
-		      <0x6192000 0x1000>;
+					<0x6192000 0x1000>;
 		reg-names = "etm-base", "debug-base";
 
 		qcom,coresight-jtagmm-cpu = <&CPU1>;
@@ -1298,7 +1379,7 @@
 	jtag_mm2: jtagmm@619e000 {
 		compatible = "qcom,jtagv8-mm";
 		reg = <0x619e000 0x1000>,
-		      <0x6194000 0x1000>;
+					<0x6194000 0x1000>;
 		reg-names = "etm-base", "debug-base";
 
 		qcom,coresight-jtagmm-cpu = <&CPU2>;
@@ -1311,7 +1392,7 @@
 	jtag_mm3: jtagmm@619f000 {
 		compatible = "qcom,jtagv8-mm";
 		reg = <0x619f000 0x1000>,
-		      <0x6196000 0x1000>;
+					<0x6196000 0x1000>;
 		reg-names = "etm-base", "debug-base";
 
 		qcom,coresight-jtagmm-cpu = <&CPU3>;
@@ -1324,7 +1405,7 @@
 	jtag_mm4: jtagmm@61bc000 {
 		compatible = "qcom,jtagv8-mm";
 		reg = <0x61bc000 0x1000>,
-		      <0x61b0000 0x1000>;
+					<0x61b0000 0x1000>;
 		reg-names = "etm-base", "debug-base";
 
 		qcom,coresight-jtagmm-cpu = <&CPU4>;
@@ -1337,7 +1418,7 @@
 	jtag_mm5: jtagmm@61bd000 {
 		compatible = "qcom,jtagv8-mm";
 		reg = <0x61bd000 0x1000>,
-		      <0x61b2000 0x1000>;
+					<0x61b2000 0x1000>;
 		reg-names = "etm-base", "debug-base";
 
 		qcom,coresight-jtagmm-cpu = <&CPU5>;
@@ -1350,7 +1431,7 @@
 	jtag_mm6: jtagmm@61be000 {
 		compatible = "qcom,jtagv8-mm";
 		reg = <0x61be000 0x1000>,
-		      <0x61b4000 0x1000>;
+					<0x61b4000 0x1000>;
 		reg-names = "etm-base", "debug-base";
 
 		qcom,coresight-jtagmm-cpu = <&CPU6>;
@@ -1363,7 +1444,7 @@
 	jtag_mm7: jtagmm@61bf000 {
 		compatible = "qcom,jtagv8-mm";
 		reg = <0x61bf000 0x1000>,
-		      <0x61b6000 0x1000>;
+					<0x61b6000 0x1000>;
 		reg-names = "etm-base", "debug-base";
 
 		qcom,coresight-jtagmm-cpu = <&CPU7>;
@@ -1507,27 +1588,27 @@
 	qcom,wcnss-wlan@0a000000 {
 		compatible = "qcom,wcnss_wlan";
 		reg = <0x0a000000 0x280000>,
-		      <0x0b011008 0x04>,
-		      <0x0a21b000 0x3000>,
-		      <0x03204000 0x00000100>,
-		      <0x03200800 0x00000200>,
-		      <0x0a100400 0x00000200>,
-		      <0x0a205050 0x00000200>,
-		      <0x0a219000 0x00000020>,
-		      <0x0a080488 0x00000008>,
-		      <0x0a080fb0 0x00000008>,
-		      <0x0a08040c 0x00000008>,
-		      <0x0a0120a8 0x00000008>,
-		      <0x0a012448 0x00000008>,
-		      <0x0a080c00 0x00000001>;
+					<0x0b011008 0x04>,
+					<0x0a21b000 0x3000>,
+					<0x03204000 0x00000100>,
+					<0x03200800 0x00000200>,
+					<0x0a100400 0x00000200>,
+					<0x0a205050 0x00000200>,
+					<0x0a219000 0x00000020>,
+					<0x0a080488 0x00000008>,
+					<0x0a080fb0 0x00000008>,
+					<0x0a08040c 0x00000008>,
+					<0x0a0120a8 0x00000008>,
+					<0x0a012448 0x00000008>,
+					<0x0a080c00 0x00000001>;
 
 		reg-names = "wcnss_mmio", "wcnss_fiq",
-			    "pronto_phy_base", "riva_phy_base",
-			    "riva_ccu_base", "pronto_a2xb_base",
-			    "pronto_ccpu_base", "pronto_saw2_base",
-			    "wlan_tx_phy_aborts","wlan_brdg_err_source",
-			    "wlan_tx_status", "alarms_txctl",
-			    "alarms_tactl", "pronto_mcu_base";
+					"pronto_phy_base", "riva_phy_base",
+					"riva_ccu_base", "pronto_a2xb_base",
+					"pronto_ccpu_base", "pronto_saw2_base",
+					"wlan_tx_phy_aborts","wlan_brdg_err_source",
+					"wlan_tx_status", "alarms_txctl",
+					"alarms_tactl", "pronto_mcu_base";
 
 		interrupts = <0 145 0 0 146 0>;
 		interrupt-names = "wcnss_wlantx_irq", "wcnss_wlanrx_irq";
@@ -1641,7 +1722,7 @@
 	qcom_cedev: qcedev@720000 {
 		compatible = "qcom,qcedev";
 		reg = <0x720000 0x20000>,
-		      <0x704000 0x20000>;
+					<0x704000 0x20000>;
 		reg-names = "crypto-base","crypto-bam-base";
 		interrupts = <0 207 0>;
 		qcom,bam-pipe-pair = <1>;
@@ -1743,7 +1824,7 @@
 		compatible = "qcom,ice";
 		reg = <0x7803000 0x8000>;
 		interrupt-names = "sdcc_ice_nonsec_level_irq",
-				  "sdcc_ice_sec_level_irq";
+					"sdcc_ice_sec_level_irq";
 		interrupts = <0 312 0>, <0 313 0>;
 		qcom,enable-ice-clk;
 		clock-names = "ice_core_clk_src", "ice_core_clk",
@@ -1898,11 +1979,11 @@
 	qcom,mss@4080000 {
 		compatible = "qcom,pil-q6v55-mss";
 		reg = <0x04080000 0x100>,
-		      <0x0194f000 0x010>,
-		      <0x01950000 0x008>,
-		      <0x01951000 0x008>,
-		      <0x04020000 0x040>,
-		      <0x01871000 0x004>;
+					<0x0194f000 0x010>,
+					<0x01950000 0x008>,
+					<0x01951000 0x008>,
+					<0x04020000 0x040>,
+					<0x01871000 0x004>;
 		reg-names = "qdsp6_base", "halt_q6", "halt_modem", "halt_nc",
 				 "rmb_base", "restart_reg";
 
@@ -2077,13 +2158,14 @@
 		interrupt-names = "hs_phy_irq", "ss_phy_irq", "pwr_event_irq";
 
 		USB3_GDSC-supply = <&gdsc_usb30>;
+		vbus_dwc3-supply = <&smbcharger_charger_otg>;
 		qcom,usb-dbm = <&dbm_1p5>;
 		qcom,msm-bus,name = "usb3";
-		qcom,msm-bus,num-cases = <3>;
+		qcom,msm-bus,num-cases = <2>;
 		qcom,msm-bus,num-paths = <1>;
+		qcom,detect-dpdm-floating;
 		qcom,msm-bus,vectors-KBps =
 					<61 512 0 0>,
-					<61 512 240000 800000>,
 					<61 512 240000 800000>;
 
 		qcom,dwc-usb3-msm-tx-fifo-size = <21288>;
@@ -2180,10 +2262,12 @@
 	qusb_phy: qusb@79000 {
 		compatible = "qcom,qusb2phy";
 		reg = <0x079000 0x180>,
+			<0x070f8800 0x400>,
 			<0x01841030 0x4>,
 			<0x0193f044 0x4>,
 			<0x0193f020 0x4>;
 		reg-names = "qusb_phy_base",
+			"qscratch_base",
 			"ref_clk_addr",
 			"tcsr_phy_clk_scheme_sel",
 			"tcsr_phy_level_shift_keeper";
@@ -2195,9 +2279,9 @@
 		qcom,vdd-voltage-level = <0 925000 925000>;
 
 		qcom,qusb-phy-init-seq = <0xF8 0x80
-					0xB3 0x84
-					0x83 0x88
-					0xC0 0x8C
+					0x53 0x84
+					0x93 0x88
+					0xCf 0x8C
 					0x14 0x9C
 					0x30 0x08
 					0x79 0x0C
@@ -2215,7 +2299,7 @@
 			 <&clock_gcc clk_gcc_usb30_master_clk>;
 
 		clock-names = "ref_clk_src", "ref_clk", "cfg_ahb_clk",
-			      "phy_reset", "iface_clk", "core_clk";
+						"phy_reset", "iface_clk", "core_clk";
 
 	};
 
@@ -2228,11 +2312,11 @@
 	ssphy: ssphy@78000 {
 		compatible = "qcom,usb-ssphy-qmp";
 		reg = <0x78000 0x9f8>,
-		      <0x0193f244 0x4>,
-		      <0x0193f044 0x4>;
+					<0x0193f244 0x4>,
+					<0x0193f044 0x4>;
 		reg-names = "qmp_phy_base",
-			    "vls_clamp_reg",
-			    "tcsr_phy_clk_scheme_sel";
+					"vls_clamp_reg",
+					"tcsr_phy_clk_scheme_sel";
 		qcom,qmp-phy-init-seq = <0xac 0x14 0x1a 0x00
 					0x34 0x08 0x08 0x00
 					0x174 0x30 0x30 0x00
@@ -2326,7 +2410,7 @@
 			 <&clock_gcc clk_gcc_usb_ss_ref_clk>;
 
 		clock-names = "aux_clk", "pipe_clk", "cfg_ahb_clk", "phy_reset",
-			      "phy_phy_reset", "ref_clk_src", "ref_clk";
+						"phy_phy_reset", "ref_clk_src", "ref_clk";
 
 	};
 

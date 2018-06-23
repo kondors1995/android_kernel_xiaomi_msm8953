@@ -67,9 +67,9 @@
 		qcom,id = <0>;
 		qcom,chipid = <0x05000600>;
 
-		qcom,initial-pwrlevel = <4>;
-
-		qcom,idle-timeout = <80>; //msecs
+		qcom,initial-pwrlevel = <7>;
+		
+		qcom,idle-timeout = <34>; //msecs
 		qcom,deep-nap-timeout = <100>; //msecs
 		qcom,strtstp-sleepwake;
 
@@ -133,6 +133,9 @@
 
 		/* Enable context aware freq. scaling */
 		qcom,enable-ca-jump;
+
+		/* Enable Per Object Post Processing*/
+		qcom,popp-enable;
 
 		/* Context aware jump busy penalty in us */
 		qcom,ca-busy-penalty = <12000>;
