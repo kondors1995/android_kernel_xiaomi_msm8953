@@ -20,8 +20,7 @@
 #include <linux/moduleparam.h>
 #include <linux/slab.h>
 
-static unsigned int input_boost_freq_lp = CONFIG_INPUT_BOOST_FREQ_LP;
-static unsigned int input_boost_freq_hp = CONFIG_INPUT_BOOST_FREQ_PERF;
+static unsigned int input_boost_freq = CONFIG_INPUT_BOOST_FREQ;
 static unsigned short input_boost_duration = CONFIG_INPUT_BOOST_DURATION_MS;
 
 #ifdef CONFIG_DYNAMIC_STUNE_BOOST
@@ -31,8 +30,7 @@ static unsigned short dynamic_stune_boost;
 module_param(dynamic_stune_boost, short, 0644);
 #endif
 
-module_param(input_boost_freq_lp, uint, 0644);
-module_param(input_boost_freq_hp, uint, 0644);
+module_param(input_boost_freq, uint, 0644);
 module_param(input_boost_duration, short, 0644);
 
 /* Available bits for boost_drv state */
@@ -56,14 +54,6 @@ struct boost_drv {
 };
 
 static struct boost_drv *boost_drv_g;
-
-static u32 get_boost_freq(struct boost_drv *b, u32 cpu)
-{
-	if (cpumask_test_cpu(cpu, cpu_lp_mask))
-		return input_boost_freq_lp;
-
-	return input_boost_freq_hp;
-}
 
 static u32 get_boost_state(struct boost_drv *b)
 {
@@ -219,7 +209,7 @@ static int cpu_notifier_cb(struct notifier_block *nb,
 {
 	struct boost_drv *b = container_of(nb, typeof(*b), cpu_notif);
 	struct cpufreq_policy *policy = data;
-	u32 boost_freq, state;
+	u32 state;
 
 	if (action != CPUFREQ_ADJUST)
 		return NOTIFY_OK;
@@ -237,8 +227,7 @@ static int cpu_notifier_cb(struct notifier_block *nb,
 	 * unboosting, set policy->min to the absolute min freq for the CPU.
 	 */
 	if (state & INPUT_BOOST) {
-		boost_freq = get_boost_freq(b, policy->cpu);
-		policy->min = min(policy->max, boost_freq);
+		policy->min = min(policy->max, input_boost_freq);
 	} else {
 		policy->min = policy->cpuinfo.min_freq;
 	}
