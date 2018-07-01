@@ -32,7 +32,7 @@ can also be enabled and disabled at runtime using the sysfs interface.
 An example command to enable zswap at runtime, assuming sysfs is mounted
 at /sys, is:
 
-echo 1 > /sys/module/zswap/parameters/enabled
+echo 1 > /sys/modules/zswap/parameters/enabled
 
 When zswap is disabled at runtime it will stop storing pages that are
 being swapped out.  However, it will _not_ immediately write out or fault
