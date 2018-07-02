@@ -466,7 +466,7 @@ static void hugepd_free(struct mmu_gather *tlb, void *hugepte)
 
 	if (atomic_read(&tlb->mm->mm_users) < 2 ||
 	    cpumask_equal(mm_cpumask(tlb->mm),
-			  cpumask_of(smp_processor_id()))) {
+			  cpumask_of(raw_smp_processor_id()))) {
 		kmem_cache_free(hugepte_cache, hugepte);
         put_cpu_var(hugepd_freelist_cur);
 		return;

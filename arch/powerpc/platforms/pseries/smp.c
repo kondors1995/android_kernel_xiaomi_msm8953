@@ -106,7 +106,7 @@ static inline int smp_startup_cpu(unsigned int lcpu)
 		/* Already started by OF and sitting in spin loop */
 		return 1;
 
-	pcpu = get_hard_smp_processor_id(lcpu);
+	pcpu = get_hard_raw_smp_processor_id(lcpu);
 
 	/* Check to see if the CPU out of FW already for kexec */
 	if (smp_query_cpu_stopped(pcpu) == QCSS_NOT_STOPPED){
@@ -177,7 +177,7 @@ static int smp_pSeries_kick_cpu(int nr)
 		long rc;
 		unsigned long hcpuid;
 
-		hcpuid = get_hard_smp_processor_id(nr);
+		hcpuid = get_hard_raw_smp_processor_id(nr);
 		rc = plpar_hcall_norets(H_PROD, hcpuid);
 		if (rc != H_SUCCESS)
 			printk(KERN_ERR "Error: Prod to wake up processor %d "
@@ -191,7 +191,7 @@ static int smp_pSeries_kick_cpu(int nr)
 /* Only used on systems that support multiple IPI mechanisms */
 static void pSeries_cause_ipi_mux(int cpu, unsigned long data)
 {
-	if (cpumask_test_cpu(cpu, cpu_sibling_mask(smp_processor_id())))
+	if (cpumask_test_cpu(cpu, cpu_sibling_mask(raw_smp_processor_id())))
 		doorbell_cause_ipi(cpu, data);
 	else
 		xics_cause_ipi(cpu, data);

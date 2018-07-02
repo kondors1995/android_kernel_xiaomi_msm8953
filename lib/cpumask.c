@@ -49,7 +49,7 @@ EXPORT_SYMBOL(cpumask_next_and);
  * @mask: the cpumask to search
  * @cpu: the cpu to ignore.
  *
- * Often used to find any cpu but smp_processor_id() in a mask.
+ * Often used to find any cpu but raw_smp_processor_id() in a mask.
  * Returns >= nr_cpu_ids if no cpus set.
  */
 int cpumask_any_but(const struct cpumask *mask, unsigned int cpu)

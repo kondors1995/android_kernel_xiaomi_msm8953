@@ -148,7 +148,7 @@ void flush_ptrace_access(struct vm_area_struct *vma, struct page *page,
 			 unsigned long uaddr, void *kaddr, unsigned long len)
 {
 	unsigned int flags = 0;
-	if (cpumask_test_cpu(smp_processor_id(), mm_cpumask(vma->vm_mm)))
+	if (cpumask_test_cpu(raw_smp_processor_id(), mm_cpumask(vma->vm_mm)))
 		flags |= FLAG_PA_CORE_IN_MM;
 	if (vma->vm_flags & VM_EXEC)
 		flags |= FLAG_PA_IS_EXEC;

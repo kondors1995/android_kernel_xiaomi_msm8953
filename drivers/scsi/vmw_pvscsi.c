@@ -719,7 +719,7 @@ static int pvscsi_queue_ring(struct pvscsi_adapter *adapter,
 		e->senseAddr = 0;
 	}
 	e->cdbLen   = cmd->cmd_len;
-	e->vcpuHint = smp_processor_id();
+	e->vcpuHint = raw_smp_processor_id();
 	memcpy(e->cdb, cmd->cmnd, e->cdbLen);
 
 	e->tag = SIMPLE_QUEUE_TAG;

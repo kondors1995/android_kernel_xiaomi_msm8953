@@ -281,7 +281,7 @@ static void pet_watchdog(struct msm_watchdog_data *wdog_dd)
 
 static void keep_alive_response(void *info)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct msm_watchdog_data *wdog_dd = (struct msm_watchdog_data *)info;
 	cpumask_set_cpu(cpu, &wdog_dd->alive_mask);
 	smp_mb();

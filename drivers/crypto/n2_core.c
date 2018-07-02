@@ -116,14 +116,14 @@ static irqreturn_t cwq_intr(int irq, void *dev_id)
 	struct spu_queue *q = dev_id;
 
 	pr_err("CPU[%d]: Got CWQ interrupt for qhdl[%lx]\n",
-	       smp_processor_id(), q->qhandle);
+	       raw_smp_processor_id(), q->qhandle);
 
 	spin_lock(&q->lock);
 
 	hv_ret = sun4v_ncs_gethead(q->qhandle, &new_head);
 
 	pr_err("CPU[%d]: CWQ gethead[%lx] hv_ret[%lu]\n",
-	       smp_processor_id(), new_head, hv_ret);
+	       raw_smp_processor_id(), new_head, hv_ret);
 
 	for (off = q->head; off != new_head; off = spu_next_offset(q, off)) {
 		/* XXX ... XXX */
@@ -146,12 +146,12 @@ static irqreturn_t mau_intr(int irq, void *dev_id)
 	spin_lock(&q->lock);
 
 	pr_err("CPU[%d]: Got MAU interrupt for qhdl[%lx]\n",
-	       smp_processor_id(), q->qhandle);
+	       raw_smp_processor_id(), q->qhandle);
 
 	hv_ret = sun4v_ncs_gethead(q->qhandle, &head);
 
 	pr_err("CPU[%d]: MAU gethead[%lx] hv_ret[%lu]\n",
-	       smp_processor_id(), head, hv_ret);
+	       raw_smp_processor_id(), head, hv_ret);
 
 	sun4v_ncs_sethead_marker(q->qhandle, head);
 

@@ -235,7 +235,7 @@ static int shmobile_smp_apmu_do_suspend(unsigned long cpu)
 
 static int shmobile_smp_apmu_enter_suspend(suspend_state_t state)
 {
-	cpu_suspend(smp_processor_id(), shmobile_smp_apmu_do_suspend);
+	cpu_suspend(raw_smp_processor_id(), shmobile_smp_apmu_do_suspend);
 	cpu_leave_lowpower();
 	return 0;
 }

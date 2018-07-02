@@ -93,7 +93,7 @@ void smp_vm_unmask_irq(void *info)
 
 irqreturn_t handle_ipi(int irq, void *desc)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct ipi_data *ipi = &per_cpu(ipi_data, cpu);
 	unsigned long ops;
 
@@ -165,7 +165,7 @@ void start_secondary(void)
 	atomic_inc(&init_mm.mm_count);
 	current->active_mm = &init_mm;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	setup_irq(BASE_IPI_IRQ + cpu, &ipi_intdesc);
 
@@ -238,7 +238,7 @@ void smp_send_stop(void)
 {
 	struct cpumask targets;
 	cpumask_copy(&targets, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), &targets);
+	cpumask_clear_cpu(raw_smp_processor_id(), &targets);
 	send_ipi(&targets, IPI_CPU_STOP);
 }
 

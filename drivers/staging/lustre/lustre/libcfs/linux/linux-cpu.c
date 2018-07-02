@@ -535,7 +535,7 @@ EXPORT_SYMBOL(cfs_cpt_spread_node);
 int
 cfs_cpt_current(struct cfs_cpt_table *cptab, int remap)
 {
-	int	cpu = smp_processor_id();
+	int	cpu = raw_smp_processor_id();
 	int	cpt = cptab->ctb_cpu2cpt[cpu];
 
 	if (cpt < 0) {

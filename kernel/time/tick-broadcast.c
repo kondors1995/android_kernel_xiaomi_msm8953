@@ -255,7 +255,7 @@ int tick_receive_broadcast(void)
  */
 static void tick_do_broadcast(struct cpumask *mask)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct tick_device *td;
 
 	/*
@@ -337,7 +337,7 @@ static void tick_do_broadcast_on_off(unsigned long *reason)
 
 	raw_spin_lock_irqsave(&tick_broadcast_lock, flags);
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	td = &per_cpu(tick_cpu_device, cpu);
 	dev = td->evtdev;
 	bc = tick_broadcast_device.evtdev;
@@ -470,7 +470,7 @@ int tick_resume_broadcast(void)
 		case TICKDEV_MODE_PERIODIC:
 			if (!cpumask_empty(tick_broadcast_mask))
 				tick_broadcast_start_periodic(bc);
-			broadcast = cpumask_test_cpu(smp_processor_id(),
+			broadcast = cpumask_test_cpu(raw_smp_processor_id(),
 						     tick_broadcast_mask);
 			break;
 		case TICKDEV_MODE_ONESHOT:
@@ -508,7 +508,7 @@ struct cpumask *tick_get_broadcast_oneshot_mask(void)
  */
 int tick_check_broadcast_expired(void)
 {
-	return cpumask_test_cpu(smp_processor_id(), tick_broadcast_force_mask);
+	return cpumask_test_cpu(raw_smp_processor_id(), tick_broadcast_force_mask);
 }
 
 /*
@@ -553,7 +553,7 @@ int tick_resume_broadcast_oneshot(struct clock_event_device *bc)
  */
 void tick_check_oneshot_broadcast_this_cpu(void)
 {
-	if (cpumask_test_cpu(smp_processor_id(), tick_broadcast_oneshot_mask)) {
+	if (cpumask_test_cpu(raw_smp_processor_id(), tick_broadcast_oneshot_mask)) {
 		struct tick_device *td = this_cpu_ptr(&tick_cpu_device);
 
 		/*
@@ -612,7 +612,7 @@ again:
 	 * Remove the current cpu from the pending mask. The event is
 	 * delivered immediately in tick_do_broadcast() !
 	 */
-	cpumask_clear_cpu(smp_processor_id(), tick_broadcast_pending_mask);
+	cpumask_clear_cpu(raw_smp_processor_id(), tick_broadcast_pending_mask);
 
 	/* Take care of enforced broadcast requests */
 	cpumask_or(tmpmask, tmpmask, tick_broadcast_force_mask);
@@ -669,7 +669,7 @@ static void broadcast_shutdown_local(struct clock_event_device *bc,
 	 * if we own the broadcast timer.
 	 */
 	if (bc->features & CLOCK_EVT_FEAT_HRTIMER) {
-		if (broadcast_needs_cpu(bc, smp_processor_id()))
+		if (broadcast_needs_cpu(bc, raw_smp_processor_id()))
 			return;
 		if (dev->next_event.tv64 < bc->next_event.tv64)
 			return;
@@ -716,7 +716,7 @@ int tick_broadcast_oneshot_control(unsigned long reason)
 	 * We are called with preemtion disabled from the depth of the
 	 * idle code, so we can't be moved away.
 	 */
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	td = &per_cpu(tick_cpu_device, cpu);
 	dev = td->evtdev;
 
@@ -851,7 +851,7 @@ static void tick_broadcast_init_next_event(struct cpumask *mask,
  */
 void tick_broadcast_setup_oneshot(struct clock_event_device *bc)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	/* Set it up only once ! */
 	if (bc->event_handler != tick_handle_oneshot_broadcast) {

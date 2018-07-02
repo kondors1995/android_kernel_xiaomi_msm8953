@@ -356,7 +356,7 @@ int __kprobes kprobe_exceptions_notify(struct notifier_block *self,
 			ret = NOTIFY_STOP;
 		break;
 	case DIE_PAGE_FAULT:
-		/* kprobe_running() needs smp_processor_id(). */
+		/* kprobe_running() needs raw_smp_processor_id(). */
 		preempt_disable();
 
 		if (kprobe_running()

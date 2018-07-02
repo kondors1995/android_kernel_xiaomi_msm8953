@@ -150,7 +150,7 @@ int kgdb_arch_handle_exception(int e_vector, int signo, int err_code,
 		if (remcomInBuffer[0] == 's') {
 			do_single_step(regs);
 			atomic_set(&kgdb_cpu_doing_single_step,
-				   smp_processor_id());
+				   raw_smp_processor_id());
 		}
 
 		return 0;

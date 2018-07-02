@@ -170,7 +170,7 @@ struct plat_smp_ops bcm1480_smp_ops = {
 
 void bcm1480_mailbox_interrupt(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int irq = K_BCM1480_INT_MBOX_0_0;
 	unsigned int action;
 

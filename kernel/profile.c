@@ -235,7 +235,7 @@ EXPORT_SYMBOL_GPL(profile_event_unregister);
  */
 static void __profile_flip_buffers(void *unused)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	per_cpu(cpu_profile_flip, cpu) = !per_cpu(cpu_profile_flip, cpu);
 }
@@ -411,7 +411,7 @@ void profile_tick(int type)
 	struct pt_regs *regs = get_irq_regs();
 
 	if (!user_mode(regs) && prof_cpu_mask != NULL &&
-	    cpumask_test_cpu(smp_processor_id(), prof_cpu_mask))
+	    cpumask_test_cpu(raw_smp_processor_id(), prof_cpu_mask))
 		profile_hit(type, (void *)profile_pc(regs));
 }
 

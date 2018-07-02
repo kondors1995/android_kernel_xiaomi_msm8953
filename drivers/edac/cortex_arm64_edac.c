@@ -268,7 +268,7 @@ static void ca53_parse_cpumerrsr(struct erp_local_data *ed)
 		ed->err = DBE;
 
 	edac_printk(KERN_CRIT, EDAC_CPU, "Cortex A53 CPU%d L1 %s Error detected\n",
-					 smp_processor_id(), err_name[ed->err]);
+					 raw_smp_processor_id(), err_name[ed->err]);
 	ca53_ca57_print_error_state_regs();
 	if (ed->err == DBE)
 		edac_printk(KERN_CRIT, EDAC_CPU, "Fatal error\n");
@@ -315,10 +315,10 @@ static void ca53_parse_cpumerrsr(struct erp_local_data *ed)
 					 (int) A53_CPUMERRSR_OTHER(cpumerrsr));
 
 	if (ed->err == SBE)
-		errors[A53_L1_CE].func(ed->drv->edev_ctl, smp_processor_id(),
+		errors[A53_L1_CE].func(ed->drv->edev_ctl, raw_smp_processor_id(),
 					L1_CACHE, errors[A53_L1_CE].msg);
 	else if (ed->err == DBE)
-		errors[A53_L1_UE].func(ed->drv->edev_ctl, smp_processor_id(),
+		errors[A53_L1_UE].func(ed->drv->edev_ctl, raw_smp_processor_id(),
 					L1_CACHE, errors[A53_L1_UE].msg);
 	write_cpumerrsr_el1(0);
 }
@@ -373,10 +373,10 @@ static void ca53_parse_l2merrsr(struct erp_local_data *ed)
 					 (int) A53_L2MERRSR_OTHER(l2merrsr));
 
 	if (ed->err == SBE)
-		errors[A53_L2_CE].func(ed->drv->edev_ctl, smp_processor_id(),
+		errors[A53_L2_CE].func(ed->drv->edev_ctl, raw_smp_processor_id(),
 					L2_CACHE, errors[A53_L2_CE].msg);
 	else if (ed->err == DBE)
-		errors[A53_L2_UE].func(ed->drv->edev_ctl, smp_processor_id(),
+		errors[A53_L2_UE].func(ed->drv->edev_ctl, raw_smp_processor_id(),
 					L2_CACHE, errors[A53_L2_UE].msg);
 	write_l2merrsr_el1(0);
 }
@@ -396,7 +396,7 @@ static void ca57_parse_cpumerrsr(struct erp_local_data *ed)
 		ed->err = DBE;
 
 	edac_printk(KERN_CRIT, EDAC_CPU, "Cortex A57 CPU%d L1 %s Error detected\n",
-					 smp_processor_id(), err_name[ed->err]);
+					 raw_smp_processor_id(), err_name[ed->err]);
 	ca53_ca57_print_error_state_regs();
 	if (ed->err == DBE)
 		edac_printk(KERN_CRIT, EDAC_CPU, "Fatal error\n");
@@ -437,10 +437,10 @@ static void ca57_parse_cpumerrsr(struct erp_local_data *ed)
 					 (int) A57_CPUMERRSR_OTHER(cpumerrsr));
 
 	if (ed->err == SBE)
-		errors[A57_L1_CE].func(ed->drv->edev_ctl, smp_processor_id(),
+		errors[A57_L1_CE].func(ed->drv->edev_ctl, raw_smp_processor_id(),
 					L1_CACHE, errors[A57_L1_CE].msg);
 	else if (ed->err == DBE)
-		errors[A57_L1_UE].func(ed->drv->edev_ctl, smp_processor_id(),
+		errors[A57_L1_UE].func(ed->drv->edev_ctl, raw_smp_processor_id(),
 					L1_CACHE, errors[A57_L1_UE].msg);
 	write_cpumerrsr_el1(0);
 }
@@ -505,10 +505,10 @@ static void ca57_parse_l2merrsr(struct erp_local_data *ed)
 					 (int) A57_L2MERRSR_OTHER(l2merrsr));
 
 	if (ed->err == SBE) {
-		errors[A57_L2_CE].func(ed->drv->edev_ctl, smp_processor_id(),
+		errors[A57_L2_CE].func(ed->drv->edev_ctl, raw_smp_processor_id(),
 					L2_CACHE, errors[A57_L2_CE].msg);
 	} else if (ed->err == DBE) {
-		errors[A57_L2_UE].func(ed->drv->edev_ctl, smp_processor_id(),
+		errors[A57_L2_UE].func(ed->drv->edev_ctl, raw_smp_processor_id(),
 					L2_CACHE, errors[A57_L2_UE].msg);
 	}
 	write_l2merrsr_el1(0);
@@ -549,10 +549,10 @@ static void kryo2xx_gold_parse_l2merrsr(struct erp_local_data *ed)
 					 (int) KRYO2XX_GOLD_L2MERRSR_OTHER(l2merrsr));
 
 	if (ed->err == SBE) {
-		errors[A57_L2_CE].func(ed->drv->edev_ctl, smp_processor_id(),
+		errors[A57_L2_CE].func(ed->drv->edev_ctl, raw_smp_processor_id(),
 					L2_CACHE, errors[A57_L2_CE].msg);
 	} else if (ed->err == DBE) {
-		errors[A57_L2_UE].func(ed->drv->edev_ctl, smp_processor_id(),
+		errors[A57_L2_UE].func(ed->drv->edev_ctl, raw_smp_processor_id(),
 					L2_CACHE, errors[A57_L2_UE].msg);
 	}
 	write_l2merrsr_el1(0);
@@ -638,9 +638,9 @@ static void arm64_ext_local_handler(void *info)
 	if (l2ectlr & L2ECTLR_EXT_ERR) {
 		edac_printk(KERN_CRIT, EDAC_CPU,
 		    "L2 external error detected by CPU%d\n",
-		    smp_processor_id());
+		    raw_smp_processor_id());
 
-		errors[L2_EXT_UE].func(drv->edev_ctl, smp_processor_id(),
+		errors[L2_EXT_UE].func(drv->edev_ctl, raw_smp_processor_id(),
 				       L2_CACHE, errors[L2_EXT_UE].msg);
 
 		l2ectlr &= ~L2ECTLR_EXT_ERR;

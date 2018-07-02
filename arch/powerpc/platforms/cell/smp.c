@@ -80,7 +80,7 @@ static inline int smp_startup_cpu(unsigned int lcpu)
 		/* Already started by OF and sitting in spin loop */
 		return 1;
 
-	pcpu = get_hard_smp_processor_id(lcpu);
+	pcpu = get_hard_raw_smp_processor_id(lcpu);
 
 	/* Fixup atomic count: it exited inside IRQ handler. */
 	task_thread_info(paca[lcpu].__current)->preempt_count	= 0;

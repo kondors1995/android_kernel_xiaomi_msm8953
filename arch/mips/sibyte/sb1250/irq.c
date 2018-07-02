@@ -289,7 +289,7 @@ extern void sb1250_mailbox_interrupt(void);
 
 static inline void dispatch_ip2(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	unsigned long long mask;
 
 	/*
@@ -305,7 +305,7 @@ static inline void dispatch_ip2(void)
 
 asmlinkage void plat_irq_dispatch(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	unsigned int pending;
 
 	/*

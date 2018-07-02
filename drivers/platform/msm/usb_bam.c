@@ -224,7 +224,7 @@ static void __maybe_unused put_timestamp(char *tbuf)
 	unsigned long long t;
 	unsigned long nanosec_rem;
 
-	t = cpu_clock(smp_processor_id());
+	t = cpu_clock(raw_smp_processor_id());
 	nanosec_rem = do_div(t, 1000000000)/1000;
 	snprintf(tbuf, TIME_BUF_LEN, "[%5lu.%06lu]: ", (unsigned long)t,
 		nanosec_rem);

@@ -129,7 +129,7 @@ static void unmap_cpu_to_physid(int, int);
 /*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
 void smp_prepare_boot_cpu(void)
 {
-	bsp_phys_id = hard_smp_processor_id();
+	bsp_phys_id = hard_raw_smp_processor_id();
 	physid_set(bsp_phys_id, phys_cpu_present_map);
 	set_cpu_online(0, true);	/* BSP's cpu_id == 0 */
 	cpumask_set_cpu(0, &cpu_callout_map);
@@ -421,7 +421,7 @@ int __init start_secondary(void *unused)
 	cpu_init();
 	preempt_disable();
 	smp_callin();
-	while (!cpumask_test_cpu(smp_processor_id(), &smp_commenced_mask))
+	while (!cpumask_test_cpu(raw_smp_processor_id(), &smp_commenced_mask))
 		cpu_relax();
 
 	smp_online();
@@ -455,8 +455,8 @@ int __init start_secondary(void *unused)
  *==========================================================================*/
 static void __init smp_callin(void)
 {
-	int phys_id = hard_smp_processor_id();
-	int cpu_id = smp_processor_id();
+	int phys_id = hard_raw_smp_processor_id();
+	int cpu_id = raw_smp_processor_id();
 	unsigned long timeout;
 
 	if (cpumask_test_cpu(cpu_id, &cpu_callin_map)) {
@@ -487,7 +487,7 @@ static void __init smp_callin(void)
 
 static void __init smp_online(void)
 {
-	int cpu_id = smp_processor_id();
+	int cpu_id = raw_smp_processor_id();
 
 	notify_cpu_starting(cpu_id);
 

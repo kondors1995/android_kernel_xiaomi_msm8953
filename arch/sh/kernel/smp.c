@@ -56,7 +56,7 @@ static inline void smp_store_cpu_info(unsigned int cpu)
 
 void __init smp_prepare_cpus(unsigned int max_cpus)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	init_new_context(current, &init_mm);
 	current_thread_info()->cpu = cpu;
@@ -69,7 +69,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
 
 void __init smp_prepare_boot_cpu(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	__cpu_number_map[0] = cpu;
 	__cpu_logical_map[0] = cpu;
@@ -122,7 +122,7 @@ void native_play_dead(void)
 
 int __cpu_disable(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	int ret;
 
 	ret = mp_ops->cpu_disable(cpu);
@@ -176,7 +176,7 @@ void native_play_dead(void)
 
 asmlinkage void start_secondary(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct mm_struct *mm = &init_mm;
 
 	enable_mmu();
@@ -317,7 +317,7 @@ void smp_message_recv(unsigned int msg)
 		break;
 	default:
 		printk(KERN_WARNING "SMP %d: %s(): unknown IPI %d\n",
-		       smp_processor_id(), __func__, msg);
+		       raw_smp_processor_id(), __func__, msg);
 		break;
 	}
 }
@@ -364,7 +364,7 @@ void flush_tlb_mm(struct mm_struct *mm)
 	} else {
 		int i;
 		for (i = 0; i < num_online_cpus(); i++)
-			if (smp_processor_id() != i)
+			if (raw_smp_processor_id() != i)
 				cpu_context(i, mm) = 0;
 	}
 	local_flush_tlb_mm(mm);
@@ -401,7 +401,7 @@ void flush_tlb_range(struct vm_area_struct *vma,
 	} else {
 		int i;
 		for (i = 0; i < num_online_cpus(); i++)
-			if (smp_processor_id() != i)
+			if (raw_smp_processor_id() != i)
 				cpu_context(i, mm) = 0;
 	}
 	local_flush_tlb_range(vma, start, end);
@@ -444,7 +444,7 @@ void flush_tlb_page(struct vm_area_struct *vma, unsigned long page)
 	} else {
 		int i;
 		for (i = 0; i < num_online_cpus(); i++)
-			if (smp_processor_id() != i)
+			if (raw_smp_processor_id() != i)
 				cpu_context(i, vma->vm_mm) = 0;
 	}
 	local_flush_tlb_page(vma, page);

@@ -72,7 +72,7 @@ static void trace_note(struct blk_trace *bt, pid_t pid, int action,
 	struct ring_buffer_event *event = NULL;
 	struct ring_buffer *buffer = NULL;
 	int pc = 0;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	bool blk_tracer = blk_tracer_enabled;
 
 	if (blk_tracer) {

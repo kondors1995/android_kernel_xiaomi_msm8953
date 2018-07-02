@@ -151,7 +151,7 @@ static struct attribute_group thermal_attr_group = {
 static int therm_throt_process(bool new_event, int event, int level)
 {
 	struct _thermal_state *state;
-	unsigned int this_cpu = smp_processor_id();
+	unsigned int this_cpu = raw_smp_processor_id();
 	bool old_event;
 	u64 now;
 	struct thermal_state *pstate = &per_cpu(thermal_state, this_cpu);
@@ -210,7 +210,7 @@ static int therm_throt_process(bool new_event, int event, int level)
 static int thresh_event_valid(int level, int event)
 {
 	struct _thermal_state *state;
-	unsigned int this_cpu = smp_processor_id();
+	unsigned int this_cpu = raw_smp_processor_id();
 	struct thermal_state *pstate = &per_cpu(thermal_state, this_cpu);
 	u64 now = get_jiffies_64();
 
@@ -418,7 +418,7 @@ static void intel_thermal_interrupt(void)
 static void unexpected_thermal_interrupt(void)
 {
 	printk(KERN_ERR "CPU%d: Unexpected LVT thermal interrupt!\n",
-			smp_processor_id());
+			raw_smp_processor_id());
 }
 
 static void (*smp_thermal_vector)(void) = unexpected_thermal_interrupt;
@@ -468,7 +468,7 @@ void __init mcheck_intel_therm_init(void)
 
 void intel_init_thermal(struct cpuinfo_x86 *c)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	int tm2 = 0;
 	u32 l, h;
 

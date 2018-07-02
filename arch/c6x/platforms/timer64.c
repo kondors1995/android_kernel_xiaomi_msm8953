@@ -234,7 +234,7 @@ void __init timer64_init(void)
 	cd->max_delta_ns	= clockevent_delta2ns(0x7fffffff, cd);
 	cd->min_delta_ns	= clockevent_delta2ns(250, cd);
 
-	cd->cpumask		= cpumask_of(smp_processor_id());
+	cd->cpumask		= cpumask_of(raw_smp_processor_id());
 
 	clockevents_register_device(cd);
 	setup_irq(cd->irq, &timer_iact);

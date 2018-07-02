@@ -283,7 +283,7 @@ void load_ucode_amd_ap(void)
 
 static void __init collect_cpu_sig_on_bsp(void *arg)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
 
 	uci->cpu_sig.sig = cpuid_eax(0x00000001);
@@ -300,7 +300,7 @@ static void __init get_bsp_sig(void)
 #else
 void load_ucode_amd_ap(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
 	struct equiv_cpu_entry *eq;
 	struct microcode_amd *mc;
@@ -389,7 +389,7 @@ int __init save_microcode_in_initrd_amd(void)
 	eax   = cpuid_eax(0x00000001);
 	eax   = ((eax >> 8) & 0xf) + ((eax >> 20) & 0xff);
 
-	ret = load_microcode_amd(smp_processor_id(), eax, container, container_size);
+	ret = load_microcode_amd(raw_smp_processor_id(), eax, container, container_size);
 	if (ret != UCODE_OK)
 		retval = -EINVAL;
 

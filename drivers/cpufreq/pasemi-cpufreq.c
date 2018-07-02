@@ -122,7 +122,7 @@ static void set_astate(int cpu, unsigned int astate)
 
 int check_astate(void)
 {
-	return get_cur_astate(hard_smp_processor_id());
+	return get_cur_astate(hard_raw_smp_processor_id());
 }
 
 void restore_astate(int cpu)

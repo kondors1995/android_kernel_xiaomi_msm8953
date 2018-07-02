@@ -227,7 +227,7 @@ enum pmsu_idle_prepare_flags {
 /* No locking is needed because we only access per-CPU registers */
 static int mvebu_v7_pmsu_idle_prepare(unsigned long flags)
 {
-	unsigned int hw_cpu = cpu_logical_map(smp_processor_id());
+	unsigned int hw_cpu = cpu_logical_map(raw_smp_processor_id());
 	u32 reg;
 
 	if (pmsu_mp_base == NULL)
@@ -341,7 +341,7 @@ static int armada_38x_cpu_suspend(unsigned long deepidle)
 /* No locking is needed because we only access per-CPU registers */
 void mvebu_v7_pmsu_idle_exit(void)
 {
-	unsigned int hw_cpu = cpu_logical_map(smp_processor_id());
+	unsigned int hw_cpu = cpu_logical_map(raw_smp_processor_id());
 	u32 reg;
 
 	if (pmsu_mp_base == NULL)
@@ -364,7 +364,7 @@ static int mvebu_v7_cpu_pm_notify(struct notifier_block *self,
 				    unsigned long action, void *hcpu)
 {
 	if (action == CPU_PM_ENTER) {
-		unsigned int hw_cpu = cpu_logical_map(smp_processor_id());
+		unsigned int hw_cpu = cpu_logical_map(raw_smp_processor_id());
 		mvebu_pmsu_set_cpu_boot_addr(hw_cpu, mvebu_cpu_resume);
 	} else if (action == CPU_PM_EXIT) {
 		mvebu_v7_pmsu_idle_exit();
@@ -515,7 +515,7 @@ early_initcall(mvebu_v7_pmsu_init);
 static void mvebu_pmsu_dfs_request_local(void *data)
 {
 	u32 reg;
-	u32 cpu = smp_processor_id();
+	u32 cpu = raw_smp_processor_id();
 	unsigned long flags;
 
 	local_irq_save(flags);

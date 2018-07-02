@@ -126,8 +126,8 @@ DECLARE_PER_CPU(unsigned long long, interrupts_enabled_mask);
 
 #ifdef CONFIG_DEBUG_PREEMPT
 /* Due to inclusion issues, we can't rely on <linux/smp.h> here. */
-extern unsigned int debug_smp_processor_id(void);
-# define smp_processor_id() debug_smp_processor_id()
+extern unsigned int debug_raw_smp_processor_id(void);
+# define smp_processor_id() debug_raw_smp_processor_id()
 #endif
 
 /* Disable interrupts. */

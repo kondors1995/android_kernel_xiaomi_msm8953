@@ -208,7 +208,7 @@ static void __init vsmp_cap_cpus(void)
 
 static int apicid_phys_pkg_id(int initial_apic_id, int index_msb)
 {
-	return hard_smp_processor_id() >> index_msb;
+	return hard_raw_smp_processor_id() >> index_msb;
 }
 
 /*

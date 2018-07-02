@@ -332,7 +332,7 @@ void __init start_early_boot(void)
 	per_cpu_patch();
 	sun4v_patch();
 
-	cpu = hard_smp_processor_id();
+	cpu = hard_raw_smp_processor_id();
 	if (cpu >= NR_CPUS) {
 		prom_printf("Serious problem, boot cpu id (%d) >= NR_CPUS (%d)\n",
 			    cpu, NR_CPUS);

@@ -570,7 +570,7 @@ static int intel_idle(struct cpuidle_device *dev,
 	struct cpuidle_state *state = &drv->states[index];
 	unsigned long eax = flg2MWAIT(state->flags);
 	unsigned int cstate;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	cstate = (((eax) >> MWAIT_SUBSTATE_SIZE) & MWAIT_CSTATE_MASK) + 1;
 
@@ -595,7 +595,7 @@ static int intel_idle(struct cpuidle_device *dev,
 static void __setup_broadcast_timer(void *arg)
 {
 	unsigned long reason = (unsigned long)arg;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	reason = reason ?
 		CLOCK_EVT_NOTIFY_BROADCAST_ON : CLOCK_EVT_NOTIFY_BROADCAST_OFF;

@@ -503,7 +503,7 @@ static int sha1_mb_update(struct shash_desc *desc, const u8 *data,
 
 
 	/* sanity check */
-	if (rctx->tag.cpu != smp_processor_id()) {
+	if (rctx->tag.cpu != raw_smp_processor_id()) {
 		pr_err("mcryptd error: cpu clash\n");
 		goto done;
 	}
@@ -561,7 +561,7 @@ static int sha1_mb_finup(struct shash_desc *desc, const u8 *data,
 	int ret = 0, flag = HASH_UPDATE, nbytes;
 
 	/* sanity check */
-	if (rctx->tag.cpu != smp_processor_id()) {
+	if (rctx->tag.cpu != raw_smp_processor_id()) {
 		pr_err("mcryptd error: cpu clash\n");
 		goto done;
 	}
@@ -621,7 +621,7 @@ static int sha1_mb_final(struct shash_desc *desc, u8 *out)
 	u8 data;
 
 	/* sanity check */
-	if (rctx->tag.cpu != smp_processor_id()) {
+	if (rctx->tag.cpu != raw_smp_processor_id()) {
 		pr_err("mcryptd error: cpu clash\n");
 		goto done;
 	}

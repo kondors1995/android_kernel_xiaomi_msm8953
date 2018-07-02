@@ -303,11 +303,11 @@ static void omap3_pm_idle(void)
 	if (omap_irq_pending())
 		return;
 
-	trace_cpu_idle(1, smp_processor_id());
+	trace_cpu_idle(1, raw_smp_processor_id());
 
 	omap_sram_idle();
 
-	trace_cpu_idle(PWR_EVENT_EXIT, smp_processor_id());
+	trace_cpu_idle(PWR_EVENT_EXIT, raw_smp_processor_id());
 }
 
 #ifdef CONFIG_SUSPEND

@@ -199,7 +199,7 @@
 #define F_FLOW_SEQ    (1<<11)	/* Sequential flows */
 #define F_IPSEC_ON    (1<<12)	/* ipsec on for flows */
 #define F_QUEUE_MAP_RND (1<<13)	/* queue map Random */
-#define F_QUEUE_MAP_CPU (1<<14)	/* queue map mirrors smp_processor_id() */
+#define F_QUEUE_MAP_CPU (1<<14)	/* queue map mirrors raw_smp_processor_id() */
 #define F_NODE          (1<<15)	/* Node memory alloc*/
 #define F_UDPCSUM       (1<<16)	/* Include UDP checksum */
 #define F_NO_TIMESTAMP  (1<<17)	/* Don't timestamp packets (default TS) */
@@ -2309,7 +2309,7 @@ static void set_cur_queue_map(struct pktgen_dev *pkt_dev)
 {
 
 	if (pkt_dev->flags & F_QUEUE_MAP_CPU)
-		pkt_dev->cur_queue_map = smp_processor_id();
+		pkt_dev->cur_queue_map = raw_smp_processor_id();
 
 	else if (pkt_dev->queue_map_min <= pkt_dev->queue_map_max) {
 		__u16 t;
@@ -3361,7 +3361,7 @@ static void pktgen_xmit(struct pktgen_dev *pkt_dev)
 
 	local_bh_disable();
 
-	HARD_TX_LOCK(odev, txq, smp_processor_id());
+	HARD_TX_LOCK(odev, txq, raw_smp_processor_id());
 
 	if (unlikely(netif_xmit_frozen_or_drv_stopped(txq))) {
 		ret = NETDEV_TX_BUSY;
@@ -3426,7 +3426,7 @@ static int pktgen_thread_worker(void *arg)
 	struct pktgen_dev *pkt_dev = NULL;
 	int cpu = t->cpu;
 
-	BUG_ON(smp_processor_id() != cpu);
+	BUG_ON(raw_smp_processor_id() != cpu);
 
 	init_waitqueue_head(&t->queue);
 	complete(&t->start_done);

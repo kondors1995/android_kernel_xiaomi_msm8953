@@ -316,7 +316,7 @@ static inline void disable_pkg_thres_interrupt(void)
 static void pkg_temp_thermal_threshold_work_fn(struct work_struct *work)
 {
 	__u64 msr_val;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int phy_id = topology_physical_package_id(cpu);
 	struct phy_dev_entry *phdev = pkg_temp_thermal_get_phy_entry(cpu);
 	bool notify = false;
@@ -355,7 +355,7 @@ static void pkg_temp_thermal_threshold_work_fn(struct work_struct *work)
 static int pkg_temp_thermal_platform_thermal_notify(__u64 msr_val)
 {
 	unsigned long flags;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int phy_id = topology_physical_package_id(cpu);
 
 	/*

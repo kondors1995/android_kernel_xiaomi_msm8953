@@ -50,7 +50,7 @@ static long __sh_cpufreq_target(void *arg)
 	struct device *dev;
 	long freq;
 
-	if (smp_processor_id() != cpu)
+	if (raw_smp_processor_id() != cpu)
 		return -ENODEV;
 
 	dev = get_cpu_device(cpu);

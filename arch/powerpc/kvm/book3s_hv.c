@@ -1585,7 +1585,7 @@ static void kvmppc_start_thread(struct kvm_vcpu *vcpu)
 	vcpu->cpu = vc->pcpu;
 	smp_wmb();
 #if defined(CONFIG_PPC_ICP_NATIVE) && defined(CONFIG_SMP)
-	if (cpu != smp_processor_id()) {
+	if (cpu != raw_smp_processor_id()) {
 		xics_wake_cpu(cpu);
 		if (vcpu->arch.ptid)
 			++vc->n_woken;
@@ -1617,7 +1617,7 @@ static void kvmppc_wait_for_nap(struct kvmppc_vcore *vc)
  */
 static int on_primary_thread(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int thr;
 
 	/* Are we on a primary subcore? */
@@ -1728,7 +1728,7 @@ static void kvmppc_run_core(struct kvmppc_vcore *vc)
 	}
 
 
-	vc->pcpu = smp_processor_id();
+	vc->pcpu = raw_smp_processor_id();
 	list_for_each_entry(vcpu, &vc->runnable_threads, arch.run_list) {
 		kvmppc_start_thread(vcpu);
 		kvmppc_create_dtl_entry(vcpu, vc);

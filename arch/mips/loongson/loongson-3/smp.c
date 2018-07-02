@@ -253,7 +253,7 @@ loongson3_send_ipi_mask(const struct cpumask *mask, unsigned int action)
 
 void loongson3_ipi_interrupt(struct pt_regs *regs)
 {
-	int i, cpu = smp_processor_id();
+	int i, cpu = raw_smp_processor_id();
 	unsigned int action, c0count;
 
 	/* Load the ipi register to figure out what we're supposed to do */
@@ -284,7 +284,7 @@ static void loongson3_init_secondary(void)
 {
 	int i;
 	uint32_t initcount;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	unsigned int imask = STATUSF_IP7 | STATUSF_IP6 |
 			     STATUSF_IP3 | STATUSF_IP2;
 
@@ -317,9 +317,9 @@ static void loongson3_smp_finish(void)
 	write_c0_compare(read_c0_count() + mips_hpt_frequency/HZ);
 	local_irq_enable();
 	loongson3_ipi_write64(0,
-			(void *)(ipi_mailbox_buf[smp_processor_id()]+0x0));
+			(void *)(ipi_mailbox_buf[raw_smp_processor_id()]+0x0));
 	pr_info("CPU#%d finished, CP0_ST=%x\n",
-			smp_processor_id(), read_c0_status());
+			raw_smp_processor_id(), read_c0_status());
 }
 
 static void __init loongson3_smp_setup(void)
@@ -350,7 +350,7 @@ static void __init loongson3_smp_setup(void)
 static void __init loongson3_prepare_cpus(unsigned int max_cpus)
 {
 	init_cpu_present(cpu_possible_mask);
-	per_cpu(cpu_state, smp_processor_id()) = CPU_ONLINE;
+	per_cpu(cpu_state, raw_smp_processor_id()) = CPU_ONLINE;
 }
 
 /*
@@ -382,7 +382,7 @@ static void loongson3_boot_secondary(int cpu, struct task_struct *idle)
 static int loongson3_cpu_disable(void)
 {
 	unsigned long flags;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	if (cpu == 0)
 		return -EBUSY;
@@ -439,7 +439,7 @@ static void loongson3a_play_dead(int *state_addr)
 		"   .set pop                      \n"
 		: [addr] "=&r" (addr), [val] "=&r" (val)
 		: [state_addr] "r" (state_addr),
-		  [sets] "r" (cpu_data[smp_processor_id()].dcache.sets));
+		  [sets] "r" (cpu_data[raw_smp_processor_id()].dcache.sets));
 
 	__asm__ __volatile__(
 		"   .set push                         \n"
@@ -501,7 +501,7 @@ static void loongson3b_play_dead(int *state_addr)
 		"   .set pop                      \n"
 		: [addr] "=&r" (addr), [val] "=&r" (val)
 		: [state_addr] "r" (state_addr),
-		  [sets] "r" (cpu_data[smp_processor_id()].dcache.sets));
+		  [sets] "r" (cpu_data[raw_smp_processor_id()].dcache.sets));
 
 	__asm__ __volatile__(
 		"   .set push                         \n"
@@ -540,7 +540,7 @@ static void loongson3b_play_dead(int *state_addr)
 void play_dead(void)
 {
 	int *state_addr;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	void (*play_dead_at_ckseg1)(int *);
 
 	idle_task_exit();

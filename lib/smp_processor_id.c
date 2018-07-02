@@ -1,7 +1,7 @@
 /*
- * lib/smp_processor_id.c
+ * lib/raw_smp_processor_id.c
  *
- * DEBUG_PREEMPT variant of smp_processor_id().
+ * DEBUG_PREEMPT variant of raw_smp_processor_id().
  */
 #include <linux/export.h>
 #include <linux/kallsyms.h>
@@ -20,7 +20,7 @@ notrace static unsigned int check_preemption_disabled(const char *what1,
 
 	/*
 	 * Kernel threads bound to a single CPU can safely use
-	 * smp_processor_id():
+	 * raw_smp_processor_id():
 	 */
 	if (cpumask_equal(tsk_cpus_allowed(current), cpumask_of(this_cpu)))
 		goto out;
@@ -51,11 +51,11 @@ out:
 	return this_cpu;
 }
 
-notrace unsigned int debug_smp_processor_id(void)
+notrace unsigned int debug_raw_smp_processor_id(void)
 {
-	return check_preemption_disabled("smp_processor_id", "");
+	return check_preemption_disabled("raw_smp_processor_id", "");
 }
-EXPORT_SYMBOL(debug_smp_processor_id);
+EXPORT_SYMBOL(debug_raw_smp_processor_id);
 
 notrace void __this_cpu_preempt_check(const char *op)
 {

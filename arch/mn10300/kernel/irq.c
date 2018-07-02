@@ -246,7 +246,7 @@ void __init init_IRQ(void)
 asmlinkage void do_IRQ(void)
 {
 	unsigned long sp, epsw, irq_disabled_epsw, old_irq_enabled_epsw;
-	unsigned int cpu_id = smp_processor_id();
+	unsigned int cpu_id = raw_smp_processor_id();
 	int irq;
 
 	sp = current_stack_pointer();
@@ -313,7 +313,7 @@ void migrate_irqs(void)
 	unsigned int self, new;
 	unsigned long flags;
 
-	self = smp_processor_id();
+	self = raw_smp_processor_id();
 	for (irq = 0; irq < NR_IRQS; irq++) {
 		struct irq_data *data = irq_get_irq_data(irq);
 

@@ -197,7 +197,7 @@ static enum hrtimer_restart null_cmd_timer_expired(struct hrtimer *timer)
 	struct llist_node *entry;
 	struct nullb_cmd *cmd;
 
-	cq = &per_cpu(completion_queues, smp_processor_id());
+	cq = &per_cpu(completion_queues, raw_smp_processor_id());
 
 	while ((entry = llist_del_all(&cq->list)) != NULL) {
 		entry = llist_reverse_order(entry);

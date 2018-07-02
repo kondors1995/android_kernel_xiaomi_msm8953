@@ -49,12 +49,12 @@ EXPORT_SYMBOL(kvm_mips_is_error_pfn);
 
 uint32_t kvm_mips_get_kernel_asid(struct kvm_vcpu *vcpu)
 {
-	return vcpu->arch.guest_kernel_asid[smp_processor_id()] & ASID_MASK;
+	return vcpu->arch.guest_kernel_asid[raw_smp_processor_id()] & ASID_MASK;
 }
 
 uint32_t kvm_mips_get_user_asid(struct kvm_vcpu *vcpu)
 {
-	return vcpu->arch.guest_user_asid[smp_processor_id()] & ASID_MASK;
+	return vcpu->arch.guest_user_asid[raw_smp_processor_id()] & ASID_MASK;
 }
 
 inline uint32_t kvm_mips_get_commpage_asid(struct kvm_vcpu *vcpu)
@@ -745,7 +745,7 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
 
 	local_irq_save(flags);
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	vcpu->arch.preempt_entryhi = read_c0_entryhi();
 	vcpu->arch.last_sched_cpu = cpu;

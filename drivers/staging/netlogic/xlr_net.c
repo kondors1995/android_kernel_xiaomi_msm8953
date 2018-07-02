@@ -295,7 +295,7 @@ static u16 xlr_net_select_queue(struct net_device *ndev, struct sk_buff *skb,
 				void *accel_priv,
 				select_queue_fallback_t fallback)
 {
-	return (u16)smp_processor_id();
+	return (u16)raw_smp_processor_id();
 }
 
 static void xlr_hw_set_mac_addr(struct net_device *ndev)

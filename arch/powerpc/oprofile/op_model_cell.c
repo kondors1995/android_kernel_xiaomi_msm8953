@@ -899,7 +899,7 @@ static int cell_reg_setup(struct op_counter_config *ctr,
 /* This function is called once for each cpu */
 static int cell_cpu_setup(struct op_counter_config *cntr)
 {
-	u32 cpu = smp_processor_id();
+	u32 cpu = raw_smp_processor_id();
 	u32 num_enabled = 0;
 	int i;
 	int ret;
@@ -1269,7 +1269,7 @@ static int cell_global_start_spu_cycles(struct op_counter_config *ctr)
 		       ret);
 
 	else
-		cpu_khzfreq = cpufreq_quick_get(smp_processor_id());
+		cpu_khzfreq = cpufreq_quick_get(raw_smp_processor_id());
 #endif
 
 	set_spu_profiling_frequency(cpu_khzfreq, spu_cycle_reset);
@@ -1500,7 +1500,7 @@ static void cell_handle_interrupt_spu(struct pt_regs *regs,
 	/* Make sure spu event interrupt handler and spu event swap
 	 * don't access the counters simultaneously.
 	 */
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	spin_lock_irqsave(&cntr_lock, flags);
 
 	cpu_tmp = cpu;
@@ -1611,7 +1611,7 @@ static void cell_handle_interrupt_ppu(struct pt_regs *regs,
 	u32 interrupt_mask;
 	int i;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	/*
 	 * Need to make sure the interrupt handler and the virt counter

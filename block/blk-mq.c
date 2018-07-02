@@ -777,7 +777,7 @@ void blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async)
 	if (unlikely(test_bit(BLK_MQ_S_STOPPED, &hctx->state)))
 		return;
 
-	if (!async && cpumask_test_cpu(smp_processor_id(), hctx->cpumask))
+	if (!async && cpumask_test_cpu(raw_smp_processor_id(), hctx->cpumask))
 		__blk_mq_run_hw_queue(hctx);
 	else if (hctx->queue->nr_hw_queues == 1)
 		kblockd_schedule_delayed_work(&hctx->run_work, 0);

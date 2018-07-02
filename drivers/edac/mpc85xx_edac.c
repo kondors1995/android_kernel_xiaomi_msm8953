@@ -1223,8 +1223,8 @@ static struct platform_driver mpc85xx_mc_err_driver = {
 #ifdef CONFIG_FSL_SOC_BOOKE
 static void __init mpc85xx_mc_clear_rfxe(void *data)
 {
-	orig_hid1[smp_processor_id()] = mfspr(SPRN_HID1);
-	mtspr(SPRN_HID1, (orig_hid1[smp_processor_id()] & ~HID1_RFXE));
+	orig_hid1[raw_smp_processor_id()] = mfspr(SPRN_HID1);
+	mtspr(SPRN_HID1, (orig_hid1[raw_smp_processor_id()] & ~HID1_RFXE));
 }
 #endif
 
@@ -1276,7 +1276,7 @@ module_init(mpc85xx_mc_init);
 #ifdef CONFIG_FSL_SOC_BOOKE
 static void __exit mpc85xx_mc_restore_hid1(void *data)
 {
-	mtspr(SPRN_HID1, orig_hid1[smp_processor_id()]);
+	mtspr(SPRN_HID1, orig_hid1[raw_smp_processor_id()]);
 }
 #endif
 

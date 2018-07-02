@@ -174,7 +174,7 @@ static void fix_b0_for_bsp(void)
 	int cpuid;
 	static int fix_bsp_b0 = 1;
 
-	cpuid = smp_processor_id();
+	cpuid = raw_smp_processor_id();
 
 	/*
 	 * Cache the b0 value on the first AP that comes up
@@ -341,7 +341,7 @@ ia64_sync_itc (unsigned int master)
 #endif
 
 	printk(KERN_INFO "CPU %d: synchronized ITC with CPU %u (last diff %ld cycles, "
-	       "maxerr %lu cycles)\n", smp_processor_id(), master, delta, rt);
+	       "maxerr %lu cycles)\n", raw_smp_processor_id(), master, delta, rt);
 }
 
 /*
@@ -363,8 +363,8 @@ smp_callin (void)
 	extern void pfm_init_percpu(void);
 #endif
 
-	cpuid = smp_processor_id();
-	phys_id = hard_smp_processor_id();
+	cpuid = raw_smp_processor_id();
+	phys_id = hard_raw_smp_processor_id();
 	itc_master = time_keeper_id;
 
 	if (cpu_online(cpuid)) {
@@ -448,7 +448,7 @@ start_secondary (void *unused)
 	/* Early console may use I/O ports */
 	ia64_set_kr(IA64_KR_IO_BASE, __pa(ia64_iobase));
 #ifndef CONFIG_PRINTK_TIME
-	Dprintk("start_secondary: starting CPU 0x%x\n", hard_smp_processor_id());
+	Dprintk("start_secondary: starting CPU 0x%x\n", hard_raw_smp_processor_id());
 #endif
 	efi_map_pal_code();
 	cpu_init();
@@ -507,7 +507,7 @@ void __init
 smp_build_cpu_map (void)
 {
 	int sapicid, cpu, i;
-	int boot_cpu_id = hard_smp_processor_id();
+	int boot_cpu_id = hard_raw_smp_processor_id();
 
 	for (cpu = 0; cpu < NR_CPUS; cpu++) {
 		ia64_cpu_to_sapicid[cpu] = -1;
@@ -533,7 +533,7 @@ smp_build_cpu_map (void)
 void __init
 smp_prepare_cpus (unsigned int max_cpus)
 {
-	int boot_cpu_id = hard_smp_processor_id();
+	int boot_cpu_id = hard_raw_smp_processor_id();
 
 	/*
 	 * Initialize the per-CPU profiling counter/multiplier
@@ -564,10 +564,10 @@ smp_prepare_cpus (unsigned int max_cpus)
 
 void smp_prepare_boot_cpu(void)
 {
-	set_cpu_online(smp_processor_id(), true);
-	cpu_set(smp_processor_id(), cpu_callin_map);
-	set_numa_node(cpu_to_node_map[smp_processor_id()]);
-	per_cpu(cpu_state, smp_processor_id()) = CPU_ONLINE;
+	set_cpu_online(raw_smp_processor_id(), true);
+	cpu_set(raw_smp_processor_id(), cpu_callin_map);
+	set_numa_node(cpu_to_node_map[raw_smp_processor_id()]);
+	per_cpu(cpu_state, raw_smp_processor_id()) = CPU_ONLINE;
 	paravirt_post_smp_prepare_boot_cpu();
 }
 
@@ -648,7 +648,7 @@ int migrate_platform_irqs(unsigned int cpu)
 /* must be called with cpucontrol mutex held */
 int __cpu_disable(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	/*
 	 * dont permit boot processor for now

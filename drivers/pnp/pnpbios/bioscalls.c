@@ -103,9 +103,9 @@ static inline u16 call_pnp_bios(u16 func, u16 arg1, u16 arg2, u16 arg3,
 
 	/* The lock prevents us bouncing CPU here */
 	if (ts1_size)
-		Q2_SET_SEL(smp_processor_id(), PNP_TS1, ts1_base, ts1_size);
+		Q2_SET_SEL(raw_smp_processor_id(), PNP_TS1, ts1_base, ts1_size);
 	if (ts2_size)
-		Q2_SET_SEL(smp_processor_id(), PNP_TS2, ts2_base, ts2_size);
+		Q2_SET_SEL(raw_smp_processor_id(), PNP_TS2, ts2_base, ts2_size);
 
 	__asm__ __volatile__("pushl %%ebp\n\t"
 			     "pushl %%edi\n\t"

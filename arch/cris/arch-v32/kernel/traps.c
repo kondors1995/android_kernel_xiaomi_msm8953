@@ -21,7 +21,7 @@ void show_registers(struct pt_regs *regs)
 	unsigned long d_mmu_cause;
 	unsigned long i_mmu_cause;
 
-	printk("CPU: %d\n", smp_processor_id());
+	printk("CPU: %d\n", raw_smp_processor_id());
 
 	printk("ERP: %08lx SRP: %08lx  CCS: %08lx USP: %08lx MOF: %08lx\n",
 	       regs->erp, regs->srp, regs->ccs, usp, regs->mof);

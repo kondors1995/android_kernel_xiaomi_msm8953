@@ -703,7 +703,7 @@ static __inline__ void gem_tx(struct net_device *dev, struct gem *gp, u32 gem_st
 		     TX_BUFFS_AVAIL(gp) > (MAX_SKB_FRAGS + 1))) {
 		struct netdev_queue *txq = netdev_get_tx_queue(dev, 0);
 
-		__netif_tx_lock(txq, smp_processor_id());
+		__netif_tx_lock(txq, raw_smp_processor_id());
 		if (netif_queue_stopped(dev) &&
 		    TX_BUFFS_AVAIL(gp) > (MAX_SKB_FRAGS + 1))
 			netif_wake_queue(dev);
@@ -897,7 +897,7 @@ static int gem_poll(struct napi_struct *napi, int budget)
 			 * chip, but we need to guard it against DMA being
 			 * restarted by the link poll timer
 			 */
-			__netif_tx_lock(txq, smp_processor_id());
+			__netif_tx_lock(txq, raw_smp_processor_id());
 			reset = gem_abnormal_irq(dev, gp, gp->status);
 			__netif_tx_unlock(txq);
 			if (reset) {
@@ -1368,7 +1368,7 @@ static int gem_set_link_modes(struct gem *gp)
 	/* We take the tx queue lock to avoid collisions between
 	 * this code, the tx path and the NAPI-driven error path
 	 */
-	__netif_tx_lock(txq, smp_processor_id());
+	__netif_tx_lock(txq, raw_smp_processor_id());
 
 	val = (MAC_TXCFG_EIPG0 | MAC_TXCFG_NGU);
 	if (full_duplex) {

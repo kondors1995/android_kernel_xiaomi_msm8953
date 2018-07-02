@@ -57,7 +57,7 @@ int gru_cpu_fault_map_id(void)
 #ifdef CONFIG_IA64
 	return uv_blade_processor_id() % GRU_NUM_TFM;
 #else
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int id, core;
 
 	core = uv_cpu_core_number(cpu);

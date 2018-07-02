@@ -209,7 +209,7 @@ static int setup_APIC_mce(int reserved, int new)
 void mce_amd_feature_init(struct cpuinfo_x86 *c)
 {
 	struct threshold_block b;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	u32 low = 0, high = 0, address = 0;
 	unsigned int bank, block;
 	int offset = -1;

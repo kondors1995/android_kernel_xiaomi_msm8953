@@ -320,7 +320,7 @@ extern void bcm1480_mailbox_interrupt(void);
 static inline void dispatch_ip2(void)
 {
 	unsigned long long mask_h, mask_l;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	unsigned long base;
 
 	/*
@@ -344,7 +344,7 @@ static inline void dispatch_ip2(void)
 
 asmlinkage void plat_irq_dispatch(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	unsigned int pending;
 
 	pending = read_c0_cause() & read_c0_status();

@@ -90,7 +90,7 @@ conf_read(unsigned long addr, unsigned char type1,
 	unsigned long mid = MCPCIA_HOSE2MID(hose->index);
 	unsigned int stat0, value, cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	local_irq_save(flags);
 
@@ -138,7 +138,7 @@ conf_write(unsigned long addr, unsigned int value, unsigned char type1,
 	unsigned long mid = MCPCIA_HOSE2MID(hose->index);
 	unsigned int stat0, cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	local_irq_save(flags);	/* avoid getting hit by machine check */
 
@@ -252,7 +252,7 @@ mcpcia_pci_tbi(struct pci_controller *hose, dma_addr_t start, dma_addr_t end)
 static int __init
 mcpcia_probe_hose(int h)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int mid = MCPCIA_HOSE2MID(h);
 	unsigned int pci_rev;
 
@@ -573,7 +573,7 @@ void
 mcpcia_machine_check(unsigned long vector, unsigned long la_ptr)
 {
 	struct el_MCPCIA_uncorrected_frame_mcheck *mchk_logout;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	int expected;
 
 	mchk_logout = (struct el_MCPCIA_uncorrected_frame_mcheck *)la_ptr;

@@ -340,7 +340,7 @@ static void __clockevents_unbind(void *arg)
 	int res;
 
 	raw_spin_lock(&clockevents_lock);
-	res = __clockevents_try_unbind(cu->ce, smp_processor_id());
+	res = __clockevents_try_unbind(cu->ce, raw_smp_processor_id());
 	if (res == -EAGAIN)
 		res = clockevents_replace(cu->ce);
 	cu->res = res;
@@ -384,7 +384,7 @@ void clockevents_register_device(struct clock_event_device *dev)
 	BUG_ON(dev->mode != CLOCK_EVT_MODE_UNUSED);
 	if (!dev->cpumask) {
 		WARN_ON(num_possible_cpus() > 1);
-		dev->cpumask = cpumask_of(smp_processor_id());
+		dev->cpumask = cpumask_of(raw_smp_processor_id());
 	}
 
 	raw_spin_lock_irqsave(&clockevents_lock, flags);

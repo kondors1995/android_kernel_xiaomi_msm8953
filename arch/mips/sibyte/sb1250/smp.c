@@ -158,7 +158,7 @@ struct plat_smp_ops sb_smp_ops = {
 
 void sb1250_mailbox_interrupt(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int irq = K_INT_MBOX_0;
 	unsigned int action;
 

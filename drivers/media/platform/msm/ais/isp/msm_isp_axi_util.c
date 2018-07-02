@@ -1579,7 +1579,7 @@ void msm_isp_halt_send_error(struct vfe_device *vfe_dev, uint32_t event)
 		vfe_dev->hw_info->vfe_ops.irq_ops.
 			read_irq_status(vfe_dev, &irq_status0, &irq_status1);
 		pr_err("%s:pingpong mismatch from vfe%d, core%d, recovery_count %d\n",
-			__func__, vfe_dev->pdev->id, smp_processor_id(),
+			__func__, vfe_dev->pdev->id, raw_smp_processor_id(),
 			vfe_dev->axi_data.recovery_count);
 
 		vfe_dev->axi_data.recovery_count++;

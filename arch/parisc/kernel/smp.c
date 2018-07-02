@@ -110,7 +110,7 @@ halt_processor(void)
 {
 	/* REVISIT : redirect I/O Interrupts to another CPU? */
 	/* REVISIT : does PM *know* this CPU isn't available? */
-	set_cpu_online(smp_processor_id(), false);
+	set_cpu_online(raw_smp_processor_id(), false);
 	local_irq_disable();
 	for (;;)
 		;
@@ -120,7 +120,7 @@ halt_processor(void)
 irqreturn_t __irq_entry
 ipi_interrupt(int irq, void *dev_id) 
 {
-	int this_cpu = smp_processor_id();
+	int this_cpu = raw_smp_processor_id();
 	struct cpuinfo_parisc *p = &per_cpu(cpu_data, this_cpu);
 	unsigned long ops;
 	unsigned long flags;
@@ -221,7 +221,7 @@ send_IPI_allbutself(enum ipi_message_type op)
 	int i;
 	
 	for_each_online_cpu(i) {
-		if (i != smp_processor_id())
+		if (i != raw_smp_processor_id())
 			send_IPI_single(i, op);
 	}
 }

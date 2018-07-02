@@ -565,7 +565,7 @@ static void set_track(struct kmem_cache *s, void *object,
 			p->addrs[i] = 0;
 #endif
 		p->addr = addr;
-		p->cpu = smp_processor_id();
+		p->cpu = raw_smp_processor_id();
 		p->pid = current->pid;
 		p->when = jiffies;
 	} else
@@ -2155,7 +2155,7 @@ static void flush_cpu_slab(void *d)
 {
 	struct kmem_cache *s = d;
 
-	__flush_cpu_slab(s, smp_processor_id());
+	__flush_cpu_slab(s, raw_smp_processor_id());
 }
 
 static bool has_cpu_slab(int cpu, void *info)
@@ -3699,7 +3699,7 @@ static struct kmem_cache * __init bootstrap(struct kmem_cache *static_cache)
 	 * up.  Even if it weren't true, IRQs are not up so we couldn't fire
 	 * IPIs around.
 	 */
-	__flush_cpu_slab(s, smp_processor_id());
+	__flush_cpu_slab(s, raw_smp_processor_id());
 	for_each_kmem_cache_node(s, node, n) {
 		struct page *p;
 

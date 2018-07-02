@@ -119,7 +119,7 @@ wait_boot_cpu_to_stop(int cpuid)
 void
 smp_callin(void)
 {
-	int cpuid = hard_smp_processor_id();
+	int cpuid = hard_raw_smp_processor_id();
 
 	if (cpu_online(cpuid)) {
 		printk("??, cpu 0x%x already present??\n", cpuid);
@@ -244,7 +244,7 @@ recv_secondary_console_msg(void)
 
 	DBGS(("recv_secondary_console_msg: TXRDY 0x%lx.\n", txrdy));
 
-	mycpu = hard_smp_processor_id();
+	mycpu = hard_raw_smp_processor_id();
 
 	for (i = 0; i < NR_CPUS; i++) {
 		if (!(txrdy & (1UL << i)))
@@ -524,7 +524,7 @@ send_ipi_message(const struct cpumask *to_whom, enum ipi_message_type operation)
 void
 handle_ipi(struct pt_regs *regs)
 {
-	int this_cpu = smp_processor_id();
+	int this_cpu = raw_smp_processor_id();
 	unsigned long *pending_ipis = &ipi_data[this_cpu].bits;
 	unsigned long ops;
 
@@ -579,7 +579,7 @@ void
 smp_send_reschedule(int cpu)
 {
 #ifdef DEBUG_IPI_MSG
-	if (cpu == hard_smp_processor_id())
+	if (cpu == hard_raw_smp_processor_id())
 		printk(KERN_WARNING
 		       "smp_send_reschedule: Sending IPI to self.\n");
 #endif
@@ -591,9 +591,9 @@ smp_send_stop(void)
 {
 	cpumask_t to_whom;
 	cpumask_copy(&to_whom, cpu_possible_mask);
-	cpumask_clear_cpu(smp_processor_id(), &to_whom);
+	cpumask_clear_cpu(raw_smp_processor_id(), &to_whom);
 #ifdef DEBUG_IPI_MSG
-	if (hard_smp_processor_id() != boot_cpu_id)
+	if (hard_raw_smp_processor_id() != boot_cpu_id)
 		printk(KERN_WARNING "smp_send_stop: Not on boot cpu.\n");
 #endif
 	send_ipi_message(&to_whom, IPI_CPU_STOP);
@@ -640,7 +640,7 @@ flush_tlb_all(void)
 	}
 }
 
-#define asn_locked() (cpu_data[smp_processor_id()].asn_lock)
+#define asn_locked() (cpu_data[raw_smp_processor_id()].asn_lock)
 
 static void
 ipi_flush_tlb_mm(void *x)
@@ -660,7 +660,7 @@ flush_tlb_mm(struct mm_struct *mm)
 	if (mm == current->active_mm) {
 		flush_tlb_current(mm);
 		if (atomic_read(&mm->mm_users) <= 1) {
-			int cpu, this_cpu = smp_processor_id();
+			int cpu, this_cpu = raw_smp_processor_id();
 			for (cpu = 0; cpu < NR_CPUS; cpu++) {
 				if (!cpu_online(cpu) || cpu == this_cpu)
 					continue;
@@ -709,7 +709,7 @@ flush_tlb_page(struct vm_area_struct *vma, unsigned long addr)
 	if (mm == current->active_mm) {
 		flush_tlb_current_page(mm, vma, addr);
 		if (atomic_read(&mm->mm_users) <= 1) {
-			int cpu, this_cpu = smp_processor_id();
+			int cpu, this_cpu = raw_smp_processor_id();
 			for (cpu = 0; cpu < NR_CPUS; cpu++) {
 				if (!cpu_online(cpu) || cpu == this_cpu)
 					continue;
@@ -765,7 +765,7 @@ flush_icache_user_range(struct vm_area_struct *vma, struct page *page,
 	if (mm == current->active_mm) {
 		__load_new_mm_context(mm);
 		if (atomic_read(&mm->mm_users) <= 1) {
-			int cpu, this_cpu = smp_processor_id();
+			int cpu, this_cpu = raw_smp_processor_id();
 			for (cpu = 0; cpu < NR_CPUS; cpu++) {
 				if (!cpu_online(cpu) || cpu == this_cpu)
 					continue;

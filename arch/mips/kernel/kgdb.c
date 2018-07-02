@@ -328,7 +328,7 @@ static int kgdb_mips_notify(struct notifier_block *self, unsigned long cmd,
 	set_fs(get_ds());
 
 	if (atomic_read(&kgdb_active) != -1)
-		kgdb_nmicallback(smp_processor_id(), regs);
+		kgdb_nmicallback(raw_smp_processor_id(), regs);
 
 	if (kgdb_handle_exception(trap, compute_signal(trap), cmd, regs)) {
 		set_fs(old_fs);

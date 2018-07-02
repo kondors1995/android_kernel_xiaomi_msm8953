@@ -217,7 +217,7 @@ pci_serr_error(unsigned char reason, struct pt_regs *regs)
 		return;
 
 	pr_emerg("NMI: PCI system error (SERR) for reason %02x on CPU %d.\n",
-		 reason, smp_processor_id());
+		 reason, raw_smp_processor_id());
 
 	/*
 	 * On some machines, PCI SERR line is used to report memory
@@ -252,7 +252,7 @@ io_check_error(unsigned char reason, struct pt_regs *regs)
 
 	pr_emerg(
 	"NMI: IOCK error (debug interrupt?) for reason %02x on CPU %d.\n",
-		 reason, smp_processor_id());
+		 reason, raw_smp_processor_id());
 	show_regs(regs);
 
 	if (panic_on_io_nmi)
@@ -293,7 +293,7 @@ unknown_nmi_error(unsigned char reason, struct pt_regs *regs)
 	__this_cpu_add(nmi_stats.unknown, 1);
 
 	pr_emerg("Uhhuh. NMI received for unknown reason %02x on CPU %d.\n",
-		 reason, smp_processor_id());
+		 reason, raw_smp_processor_id());
 
 	pr_emerg("Do you have a strange power saving mode enabled?\n");
 	if (unknown_nmi_panic || panic_on_unrecovered_nmi)

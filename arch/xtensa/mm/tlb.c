@@ -62,7 +62,7 @@ void local_flush_tlb_all(void)
 
 void local_flush_tlb_mm(struct mm_struct *mm)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (mm == current->active_mm) {
 		unsigned long flags;
@@ -88,7 +88,7 @@ void local_flush_tlb_mm(struct mm_struct *mm)
 void local_flush_tlb_range(struct vm_area_struct *vma,
 		unsigned long start, unsigned long end)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct mm_struct *mm = vma->vm_mm;
 	unsigned long flags;
 
@@ -127,7 +127,7 @@ void local_flush_tlb_range(struct vm_area_struct *vma,
 
 void local_flush_tlb_page(struct vm_area_struct *vma, unsigned long page)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct mm_struct* mm = vma->vm_mm;
 	unsigned long flags;
 	int oldpid;

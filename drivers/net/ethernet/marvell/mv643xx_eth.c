@@ -506,7 +506,7 @@ static void txq_maybe_wake(struct tx_queue *txq)
 	struct netdev_queue *nq = netdev_get_tx_queue(mp->dev, txq->index);
 
 	if (netif_tx_queue_stopped(nq)) {
-		__netif_tx_lock(nq, smp_processor_id());
+		__netif_tx_lock(nq, raw_smp_processor_id());
 		if (txq->tx_desc_count <= txq->tx_wake_threshold)
 			netif_tx_wake_queue(nq);
 		__netif_tx_unlock(nq);
@@ -1016,7 +1016,7 @@ static void txq_kick(struct tx_queue *txq)
 	u32 hw_desc_ptr;
 	u32 expected_ptr;
 
-	__netif_tx_lock(nq, smp_processor_id());
+	__netif_tx_lock(nq, raw_smp_processor_id());
 
 	if (rdlp(mp, TXQ_COMMAND) & (1 << txq->index))
 		goto out;

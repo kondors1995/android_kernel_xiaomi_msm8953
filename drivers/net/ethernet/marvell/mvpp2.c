@@ -4120,7 +4120,7 @@ static u32 mvpp2_bm_cookie_build(struct mvpp2_rx_desc *rx_desc)
 {
 	int pool = (rx_desc->status & MVPP2_RXD_BM_POOL_ID_MASK) >>
 		   MVPP2_RXD_BM_POOL_ID_OFFS;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	return ((pool & 0xFF) << MVPP2_BM_COOKIE_POOL_OFFS) |
 	       ((cpu & 0xFF) << MVPP2_BM_COOKIE_CPU_OFFS);
@@ -4166,7 +4166,7 @@ static int mvpp2_aggr_desc_num_check(struct mvpp2 *priv,
 {
 	if ((aggr_txq->count + num) > aggr_txq->size) {
 		/* Update number of occupied aggregated Tx descriptors */
-		int cpu = smp_processor_id();
+		int cpu = raw_smp_processor_id();
 		u32 val = mvpp2_read(priv, MVPP2_AGGR_TXQ_STATUS_REG(cpu));
 
 		aggr_txq->count = val & MVPP2_AGGR_TXQ_PENDING_MASK;
@@ -4445,7 +4445,7 @@ static void mvpp2_txq_done(struct mvpp2_port *port, struct mvpp2_tx_queue *txq,
 	struct netdev_queue *nq = netdev_get_tx_queue(port->dev, txq->log_id);
 	int tx_done;
 
-	if (txq_pcpu->cpu != smp_processor_id())
+	if (txq_pcpu->cpu != raw_smp_processor_id())
 		netdev_err(port->dev, "wrong cpu on the end of Tx processing\n");
 
 	tx_done = mvpp2_txq_sent_desc_proc(port, txq);
@@ -5181,7 +5181,7 @@ static int mvpp2_tx(struct sk_buff *skb, struct net_device *dev)
 	txq_id = skb_get_queue_mapping(skb);
 	txq = port->txqs[txq_id];
 	txq_pcpu = this_cpu_ptr(txq->pcpu);
-	aggr_txq = &port->priv->aggr_txqs[smp_processor_id()];
+	aggr_txq = &port->priv->aggr_txqs[raw_smp_processor_id()];
 
 	frags = skb_shinfo(skb)->nr_frags + 1;
 

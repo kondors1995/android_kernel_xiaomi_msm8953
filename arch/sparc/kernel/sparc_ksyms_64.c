@@ -24,7 +24,7 @@ struct poll {
 
 /* from helpers.S */
 EXPORT_SYMBOL(__flushw_user);
-EXPORT_SYMBOL_GPL(real_hard_smp_processor_id);
+EXPORT_SYMBOL_GPL(real_hard_raw_smp_processor_id);
 
 /* from head_64.S */
 EXPORT_SYMBOL(__ret_efault);

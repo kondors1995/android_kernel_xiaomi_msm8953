@@ -852,7 +852,7 @@ static void __init lguest_init_IRQ(void)
 	 * This call is required to set up for 4k stacks, where we have
 	 * separate stacks for hard and soft interrupts.
 	 */
-	irq_ctx_init(smp_processor_id());
+	irq_ctx_init(raw_smp_processor_id());
 }
 
 /*

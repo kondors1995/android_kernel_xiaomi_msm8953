@@ -441,7 +441,7 @@ void *l1_data_A_sram_alloc(size_t size)
 	void *addr;
 	unsigned int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	/* add mutex operation */
 	spin_lock_irqsave(&per_cpu(l1_data_sram_lock, cpu), flags);
 
@@ -468,7 +468,7 @@ int l1_data_A_sram_free(const void *addr)
 	int ret;
 	unsigned int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	/* add mutex operation */
 	spin_lock_irqsave(&per_cpu(l1_data_sram_lock, cpu), flags);
 
@@ -492,7 +492,7 @@ void *l1_data_B_sram_alloc(size_t size)
 	void *addr;
 	unsigned int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	/* add mutex operation */
 	spin_lock_irqsave(&per_cpu(l1_data_sram_lock, cpu), flags);
 
@@ -519,7 +519,7 @@ int l1_data_B_sram_free(const void *addr)
 	int ret;
 	unsigned int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	/* add mutex operation */
 	spin_lock_irqsave(&per_cpu(l1_data_sram_lock, cpu), flags);
 
@@ -575,7 +575,7 @@ void *l1_inst_sram_alloc(size_t size)
 	void *addr;
 	unsigned int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	/* add mutex operation */
 	spin_lock_irqsave(&per_cpu(l1_inst_sram_lock, cpu), flags);
 
@@ -602,7 +602,7 @@ int l1_inst_sram_free(const void *addr)
 	int ret;
 	unsigned int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	/* add mutex operation */
 	spin_lock_irqsave(&per_cpu(l1_inst_sram_lock, cpu), flags);
 
@@ -626,7 +626,7 @@ void *l1sram_alloc(size_t size)
 	void *addr;
 	unsigned int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	/* add mutex operation */
 	spin_lock_irqsave(&per_cpu(l1sram_lock, cpu), flags);
 
@@ -646,7 +646,7 @@ void *l1sram_alloc_max(size_t *psize)
 	void *addr;
 	unsigned int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	/* add mutex operation */
 	spin_lock_irqsave(&per_cpu(l1sram_lock, cpu), flags);
 
@@ -666,7 +666,7 @@ int l1sram_free(const void *addr)
 	int ret;
 	unsigned int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	/* add mutex operation */
 	spin_lock_irqsave(&per_cpu(l1sram_lock, cpu), flags);
 

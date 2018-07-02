@@ -152,7 +152,7 @@ void init_espfix_ap(void)
 	if (likely(this_cpu_read(espfix_stack)))
 		return;		/* Already initialized */
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	addr = espfix_base_addr(cpu);
 	page = cpu/ESPFIX_STACKS_PER_PAGE;
 

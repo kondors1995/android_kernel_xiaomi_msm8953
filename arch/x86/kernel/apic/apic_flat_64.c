@@ -45,7 +45,7 @@ void flat_init_apic_ldr(void)
 	unsigned long val;
 	unsigned long num, id;
 
-	num = smp_processor_id();
+	num = raw_smp_processor_id();
 	id = 1UL << num;
 	apic_write(APIC_DFR, APIC_DFR_FLAT);
 	val = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
@@ -73,7 +73,7 @@ static void
 flat_send_IPI_mask_allbutself(const struct cpumask *cpumask, int vector)
 {
 	unsigned long mask = cpumask_bits(cpumask)[0];
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (cpu < BITS_PER_LONG)
 		clear_bit(cpu, &mask);
@@ -83,7 +83,7 @@ flat_send_IPI_mask_allbutself(const struct cpumask *cpumask, int vector)
 
 static void flat_send_IPI_allbutself(int vector)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 #ifdef	CONFIG_HOTPLUG_CPU
 	int hotplug = 1;
 #else

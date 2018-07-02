@@ -53,12 +53,12 @@ void mcryptd_arm_flusher(struct mcryptd_alg_cstate *cstate, unsigned long delay)
 
 	if (!cstate->flusher_engaged) {
 		/* put the flusher on the flush list */
-		flist = per_cpu_ptr(mcryptd_flist, smp_processor_id());
+		flist = per_cpu_ptr(mcryptd_flist, raw_smp_processor_id());
 		mutex_lock(&flist->lock);
 		list_add_tail(&cstate->flush_list, &flist->list);
 		cstate->flusher_engaged = true;
 		cstate->next_flush = jiffies + delay;
-		queue_delayed_work_on(smp_processor_id(), kcrypto_wq,
+		queue_delayed_work_on(raw_smp_processor_id(), kcrypto_wq,
 			&cstate->flush, delay);
 		mutex_unlock(&flist->lock);
 	}
@@ -106,8 +106,8 @@ static int mcryptd_enqueue_request(struct mcryptd_queue *queue,
 
 	cpu_queue = raw_cpu_ptr(queue->cpu_queue);
 	spin_lock(&cpu_queue->q_lock);
-	cpu = smp_processor_id();
-	rctx->tag.cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
+	rctx->tag.cpu = raw_smp_processor_id();
 
 	err = crypto_enqueue_request(&cpu_queue->queue, request);
 	pr_debug("enqueue request: cpu %d cpu_queue %p request %p\n",
@@ -127,7 +127,7 @@ static void mcryptd_opportunistic_flush(void)
 	struct mcryptd_flush_list *flist;
 	struct mcryptd_alg_cstate *cstate;
 
-	flist = per_cpu_ptr(mcryptd_flist, smp_processor_id());
+	flist = per_cpu_ptr(mcryptd_flist, raw_smp_processor_id());
 	while (single_task_running()) {
 		mutex_lock(&flist->lock);
 		if (list_empty(&flist->list)) {
@@ -185,7 +185,7 @@ static void mcryptd_queue_worker(struct work_struct *work)
 		++i;
 	}
 	if (cpu_queue->queue.qlen)
-		queue_work_on(smp_processor_id(), kcrypto_wq, &cpu_queue->work);
+		queue_work_on(raw_smp_processor_id(), kcrypto_wq, &cpu_queue->work);
 }
 
 void mcryptd_flusher(struct work_struct *__work)
@@ -195,7 +195,7 @@ void mcryptd_flusher(struct work_struct *__work)
 	struct	mcryptd_flush_list	*flist;
 	int	cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	alg_cpu_state = container_of(to_delayed_work(__work),
 				     struct mcryptd_alg_cstate, flush);
 	alg_state = alg_cpu_state->alg_state;

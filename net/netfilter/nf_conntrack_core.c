@@ -252,7 +252,7 @@ static void nf_ct_add_to_dying_list(struct nf_conn *ct)
 	struct ct_pcpu *pcpu;
 
 	/* add this conntrack to the (per cpu) dying list */
-	ct->cpu = smp_processor_id();
+	ct->cpu = raw_smp_processor_id();
 	pcpu = per_cpu_ptr(nf_ct_net(ct)->ct.pcpu_lists, ct->cpu);
 
 	spin_lock(&pcpu->lock);
@@ -267,7 +267,7 @@ static void nf_ct_add_to_unconfirmed_list(struct nf_conn *ct)
 	struct ct_pcpu *pcpu;
 
 	/* add this conntrack to the (per cpu) unconfirmed list */
-	ct->cpu = smp_processor_id();
+	ct->cpu = raw_smp_processor_id();
 	pcpu = per_cpu_ptr(nf_ct_net(ct)->ct.pcpu_lists, ct->cpu);
 
 	spin_lock(&pcpu->lock);
@@ -581,7 +581,7 @@ void nf_conntrack_tmpl_insert(struct net *net, struct nf_conn *tmpl)
 
 	/* add this conntrack to the (per cpu) tmpl list */
 	local_bh_disable();
-	tmpl->cpu = smp_processor_id();
+	tmpl->cpu = raw_smp_processor_id();
 	pcpu = per_cpu_ptr(nf_ct_net(tmpl)->ct.pcpu_lists, tmpl->cpu);
 
 	spin_lock(&pcpu->lock);

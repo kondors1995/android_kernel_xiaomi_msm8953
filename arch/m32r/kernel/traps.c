@@ -173,7 +173,7 @@ static void show_registers(struct pt_regs *regs)
 	int in_kernel = 1;
 	unsigned long sp;
 
-	printk("CPU:    %d\n", smp_processor_id());
+	printk("CPU:    %d\n", raw_smp_processor_id());
 	show_regs(regs);
 
 	sp = (unsigned long) (1+regs);

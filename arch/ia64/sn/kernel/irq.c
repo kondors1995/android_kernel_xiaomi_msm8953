@@ -264,7 +264,7 @@ ia64_vector sn_irq_to_vector(int irq)
 
 unsigned int sn_local_vector_to_irq(u8 vector)
 {
-	return (CPU_VECTOR_TO_IRQ(smp_processor_id(), vector));
+	return (CPU_VECTOR_TO_IRQ(raw_smp_processor_id(), vector));
 }
 
 void sn_irq_init(void)

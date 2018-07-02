@@ -813,7 +813,7 @@ void walt_set_window_start(struct rq *rq)
 void walt_migrate_sync_cpu(int cpu)
 {
 	if (cpu == sync_cpu)
-		sync_cpu = smp_processor_id();
+		sync_cpu = raw_smp_processor_id();
 }
 
 void walt_fixup_busy_time(struct task_struct *p, int new_cpu)

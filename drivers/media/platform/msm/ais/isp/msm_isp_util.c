@@ -2128,7 +2128,7 @@ void msm_isp_do_tasklet(unsigned long data)
 			tasklet_data.arr[tasklet_data.first].
 			current_vfe_irq.vfe_id = vfe_dev->pdev->id;
 			tasklet_data.arr[tasklet_data.first].
-			current_vfe_irq.core = smp_processor_id();
+			current_vfe_irq.core = raw_smp_processor_id();
 			tasklet_data.arr[tasklet_data.first].
 			current_vfe_irq.irq_status0 = irq_status0;
 			tasklet_data.arr[tasklet_data.first].

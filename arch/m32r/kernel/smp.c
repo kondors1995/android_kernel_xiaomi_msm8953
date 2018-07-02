@@ -153,7 +153,7 @@ void smp_flush_cache_all(void)
 
 	preempt_disable();
 	cpumask_copy(&cpumask, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), &cpumask);
+	cpumask_clear_cpu(raw_smp_processor_id(), &cpumask);
 	spin_lock(&flushcache_lock);
 	mask=cpumask_bits(&cpumask);
 	atomic_set_mask(*mask, (atomic_t *)&flushcache_cpumask);
@@ -168,7 +168,7 @@ void smp_flush_cache_all(void)
 void smp_flush_cache_all_interrupt(void)
 {
 	_flush_cache_copyback_all();
-	clear_bit(smp_processor_id(), &flushcache_cpumask);
+	clear_bit(raw_smp_processor_id(), &flushcache_cpumask);
 }
 
 /*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
@@ -251,7 +251,7 @@ void smp_flush_tlb_mm(struct mm_struct *mm)
 	unsigned long flags;
 
 	preempt_disable();
-	cpu_id = smp_processor_id();
+	cpu_id = raw_smp_processor_id();
 	mmc = &mm->context[cpu_id];
 	cpumask_copy(&cpu_mask, mm_cpumask(mm));
 	cpumask_clear_cpu(cpu_id, &cpu_mask);
@@ -321,7 +321,7 @@ void smp_flush_tlb_page(struct vm_area_struct *vma, unsigned long va)
 	unsigned long flags;
 
 	preempt_disable();
-	cpu_id = smp_processor_id();
+	cpu_id = raw_smp_processor_id();
 	mmc = &mm->context[cpu_id];
 	cpumask_copy(&cpu_mask, mm_cpumask(mm));
 	cpumask_clear_cpu(cpu_id, &cpu_mask);
@@ -387,7 +387,7 @@ static void flush_tlb_others(cpumask_t cpumask, struct mm_struct *mm,
 	 */
 	BUG_ON(cpumask_empty(&cpumask));
 
-	BUG_ON(cpumask_test_cpu(smp_processor_id(), &cpumask));
+	BUG_ON(cpumask_test_cpu(raw_smp_processor_id(), &cpumask));
 	BUG_ON(!mm);
 
 	/* If a CPU which we ran on has gone down, OK. */
@@ -447,7 +447,7 @@ static void flush_tlb_others(cpumask_t cpumask, struct mm_struct *mm,
  *==========================================================================*/
 void smp_invalidate_interrupt(void)
 {
-	int cpu_id = smp_processor_id();
+	int cpu_id = raw_smp_processor_id();
 	unsigned long *mmc = &flush_mm->context[cpu_id];
 
 	if (!cpumask_test_cpu(cpu_id, &flush_cpumask))
@@ -515,7 +515,7 @@ void smp_send_stop(void)
  *==========================================================================*/
 static void stop_this_cpu(void *dummy)
 {
-	int cpu_id = smp_processor_id();
+	int cpu_id = raw_smp_processor_id();
 
 	/*
 	 * Remove this CPU:
@@ -655,7 +655,7 @@ void smp_ipi_timer_interrupt(struct pt_regs *regs)
 void smp_local_timer_interrupt(void)
 {
 	int user = user_mode(get_irq_regs());
-	int cpu_id = smp_processor_id();
+	int cpu_id = raw_smp_processor_id();
 
 	/*
 	 * The profiling function is SMP safe. (nothing can mess
@@ -716,7 +716,7 @@ static void send_IPI_allbutself(int ipi_num, int try)
 	cpumask_t cpumask;
 
 	cpumask_copy(&cpumask, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), &cpumask);
+	cpumask_clear_cpu(raw_smp_processor_id(), &cpumask);
 
 	send_IPI_mask(&cpumask, ipi_num, try);
 }
@@ -801,7 +801,7 @@ unsigned long send_IPI_mask_phys(const cpumask_t *physid_mask, int ipi_num,
 	ipilock = &ipi_lock[ipi_num];
 	ipicr_addr = (volatile unsigned long *)(M32R_ICU_IPICR_ADDR
 		+ (ipi_num << 2));
-	my_physid_mask = ~(1 << smp_processor_id());
+	my_physid_mask = ~(1 << raw_smp_processor_id());
 
 	/*
 	 * lock ipi_lock[i]

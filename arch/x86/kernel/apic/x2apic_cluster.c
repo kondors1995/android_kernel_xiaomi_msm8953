@@ -36,7 +36,7 @@ __x2apic_send_IPI_mask(const struct cpumask *mask, int vector, int apic_dest)
 
 	local_irq_save(flags);
 
-	this_cpu = smp_processor_id();
+	this_cpu = raw_smp_processor_id();
 
 	/*
 	 * We are to modify mask, so we need an own copy
@@ -130,7 +130,7 @@ x2apic_cpu_mask_to_apicid_and(const struct cpumask *cpumask,
 
 static void init_x2apic_ldr(void)
 {
-	unsigned int this_cpu = smp_processor_id();
+	unsigned int this_cpu = raw_smp_processor_id();
 	unsigned int cpu;
 
 	per_cpu(x86_cpu_to_logical_apicid, this_cpu) = apic_read(APIC_LDR);
@@ -188,7 +188,7 @@ static struct notifier_block __refdata x2apic_cpu_notifier = {
 
 static int x2apic_init_cpu_notifier(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	zalloc_cpumask_var(&per_cpu(cpus_in_cluster, cpu), GFP_KERNEL);
 	zalloc_cpumask_var(&per_cpu(ipi_mask, cpu), GFP_KERNEL);

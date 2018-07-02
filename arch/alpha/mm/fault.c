@@ -43,8 +43,8 @@ __load_new_mm_context(struct mm_struct *next_mm)
 	unsigned long mmc;
 	struct pcb_struct *pcb;
 
-	mmc = __get_new_mm_context(next_mm, smp_processor_id());
-	next_mm->context[smp_processor_id()] = mmc;
+	mmc = __get_new_mm_context(next_mm, raw_smp_processor_id());
+	next_mm->context[raw_smp_processor_id()] = mmc;
 
 	pcb = &current_thread_info()->pcb;
 	pcb->asn = mmc & HARDWARE_ASN_MASK;

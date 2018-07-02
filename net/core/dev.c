@@ -3037,7 +3037,7 @@ static int __dev_queue_xmit(struct sk_buff *skb, void *accel_priv,
 	   Either shot noqueue qdisc, it is even simpler 8)
 	 */
 	if (dev->flags & IFF_UP) {
-		int cpu = smp_processor_id(); /* ok because BHs are off */
+		int cpu = raw_smp_processor_id(); /* ok because BHs are off */
 
 		if (txq->xmit_lock_owner != cpu) {
 
@@ -3460,7 +3460,7 @@ static int netif_rx_internal(struct sk_buff *skb)
 
 		cpu = get_rps_cpu(skb->dev, skb, &rflow);
 		if (cpu < 0)
-			cpu = smp_processor_id();
+			cpu = raw_smp_processor_id();
 
 		ret = enqueue_to_backlog(skb, cpu, &rflow->last_qtail);
 
@@ -7157,7 +7157,7 @@ static int dev_cpu_callback(struct notifier_block *nfb,
 		return NOTIFY_OK;
 
 	local_irq_disable();
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	sd = &per_cpu(softnet_data, cpu);
 	oldsd = &per_cpu(softnet_data, oldcpu);
 

@@ -1131,7 +1131,7 @@ marvel_machine_check(unsigned long vector, unsigned long la_ptr)
 		/* Recognized error, report it. */
 		printk("%s*%s (Vector 0x%x) reported on CPU %d\n",
 		       err_print_prefix, error_type,
-		       (unsigned int)vector, (int)smp_processor_id());
+		       (unsigned int)vector, (int)raw_smp_processor_id());
 		el_print_timestamp(&lf_subpackets->logout->timestamp);
 		process_frame(lf_subpackets, 1);
 		break;
@@ -1140,7 +1140,7 @@ marvel_machine_check(unsigned long vector, unsigned long la_ptr)
 		/* Unknown - dump the annotated subpackets. */
 		printk("%s*%s (Vector 0x%x) reported on CPU %d\n",
 		       err_print_prefix, error_type,
-		       (unsigned int)vector, (int)smp_processor_id());
+		       (unsigned int)vector, (int)raw_smp_processor_id());
 		el_process_subpacket(el_ptr);
 		break;
 

@@ -25,12 +25,12 @@ static void pentium_machine_check(struct pt_regs *regs, long error_code)
 
 	printk(KERN_EMERG
 		"CPU#%d: Machine Check Exception:  0x%8X (type 0x%8X).\n",
-		smp_processor_id(), loaddr, lotype);
+		raw_smp_processor_id(), loaddr, lotype);
 
 	if (lotype & (1<<5)) {
 		printk(KERN_EMERG
 			"CPU#%d: Possible thermal failure (CPU on fire ?).\n",
-			smp_processor_id());
+			raw_smp_processor_id());
 	}
 
 	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_NOW_UNRELIABLE);
@@ -63,5 +63,5 @@ void intel_p5_mcheck_init(struct cpuinfo_x86 *c)
 	cr4_set_bits(X86_CR4_MCE);
 	printk(KERN_INFO
 	       "Intel old style machine check reporting enabled on CPU#%d.\n",
-	       smp_processor_id());
+	       raw_smp_processor_id());
 }

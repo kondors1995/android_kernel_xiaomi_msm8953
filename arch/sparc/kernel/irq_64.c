@@ -365,7 +365,7 @@ static int irq_choose_cpu(unsigned int irq, const struct cpumask *affinity)
 }
 #else
 #define irq_choose_cpu(irq, affinity)	\
-	real_hard_smp_processor_id()
+	real_hard_raw_smp_processor_id()
 #endif
 
 static void sun4u_irq_enable(struct irq_data *data)
@@ -824,7 +824,7 @@ void __irq_entry handler_irq(int pil, struct pt_regs *regs)
 			     "stx	%%g0, [%2]\n\t"
 			     "wrpr	%0, 0x0, %%pstate\n\t"
 			     : "=&r" (pstate), "=&r" (bucket_pa)
-			     : "r" (irq_work_pa(smp_processor_id())),
+			     : "r" (irq_work_pa(raw_smp_processor_id())),
 			       "i" (PSTATE_IE)
 			     : "memory");
 
@@ -851,7 +851,7 @@ void __irq_entry handler_irq(int pil, struct pt_regs *regs)
 
 void do_softirq_own_stack(void)
 {
-	void *orig_sp, *sp = softirq_stack[smp_processor_id()];
+	void *orig_sp, *sp = softirq_stack[raw_smp_processor_id()];
 
 	sp += THREAD_SIZE - 192 - STACK_BIAS;
 
@@ -962,7 +962,7 @@ static void kill_prom_timer(void)
 
 void notrace init_irqwork_curcpu(void)
 {
-	int cpu = hard_smp_processor_id();
+	int cpu = hard_raw_smp_processor_id();
 
 	trap_block[cpu].irq_worklist_pa = 0UL;
 }
@@ -1117,7 +1117,7 @@ void __init init_IRQ(void)
 
 	if (tlb_type == hypervisor) {
 		/* Load up the boot cpu's entries.  */
-		sun4v_register_mondo_queues(hard_smp_processor_id());
+		sun4v_register_mondo_queues(hard_raw_smp_processor_id());
 	}
 
 	/* We need to clear any IRQ's pending in the soft interrupt

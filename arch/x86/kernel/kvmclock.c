@@ -60,7 +60,7 @@ static void kvm_get_wallclock(struct timespec *now)
 	native_write_msr(msr_kvm_wall_clock, low, high);
 
 	preempt_disable();
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	vcpu_time = &hv_clock[cpu].pvti;
 	pvclock_read_wallclock(&wall_clock, vcpu_time, now);
@@ -80,7 +80,7 @@ static cycle_t kvm_clock_read(void)
 	int cpu;
 
 	preempt_disable_notrace();
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	src = &hv_clock[cpu].pvti;
 	ret = pvclock_clocksource_read(src);
 	preempt_enable_notrace();
@@ -108,7 +108,7 @@ static unsigned long kvm_get_tsc_khz(void)
 	unsigned long tsc_khz;
 
 	preempt_disable();
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	src = &hv_clock[cpu].pvti;
 	tsc_khz = pvclock_tsc_khz(src);
 	preempt_enable();
@@ -131,7 +131,7 @@ bool kvm_check_and_clear_guest_paused(void)
 {
 	bool ret = false;
 	struct pvclock_vcpu_time_info *src;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (!hv_clock)
 		return ret;
@@ -156,7 +156,7 @@ static struct clocksource kvm_clock = {
 
 int kvm_register_clock(char *txt)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int low, high, ret;
 	struct pvclock_vcpu_time_info *src;
 
@@ -284,7 +284,7 @@ int __init kvm_setup_vsyscall_timeinfo(void)
 	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
 
 	preempt_disable();
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	vcpu_time = &hv_clock[cpu].pvti;
 	flags = pvclock_read_flags(vcpu_time);

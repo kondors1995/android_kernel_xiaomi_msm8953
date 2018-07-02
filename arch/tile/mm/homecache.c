@@ -187,9 +187,9 @@ void homecache_finv_map_page(struct page *page, int home)
 	local_irq_save(flags);
 #ifdef CONFIG_HIGHMEM
 	va = __fix_to_virt(FIX_KMAP_BEGIN + kmap_atomic_idx_push() +
-			   (KM_TYPE_NR * smp_processor_id()));
+			   (KM_TYPE_NR * raw_smp_processor_id()));
 #else
-	va = __fix_to_virt(FIX_HOMECACHE_BEGIN + smp_processor_id());
+	va = __fix_to_virt(FIX_HOMECACHE_BEGIN + raw_smp_processor_id());
 #endif
 	ptep = virt_to_kpte(va);
 	pte = pfn_pte(page_to_pfn(page), PAGE_KERNEL);

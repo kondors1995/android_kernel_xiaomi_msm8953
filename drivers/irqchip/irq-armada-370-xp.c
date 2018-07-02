@@ -429,7 +429,7 @@ static void armada_370_xp_mpic_handle_cascade_irq(unsigned int irq,
 	chained_irq_enter(chip, desc);
 
 	irqmap = readl_relaxed(per_cpu_int_base + ARMADA_375_PPI_CAUSE);
-	cpuid = cpu_logical_map(smp_processor_id());
+	cpuid = cpu_logical_map(raw_smp_processor_id());
 
 	for_each_set_bit(irqn, &irqmap, BITS_PER_LONG) {
 		irqsrc = readl_relaxed(main_int_base +

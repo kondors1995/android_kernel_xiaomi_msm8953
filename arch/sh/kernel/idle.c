@@ -54,7 +54,7 @@ void __init select_idle_routine(void)
 void stop_this_cpu(void *unused)
 {
 	local_irq_disable();
-	set_cpu_online(smp_processor_id(), false);
+	set_cpu_online(raw_smp_processor_id(), false);
 
 	for (;;)
 		cpu_sleep();

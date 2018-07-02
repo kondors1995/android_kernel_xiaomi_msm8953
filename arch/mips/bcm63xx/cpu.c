@@ -294,7 +294,7 @@ static unsigned int detect_memory_size(void)
 void __init bcm63xx_cpu_init(void)
 {
 	unsigned int tmp;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	u32 chipid_reg;
 
 	/* soc registers location depends on cpu type */

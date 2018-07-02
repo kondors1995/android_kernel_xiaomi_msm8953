@@ -82,7 +82,7 @@ static int octeon_cpu_for_coreid(int coreid)
 #ifdef CONFIG_SMP
 	return cpu_number_map(coreid);
 #else
-	return smp_processor_id();
+	return raw_smp_processor_id();
 #endif
 }
 
@@ -204,7 +204,7 @@ static int next_cpu_for_irq(struct irq_data *data)
 	int weight = cpumask_weight(data->affinity);
 
 	if (weight > 1) {
-		cpu = smp_processor_id();
+		cpu = raw_smp_processor_id();
 		for (;;) {
 			cpu = cpumask_next(cpu, data->affinity);
 			if (cpu >= nr_cpu_ids) {
@@ -217,11 +217,11 @@ static int next_cpu_for_irq(struct irq_data *data)
 	} else if (weight == 1) {
 		cpu = cpumask_first(data->affinity);
 	} else {
-		cpu = smp_processor_id();
+		cpu = raw_smp_processor_id();
 	}
 	return cpu;
 #else
-	return smp_processor_id();
+	return raw_smp_processor_id();
 #endif
 }
 
@@ -617,7 +617,7 @@ static void octeon_irq_handle_gpio(unsigned int irq, struct irq_desc *desc)
 
 static void octeon_irq_cpu_offline_ciu(struct irq_data *data)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	cpumask_t new_affinity;
 
 	if (!cpumask_test_cpu(cpu, data->affinity))
@@ -1748,7 +1748,7 @@ void __init arch_init_irq(void)
 #ifdef CONFIG_SMP
 	/* Set the default affinity to the boot cpu. */
 	cpumask_clear(irq_default_affinity);
-	cpumask_set_cpu(smp_processor_id(), irq_default_affinity);
+	cpumask_set_cpu(raw_smp_processor_id(), irq_default_affinity);
 #endif
 	if (OCTEON_IS_MODEL(OCTEON_CN68XX))
 		octeon_irq_init_ciu2();

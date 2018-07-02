@@ -52,7 +52,7 @@ static struct irq_chip rt_irq_type = {
 
 static int rt_next_event(unsigned long delta, struct clock_event_device *evt)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	int slice = cputoslice(cpu);
 	unsigned long cnt;
 
@@ -76,7 +76,7 @@ static DEFINE_PER_CPU(char [11], hub_rt_name);
 
 static irqreturn_t hub_rt_counter_handler(int irq, void *dev_id)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct clock_event_device *cd = &per_cpu(hub_rt_clockevent, cpu);
 	int slice = cputoslice(cpu);
 
@@ -108,7 +108,7 @@ struct irqaction hub_rt_irqaction = {
 
 void hub_rt_clock_event_init(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct clock_event_device *cd = &per_cpu(hub_rt_clockevent, cpu);
 	unsigned char *name = per_cpu(hub_rt_name, cpu);
 	int irq = rt_timer_irq;
@@ -189,7 +189,7 @@ void cpu_time_init(void)
 	if (!cpu)
 		panic("No information about myself?");
 
-	printk("CPU %d clock is %dMHz.\n", smp_processor_id(), cpu->cpu_speed);
+	printk("CPU %d clock is %dMHz.\n", raw_smp_processor_id(), cpu->cpu_speed);
 
 	set_c0_status(SRB_TIMOCLK);
 }

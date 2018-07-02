@@ -129,7 +129,7 @@ static void mpc85xx_take_timebase(void)
 #ifdef CONFIG_HOTPLUG_CPU
 static void smp_85xx_mach_cpu_die(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	u32 tmp;
 
 	local_irq_disable();
@@ -193,7 +193,7 @@ static int smp_85xx_kick_cpu(int nr)
 	const u64 *cpu_rel_addr;
 	__iomem struct epapr_spin_table *spin_table;
 	struct device_node *np;
-	int hw_cpu = get_hard_smp_processor_id(nr);
+	int hw_cpu = get_hard_raw_smp_processor_id(nr);
 	int ioremappable;
 	int ret = 0;
 
@@ -426,7 +426,7 @@ static void mpc85xx_smp_machine_kexec(struct kimage *image)
 
 	for_each_online_cpu(i)
 	{
-		if ( i == smp_processor_id() ) continue;
+		if ( i == raw_smp_processor_id() ) continue;
 		mpic_reset_core(i);
 	}
 

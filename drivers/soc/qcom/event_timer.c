@@ -203,7 +203,7 @@ static enum hrtimer_restart event_hrtimer_cb(struct hrtimer *hrtimer)
 	int cpu;
 
 	spin_lock_irqsave(&event_timer_lock, flags);
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	next = timerqueue_getnext(&per_cpu(timer_head, cpu));
 
 	while (next && (ktime_to_ns(next->expires)

@@ -290,7 +290,7 @@ static void cps_smp_finish(void)
 #ifdef CONFIG_MIPS_MT_FPAFF
 	/* If we have an FPU, enroll ourselves in the FPU-full mask */
 	if (cpu_has_fpu)
-		cpu_set(smp_processor_id(), mt_fpu_cpumask);
+		cpu_set(raw_smp_processor_id(), mt_fpu_cpumask);
 #endif /* CONFIG_MIPS_MT_FPAFF */
 
 	local_irq_enable();
@@ -300,7 +300,7 @@ static void cps_smp_finish(void)
 
 static int cps_cpu_disable(void)
 {
-	unsigned cpu = smp_processor_id();
+	unsigned cpu = raw_smp_processor_id();
 	struct core_boot_config *core_cfg;
 
 	if (!cpu)
@@ -331,7 +331,7 @@ void play_dead(void)
 
 	local_irq_disable();
 	idle_task_exit();
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	cpu_death = CPU_DEATH_POWER;
 
 	if (cpu_has_mipsmt) {

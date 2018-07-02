@@ -976,7 +976,7 @@ static void its_cpu_init_lpis(void)
 					get_order(max(LPI_PENDBASE_SZ, SZ_64K)));
 		if (!pend_page) {
 			pr_err("Failed to allocate PENDBASE for CPU%d\n",
-			       smp_processor_id());
+			       raw_smp_processor_id());
 			return;
 		}
 
@@ -985,7 +985,7 @@ static void its_cpu_init_lpis(void)
 
 		paddr = page_to_phys(pend_page);
 		pr_info("CPU%d: using LPI pending table @%pa\n",
-			smp_processor_id(), &paddr);
+			raw_smp_processor_id(), &paddr);
 		gic_data_rdist()->pend_page = pend_page;
 	}
 
@@ -1058,7 +1058,7 @@ static void its_cpu_init_collection(void)
 	int cpu;
 
 	spin_lock(&its_lock);
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	list_for_each_entry(its, &its_nodes, entry) {
 		u64 target;
@@ -1515,7 +1515,7 @@ int its_cpu_init(void)
 {
 	if (!list_empty(&its_nodes)) {
 		if (!gic_rdists_supports_plpis()) {
-			pr_info("CPU%d: LPIs not supported\n", smp_processor_id());
+			pr_info("CPU%d: LPIs not supported\n", raw_smp_processor_id());
 			return -ENXIO;
 		}
 		its_cpu_init_lpis();

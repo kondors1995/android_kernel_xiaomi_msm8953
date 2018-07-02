@@ -393,7 +393,7 @@ unsigned long cpu_initialized __initdata = 0;
 	|| defined(CONFIG_CHIP_OPSP) || defined(CONFIG_CHIP_M32104)
 void __init cpu_init (void)
 {
-	int cpu_id = smp_processor_id();
+	int cpu_id = raw_smp_processor_id();
 
 	if (test_and_set_bit(cpu_id, &cpu_initialized)) {
 		printk(KERN_WARNING "CPU#%d already initialized!\n", cpu_id);

@@ -329,7 +329,7 @@ static const struct clock_event_device xen_timerop_clockevent = {
 static void xen_vcpuop_set_mode(enum clock_event_mode mode,
 				struct clock_event_device *evt)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	switch (mode) {
 	case CLOCK_EVT_MODE_PERIODIC:
@@ -355,7 +355,7 @@ static void xen_vcpuop_set_mode(enum clock_event_mode mode,
 static int xen_vcpuop_set_next_event(unsigned long delta,
 				     struct clock_event_device *evt)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct vcpu_set_singleshot_timer single;
 	int ret;
 
@@ -484,7 +484,7 @@ static const struct pv_time_ops xen_time_ops __initconst = {
 
 static void __init xen_time_init(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct timespec tp;
 
 	clocksource_register_hz(&xen_clocksource, NSEC_PER_SEC);
@@ -528,7 +528,7 @@ void __init xen_init_time_ops(void)
 #ifdef CONFIG_XEN_PVHVM
 static void xen_hvm_setup_cpu_clockevents(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	xen_setup_runstate_info(cpu);
 	/*
 	 * xen_setup_timer(cpu) - snprintf is bad in atomic context. Hence

@@ -248,8 +248,8 @@
 /* Combine old and new bits. */
 #define COMBINE(old, new, mask)	(((old) & ~(mask)) | ((new) & (mask)))
 
-/* Current CPU.  XXX should this be hard_smp_processor_id()? */
-#define THISCPU		smp_processor_id()
+/* Current CPU.  XXX should this be hard_raw_smp_processor_id()? */
+#define THISCPU		raw_smp_processor_id()
 
 /* State bits for use with atomic bit operations. */
 #define AO_CMD_STARTED	0

@@ -45,7 +45,7 @@ void __maybe_unused put_timestamp(char *tbuf)
 	unsigned long flags;
 
 	write_lock_irqsave(&dbg_buffer.lck, flags);
-	t = cpu_clock(smp_processor_id());
+	t = cpu_clock(raw_smp_processor_id());
 	write_unlock_irqrestore(&dbg_buffer.lck, flags);
 	nanosec_rem = do_div(t, 1000000000)/1000;
 	snprintf(tbuf, TIME_BUF_LEN, "[%5lu.%06lu]: ", (unsigned long)t,

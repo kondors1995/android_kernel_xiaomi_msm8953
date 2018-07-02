@@ -493,14 +493,14 @@ static void __init gic_dist_init(void)
 	 * Set all global interrupts to the boot CPU only. ARE must be
 	 * enabled.
 	 */
-	affinity = gic_mpidr_to_affinity(cpu_logical_map(smp_processor_id()));
+	affinity = gic_mpidr_to_affinity(cpu_logical_map(raw_smp_processor_id()));
 	for (i = 32; i < gic_data.irq_nr; i++)
 		writeq_relaxed(affinity, base + GICD_IROUTER + i * 8);
 }
 
 static int gic_populate_rdist(void)
 {
-	u64 mpidr = cpu_logical_map(smp_processor_id());
+	u64 mpidr = cpu_logical_map(raw_smp_processor_id());
 	u64 typer;
 	u32 aff;
 	int i;
@@ -532,7 +532,7 @@ static int gic_populate_rdist(void)
 				gic_data_rdist_rd_base() = ptr;
 				gic_data_rdist()->phys_base = gic_data.redist_regions[i].phys_base + offset;
 				pr_debug("CPU%d: found redistributor %llx region %d:%pa\n",
-					smp_processor_id(),
+					raw_smp_processor_id(),
 					(unsigned long long)mpidr,
 					i, &gic_data_rdist()->phys_base);
 				return 0;
@@ -550,7 +550,7 @@ static int gic_populate_rdist(void)
 
 	/* We couldn't even deal with ourselves... */
 	WARN(true, "CPU%d: mpidr %llx has no re-distributor!\n",
-	     smp_processor_id(), (unsigned long long)mpidr);
+	     raw_smp_processor_id(), (unsigned long long)mpidr);
 	return -ENODEV;
 }
 
@@ -675,7 +675,7 @@ static void gic_send_sgi(u64 cluster_id, u16 tlist, unsigned int irq)
 	       MPIDR_TO_SGI_AFFINITY(cluster_id, 1)	|
 	       tlist << ICC_SGI1R_TARGET_LIST_SHIFT);
 
-	pr_devel("CPU%d: ICC_SGI1R_EL1 %llx\n", smp_processor_id(), val);
+	pr_devel("CPU%d: ICC_SGI1R_EL1 %llx\n", raw_smp_processor_id(), val);
 	gic_write_sgi1r(val);
 }
 

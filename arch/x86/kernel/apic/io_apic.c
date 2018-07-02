@@ -1761,7 +1761,7 @@ __apicdebuginit(void) print_local_APIC(void *dummy)
 	u64 icr;
 
 	printk(KERN_DEBUG "printing local APIC contents on CPU#%d/%d:\n",
-		smp_processor_id(), hard_smp_processor_id());
+		raw_smp_processor_id(), hard_raw_smp_processor_id());
 	v = apic_read(APIC_ID);
 	printk(KERN_INFO "... APIC ID:      %08x (%01x)\n", v, read_apic_id());
 	v = apic_read(APIC_LVR);
@@ -2298,7 +2298,7 @@ asmlinkage __visible void smp_irq_move_cleanup_interrupt(void)
 	irq_enter();
 	exit_idle();
 
-	me = smp_processor_id();
+	me = raw_smp_processor_id();
 	for (vector = FIRST_EXTERNAL_VECTOR; vector < NR_VECTORS; vector++) {
 		int irq;
 		unsigned int irr;
@@ -2356,7 +2356,7 @@ static void __irq_complete_move(struct irq_cfg *cfg, unsigned vector)
 	if (likely(!cfg->move_in_progress))
 		return;
 
-	me = smp_processor_id();
+	me = raw_smp_processor_id();
 
 	if (vector == cfg->vector && cpumask_test_cpu(me, cfg->domain))
 		send_cleanup_vector(cfg);
@@ -2718,7 +2718,7 @@ static inline void __init unlock_ExtINT_logic(void)
 
 	entry1.dest_mode = 0;			/* physical delivery */
 	entry1.mask = 0;			/* unmask IRQ now */
-	entry1.dest = hard_smp_processor_id();
+	entry1.dest = hard_raw_smp_processor_id();
 	entry1.delivery_mode = dest_ExtINT;
 	entry1.polarity = entry0.polarity;
 	entry1.trigger = 0;

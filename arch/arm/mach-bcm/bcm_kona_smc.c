@@ -144,7 +144,7 @@ static void __bcm_kona_smc(void *info)
 	struct bcm_kona_smc_data *data = info;
 	u32 *args = bcm_smc_buffer;
 
-	BUG_ON(smp_processor_id() != 0);
+	BUG_ON(raw_smp_processor_id() != 0);
 	BUG_ON(!args);
 
 	/* Copy the four 32 bit argument values into the bounce area */

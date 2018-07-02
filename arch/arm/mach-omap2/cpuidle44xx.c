@@ -84,7 +84,7 @@ static int omap_enter_idle_coupled(struct cpuidle_device *dev,
 {
 	struct idle_statedata *cx = state_ptr + index;
 	u32 mpuss_can_lose_context = 0;
-	int cpu_id = smp_processor_id();
+	int cpu_id = raw_smp_processor_id();
 
 	/*
 	 * CPU0 has to wait and stay ON until CPU1 is OFF state.
@@ -184,7 +184,7 @@ fail:
  */
 static void omap_setup_broadcast_timer(void *arg)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ON, &cpu);
 }
 

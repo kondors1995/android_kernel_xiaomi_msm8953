@@ -1182,7 +1182,7 @@ static int find_later_rq(struct task_struct *task)
 {
 	struct sched_domain *sd;
 	struct cpumask *later_mask = this_cpu_cpumask_var_ptr(local_cpu_mask_dl);
-	int this_cpu = smp_processor_id();
+	int this_cpu = raw_smp_processor_id();
 	int best_cpu, cpu = task_cpu(task);
 
 	/* Make sure the mask is initialized first */

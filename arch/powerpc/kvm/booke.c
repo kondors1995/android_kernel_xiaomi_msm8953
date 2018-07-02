@@ -2051,7 +2051,7 @@ int kvm_arch_vcpu_ioctl_set_guest_debug(struct kvm_vcpu *vcpu,
 
 void kvmppc_booke_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
 {
-	vcpu->cpu = smp_processor_id();
+	vcpu->cpu = raw_smp_processor_id();
 	current->thread.kvm_vcpu = vcpu;
 }
 

@@ -557,7 +557,7 @@ void __init arch_init_irq(void)
 			bcm63xx_internal_set_affinity;
 
 		cpumask_clear(irq_default_affinity);
-		cpumask_set_cpu(smp_processor_id(), irq_default_affinity);
+		cpumask_set_cpu(raw_smp_processor_id(), irq_default_affinity);
 	}
 #endif
 }

@@ -209,7 +209,7 @@ static void pnv_kexec_wait_secondaries_down(void)
 			continue;
 
 		for (;;) {
-			rc = opal_query_cpu_status(get_hard_smp_processor_id(i),
+			rc = opal_query_cpu_status(get_hard_raw_smp_processor_id(i),
 						   &status);
 			if (rc != OPAL_SUCCESS || status != OPAL_THREAD_STARTED)
 				break;

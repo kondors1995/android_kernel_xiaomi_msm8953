@@ -83,7 +83,7 @@ static int cvm_irq_cpu;
 
 static void cvm_oct_enable_napi(void *_)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	napi_schedule(&cvm_oct_napi[cpu].napi);
 }
 
@@ -111,7 +111,7 @@ static void cvm_oct_enable_one_cpu(void)
 
 static void cvm_oct_no_more_work(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (cpu == cvm_irq_cpu) {
 		enable_irq(OCTEON_IRQ_WORKQ0 + pow_receive_group);
@@ -132,7 +132,7 @@ static irqreturn_t cvm_oct_do_interrupt(int cpl, void *dev_id)
 {
 	/* Disable the IRQ and start napi_poll. */
 	disable_irq_nosync(OCTEON_IRQ_WORKQ0 + pow_receive_group);
-	cvm_irq_cpu = smp_processor_id();
+	cvm_irq_cpu = raw_smp_processor_id();
 	cvm_oct_enable_napi(NULL);
 
 	return IRQ_HANDLED;

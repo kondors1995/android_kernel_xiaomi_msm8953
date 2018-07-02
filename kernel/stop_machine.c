@@ -170,7 +170,7 @@ static int multi_cpu_stop(void *data)
 {
 	struct multi_stop_data *msdata = data;
 	enum multi_stop_state curstate = MULTI_STOP_NONE;
-	int cpu = smp_processor_id(), err = 0;
+	int cpu = raw_smp_processor_id(), err = 0;
 	unsigned long flags;
 	bool is_active;
 

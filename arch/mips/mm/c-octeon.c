@@ -74,7 +74,7 @@ static void octeon_flush_icache_all_cores(struct vm_area_struct *vma)
 	octeon_local_flush_icache();
 #ifdef CONFIG_SMP
 	preempt_disable();
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	/*
 	 * If we have a vma structure, we only need to worry about
@@ -253,7 +253,7 @@ static void probe_octeon(void)
 	c->icache.sets = icache_size / (c->icache.linesz * c->icache.ways);
 	c->dcache.sets = dcache_size / (c->dcache.linesz * c->dcache.ways);
 
-	if (smp_processor_id() == 0) {
+	if (raw_smp_processor_id() == 0) {
 		pr_notice("Primary instruction cache %ldkB, %s, %d way, "
 			  "%d sets, linesize %d bytes.\n",
 			  icache_size >> 10,

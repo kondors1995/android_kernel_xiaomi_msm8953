@@ -7040,7 +7040,7 @@ static u16 ixgbe_select_queue(struct net_device *dev, struct sk_buff *skb,
 	f = &adapter->ring_feature[RING_F_FCOE];
 
 	txq = skb_rx_queue_recorded(skb) ? skb_get_rx_queue(skb) :
-					   smp_processor_id();
+					   raw_smp_processor_id();
 
 	while (txq >= f->indices)
 		txq -= f->indices;

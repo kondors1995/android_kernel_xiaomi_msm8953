@@ -62,7 +62,7 @@ void *kmap_atomic_prot_pfn(unsigned long pfn, pgprot_t prot)
 	pagefault_disable();
 
 	type = kmap_atomic_idx_push();
-	idx = type + KM_TYPE_NR * smp_processor_id();
+	idx = type + KM_TYPE_NR * raw_smp_processor_id();
 	vaddr = __fix_to_virt(FIX_KMAP_BEGIN + idx);
 	set_pte(kmap_pte - idx, pfn_pte(pfn, prot));
 	arch_flush_lazy_mmu_mode();
@@ -99,7 +99,7 @@ iounmap_atomic(void __iomem *kvaddr)
 		int idx, type;
 
 		type = kmap_atomic_idx();
-		idx = type + KM_TYPE_NR * smp_processor_id();
+		idx = type + KM_TYPE_NR * raw_smp_processor_id();
 
 #ifdef CONFIG_DEBUG_HIGHMEM
 		WARN_ON_ONCE(vaddr != __fix_to_virt(FIX_KMAP_BEGIN + idx));

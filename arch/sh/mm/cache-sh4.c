@@ -189,7 +189,7 @@ static void sh4_flush_cache_mm(void *arg)
 {
 	struct mm_struct *mm = arg;
 
-	if (cpu_context(smp_processor_id(), mm) == NO_CONTEXT)
+	if (cpu_context(raw_smp_processor_id(), mm) == NO_CONTEXT)
 		return;
 
 	flush_dcache_all();
@@ -220,7 +220,7 @@ static void sh4_flush_cache_page(void *args)
 	phys = pfn << PAGE_SHIFT;
 	page = pfn_to_page(pfn);
 
-	if (cpu_context(smp_processor_id(), vma->vm_mm) == NO_CONTEXT)
+	if (cpu_context(raw_smp_processor_id(), vma->vm_mm) == NO_CONTEXT)
 		return;
 
 	pgd = pgd_offset(vma->vm_mm, address);
@@ -283,7 +283,7 @@ static void sh4_flush_cache_range(void *args)
 	start = data->addr1;
 	end = data->addr2;
 
-	if (cpu_context(smp_processor_id(), vma->vm_mm) == NO_CONTEXT)
+	if (cpu_context(raw_smp_processor_id(), vma->vm_mm) == NO_CONTEXT)
 		return;
 
 	/*

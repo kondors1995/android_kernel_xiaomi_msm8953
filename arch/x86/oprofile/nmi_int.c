@@ -225,7 +225,7 @@ static void nmi_cpu_restore_mpx_registers(struct op_msrs *msrs)
 
 static void nmi_cpu_switch(void *dummy)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int si = per_cpu(switch_index, cpu);
 	struct op_msrs *msrs = &per_cpu(cpu_msrs, cpu);
 
@@ -341,7 +341,7 @@ fail:
 
 static void nmi_cpu_setup(void *dummy)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct op_msrs *msrs = &per_cpu(cpu_msrs, cpu);
 	nmi_cpu_save_registers(msrs);
 	raw_spin_lock(&oprofilefs_lock);
@@ -372,7 +372,7 @@ static void nmi_cpu_restore_registers(struct op_msrs *msrs)
 static void nmi_cpu_shutdown(void *dummy)
 {
 	unsigned int v;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct op_msrs *msrs = &per_cpu(cpu_msrs, cpu);
 
 	/* restoring APIC_LVTPC can trigger an apic error because the delivery

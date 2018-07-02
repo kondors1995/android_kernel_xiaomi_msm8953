@@ -147,10 +147,10 @@ Start_ISAR:
 		goto Start_ISAR;
 	if (cnt < irqloops)
 		pr_debug("%s: %d irqloops cpu%d\n", sf->name,
-			 irqloops - cnt, smp_processor_id());
+			 irqloops - cnt, raw_smp_processor_id());
 	if (irqloops && !cnt)
 		pr_notice("%s: %d IRQ LOOP cpu%d\n", sf->name,
-			  irqloops, smp_processor_id());
+			  irqloops, raw_smp_processor_id());
 	spin_unlock(&sf->lock);
 	return IRQ_HANDLED;
 }

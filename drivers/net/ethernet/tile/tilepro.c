@@ -265,7 +265,7 @@ static void net_printk(char *fmt, ...)
 	va_list args;
 	static char buf[256];
 
-	len = sprintf(buf, "tile_net[%2.2d]: ", smp_processor_id());
+	len = sprintf(buf, "tile_net[%2.2d]: ", raw_smp_processor_id());
 	va_start(args, fmt);
 	i = vscnprintf(buf + len, sizeof(buf) - len - 1, fmt, args);
 	va_end(args);
@@ -281,7 +281,7 @@ static void net_printk(char *fmt, ...)
  */
 static void dump_packet(unsigned char *data, unsigned long length, char *s)
 {
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 
 	unsigned long i;
 	char buf[128];
@@ -659,7 +659,7 @@ static void tile_net_discard_aux(struct tile_net_cpu *info, int index)
 static void tile_net_discard_packets(struct net_device *dev)
 {
 	struct tile_net_priv *priv = netdev_priv(dev);
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	struct tile_net_cpu *info = priv->cpu[my_cpu];
 	struct tile_netio_queue *queue = &info->queue;
 	netio_queue_impl_t *qsp = queue->__system_part;
@@ -823,7 +823,7 @@ static int tile_net_poll(struct napi_struct *napi, int budget)
 {
 	struct net_device *dev = napi->dev;
 	struct tile_net_priv *priv = netdev_priv(dev);
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	struct tile_net_cpu *info = priv->cpu[my_cpu];
 	struct tile_netio_queue *queue = &info->queue;
 	netio_queue_impl_t *qsp = queue->__system_part;
@@ -883,7 +883,7 @@ static irqreturn_t tile_net_handle_ingress_interrupt(int irq, void *dev_ptr)
 {
 	struct net_device *dev = (struct net_device *)dev_ptr;
 	struct tile_net_priv *priv = netdev_priv(dev);
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	struct tile_net_cpu *info = priv->cpu[my_cpu];
 
 	/* Disable the ingress interrupt. */
@@ -975,7 +975,7 @@ static void tile_net_register(void *dev_ptr)
 {
 	struct net_device *dev = (struct net_device *)dev_ptr;
 	struct tile_net_priv *priv = netdev_priv(dev);
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	struct tile_net_cpu *info;
 
 	struct tile_netio_queue *queue;
@@ -1090,7 +1090,7 @@ static void tile_net_deregister(void *dev_ptr)
 {
 	struct net_device *dev = (struct net_device *)dev_ptr;
 	struct tile_net_priv *priv = netdev_priv(dev);
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	struct tile_net_cpu *info = priv->cpu[my_cpu];
 
 	/* Disable the ingress interrupt. */
@@ -1119,7 +1119,7 @@ static void tile_net_unregister(void *dev_ptr)
 {
 	struct net_device *dev = (struct net_device *)dev_ptr;
 	struct tile_net_priv *priv = netdev_priv(dev);
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	struct tile_net_cpu *info = priv->cpu[my_cpu];
 
 	int ret;
@@ -1194,7 +1194,7 @@ static void tile_net_stop_disable(void *dev_ptr)
 {
 	struct net_device *dev = (struct net_device *)dev_ptr;
 	struct tile_net_priv *priv = netdev_priv(dev);
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	struct tile_net_cpu *info = priv->cpu[my_cpu];
 
 	/* Disable NAPI if needed. */
@@ -1215,7 +1215,7 @@ static void tile_net_open_enable(void *dev_ptr)
 {
 	struct net_device *dev = (struct net_device *)dev_ptr;
 	struct tile_net_priv *priv = netdev_priv(dev);
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	struct tile_net_cpu *info = priv->cpu[my_cpu];
 
 	/* Enable NAPI. */
@@ -1238,7 +1238,7 @@ static void tile_net_open_enable(void *dev_ptr)
 static int tile_net_open_inner(struct net_device *dev)
 {
 	struct tile_net_priv *priv = netdev_priv(dev);
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	struct tile_net_cpu *info;
 	struct tile_netio_queue *queue;
 	int result = 0;
@@ -1673,7 +1673,7 @@ static unsigned int tile_net_tx_frags(lepp_frag_t *frags,
 static int tile_net_tx_tso(struct sk_buff *skb, struct net_device *dev)
 {
 	struct tile_net_priv *priv = netdev_priv(dev);
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	struct tile_net_cpu *info = priv->cpu[my_cpu];
 	struct tile_net_stats_t *stats = &info->stats;
 
@@ -1845,7 +1845,7 @@ busy:
 static int tile_net_tx(struct sk_buff *skb, struct net_device *dev)
 {
 	struct tile_net_priv *priv = netdev_priv(dev);
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	struct tile_net_cpu *info = priv->cpu[my_cpu];
 	struct tile_net_stats_t *stats = &info->stats;
 

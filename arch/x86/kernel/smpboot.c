@@ -120,7 +120,7 @@ static void smp_callin(void)
 	 *
 	 * Since CPU0 is not wakened up by INIT, it doesn't wait for the IPI.
 	 */
-	cpuid = smp_processor_id();
+	cpuid = raw_smp_processor_id();
 	if (apic->wait_for_init_deassert && cpuid)
 		while (!atomic_read(&init_deasserted))
 			cpu_relax();
@@ -142,7 +142,7 @@ static void smp_callin(void)
 	/*
 	 * Need to setup vector mappings before we enable interrupts.
 	 */
-	setup_vector_irq(smp_processor_id());
+	setup_vector_irq(raw_smp_processor_id());
 
 	/*
 	 * Save our processor parameters. Note: this information
@@ -200,7 +200,7 @@ static void notrace start_secondary(void *unused)
 	__flush_tlb_all();
 #endif
 
-	/* otherwise gcc will move up smp_processor_id before the cpu_init */
+	/* otherwise gcc will move up raw_smp_processor_id before the cpu_init */
 	barrier();
 	/*
 	 * Check TSC synchronization with the BP:
@@ -220,9 +220,9 @@ static void notrace start_secondary(void *unused)
 	 * this lock ensures we don't half assign or remove an irq from a cpu.
 	 */
 	lock_vector_lock();
-	set_cpu_online(smp_processor_id(), true);
+	set_cpu_online(raw_smp_processor_id(), true);
 	unlock_vector_lock();
-	per_cpu(cpu_state, smp_processor_id()) = CPU_ONLINE;
+	per_cpu(cpu_state, raw_smp_processor_id()) = CPU_ONLINE;
 	x86_platform.nmi_init();
 
 	/* enable local interrupts */
@@ -684,7 +684,7 @@ static int wakeup_cpu0_nmi(unsigned int cmd, struct pt_regs *regs)
 {
 	int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	if (cpu == 0 && !cpu_online(cpu) && enable_start_cpu0)
 		return NMI_HANDLED;
 
@@ -1000,11 +1000,11 @@ static int __init smp_sanity_check(unsigned max_cpus)
 	}
 #endif
 
-	if (!physid_isset(hard_smp_processor_id(), phys_cpu_present_map)) {
+	if (!physid_isset(hard_raw_smp_processor_id(), phys_cpu_present_map)) {
 		pr_warn("weird, boot CPU (#%d) not listed by the BIOS\n",
-			hard_smp_processor_id());
+			hard_raw_smp_processor_id());
 
-		physid_set(hard_smp_processor_id(), phys_cpu_present_map);
+		physid_set(hard_raw_smp_processor_id(), phys_cpu_present_map);
 	}
 
 	/*
@@ -1027,7 +1027,7 @@ static int __init smp_sanity_check(unsigned max_cpus)
 	if (!apic->check_phys_apicid_present(boot_cpu_physical_apicid)) {
 		pr_notice("weird, boot CPU (#%d) not listed by the BIOS\n",
 			  boot_cpu_physical_apicid);
-		physid_set(hard_smp_processor_id(), phys_cpu_present_map);
+		physid_set(hard_raw_smp_processor_id(), phys_cpu_present_map);
 	}
 	preempt_enable();
 
@@ -1170,7 +1170,7 @@ void arch_enable_nonboot_cpus_end(void)
  */
 void __init native_smp_prepare_boot_cpu(void)
 {
-	int me = smp_processor_id();
+	int me = raw_smp_processor_id();
 	switch_to_new_gdt(me);
 	/* already set me in cpu_online_mask in boot_cpu_init() */
 	cpumask_set_cpu(me, cpu_callout_mask);
@@ -1308,9 +1308,9 @@ static DEFINE_PER_CPU(struct completion, die_complete);
 
 void cpu_disable_common(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
-	init_completion(&per_cpu(die_complete, smp_processor_id()));
+	init_completion(&per_cpu(die_complete, raw_smp_processor_id()));
 
 	remove_siblinginfo(cpu);
 
@@ -1364,7 +1364,7 @@ void play_dead_common(void)
 	mb();
 	/* Ack it */
 	__this_cpu_write(cpu_state, CPU_DEAD);
-	complete(&per_cpu(die_complete, smp_processor_id()));
+	complete(&per_cpu(die_complete, raw_smp_processor_id()));
 
 	/*
 	 * With physical CPU hotplug, we should halt the cpu
@@ -1374,7 +1374,7 @@ void play_dead_common(void)
 
 static bool wakeup_cpu0(void)
 {
-	if (smp_processor_id() == 0 && enable_start_cpu0)
+	if (raw_smp_processor_id() == 0 && enable_start_cpu0)
 		return true;
 
 	return false;

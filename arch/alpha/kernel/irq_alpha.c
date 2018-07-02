@@ -143,7 +143,7 @@ process_mcheck_info(unsigned long vector, unsigned long la_ptr,
 #endif
 
 	if (expected) {
-		int cpu = smp_processor_id();
+		int cpu = raw_smp_processor_id();
 		mcheck_expected(cpu) = 0;
 		mcheck_taken(cpu) = 1;
 		return;

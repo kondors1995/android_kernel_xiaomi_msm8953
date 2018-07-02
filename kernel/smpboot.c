@@ -38,7 +38,7 @@ struct task_struct *idle_thread_get(unsigned int cpu)
 
 void __init idle_thread_set_boot_cpu(void)
 {
-	per_cpu(idle_threads, smp_processor_id()) = current;
+	per_cpu(idle_threads, raw_smp_processor_id()) = current;
 }
 
 /**
@@ -67,7 +67,7 @@ void __init idle_threads_init(void)
 {
 	unsigned int cpu, boot_cpu;
 
-	boot_cpu = smp_processor_id();
+	boot_cpu = raw_smp_processor_id();
 
 	for_each_possible_cpu(cpu) {
 		if (cpu != boot_cpu)
@@ -124,7 +124,7 @@ static int smpboot_thread_fn(void *data)
 			__set_current_state(TASK_RUNNING);
 			preempt_enable();
 			if (ht->park && td->status == HP_THREAD_ACTIVE) {
-				BUG_ON(td->cpu != smp_processor_id());
+				BUG_ON(td->cpu != raw_smp_processor_id());
 				ht->park(td->cpu);
 				td->status = HP_THREAD_PARKED;
 			}
@@ -133,7 +133,7 @@ static int smpboot_thread_fn(void *data)
 			continue;
 		}
 
-		BUG_ON(td->cpu != smp_processor_id());
+		BUG_ON(td->cpu != raw_smp_processor_id());
 
 		/* Check for state change setup */
 		switch (td->status) {
@@ -458,7 +458,7 @@ bool cpu_report_death(void)
 {
 	int oldstate;
 	int newstate;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	do {
 		oldstate = atomic_read(&per_cpu(cpu_hotplug_state, cpu));

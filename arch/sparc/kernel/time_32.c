@@ -130,7 +130,7 @@ static __init void setup_timer_ce(void)
 {
 	struct clock_event_device *ce = &timer_ce;
 
-	BUG_ON(smp_processor_id() != boot_cpu_id);
+	BUG_ON(raw_smp_processor_id() != boot_cpu_id);
 
 	ce->name     = "timer_ce";
 	ce->rating   = 100;
@@ -346,7 +346,7 @@ static void __init sparc32_late_time_init(void)
 	if (sparc_config.features & FEAT_L10_CLOCKSOURCE)
 		setup_timer_cs();
 #ifdef CONFIG_SMP
-	register_percpu_ce(smp_processor_id());
+	register_percpu_ce(raw_smp_processor_id());
 #endif
 }
 

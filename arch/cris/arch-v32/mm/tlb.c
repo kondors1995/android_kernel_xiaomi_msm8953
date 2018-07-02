@@ -180,7 +180,7 @@ switch_mm(struct mm_struct *prev, struct mm_struct *next,
 	  struct task_struct *tsk)
 {
 	if (prev != next) {
-		int cpu = smp_processor_id();
+		int cpu = raw_smp_processor_id();
 
 		/* Make sure there is a MMU context. */
 		spin_lock(&mmu_context_lock);

@@ -130,7 +130,7 @@ void watchdog_interrupt(struct pt_regs *regs, enum exception_code excep)
 {
 	/*
 	 * Since current-> is always on the stack, and we always switch
-	 * the stack NMI-atomically, it's safe to use smp_processor_id().
+	 * the stack NMI-atomically, it's safe to use raw_smp_processor_id().
 	 */
 	int sum, cpu;
 	int irq = NMIIRQ;
@@ -141,7 +141,7 @@ void watchdog_interrupt(struct pt_regs *regs, enum exception_code excep)
 	tmp = WDCTR;
 	NMICR = NMICR_WDIF;
 
-	nmi_count(smp_processor_id())++;
+	nmi_count(raw_smp_processor_id())++;
 	kstat_incr_irq_this_cpu(irq);
 
 	for_each_online_cpu(cpu) {

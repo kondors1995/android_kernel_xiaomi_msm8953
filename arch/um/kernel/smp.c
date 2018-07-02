@@ -104,7 +104,7 @@ void smp_prepare_cpus(unsigned int maxcpus)
 {
 	struct task_struct *idle;
 	unsigned long waittime;
-	int err, cpu, me = smp_processor_id();
+	int err, cpu, me = raw_smp_processor_id();
 	int i;
 
 	for (i = 0; i < ncpus; ++i)
@@ -137,7 +137,7 @@ void smp_prepare_cpus(unsigned int maxcpus)
 
 void smp_prepare_boot_cpu(void)
 {
-	set_cpu_online(smp_processor_id(), true);
+	set_cpu_online(raw_smp_processor_id(), true);
 }
 
 int __cpu_up(unsigned int cpu, struct task_struct *tidle)
@@ -186,7 +186,7 @@ void IPI_handler(int cpu)
 	}
 }
 
-int hard_smp_processor_id(void)
+int hard_raw_smp_processor_id(void)
 {
 	return pid_to_processor_id(os_getpid());
 }

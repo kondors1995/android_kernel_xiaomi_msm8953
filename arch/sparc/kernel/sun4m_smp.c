@@ -40,7 +40,7 @@ void sun4m_cpu_pre_starting(void *arg)
 
 void sun4m_cpu_pre_online(void *arg)
 {
-	int cpuid = hard_smp_processor_id();
+	int cpuid = hard_raw_smp_processor_id();
 
 	/* Allow master to continue. The master will then give us the
 	 * go-ahead by setting the smp_commenced_mask and will wait without
@@ -190,7 +190,7 @@ static void sun4m_cross_call(smpfunc_t func, cpumask_t mask, unsigned long arg1,
 		{
 			register int i;
 
-			cpumask_clear_cpu(smp_processor_id(), &mask);
+			cpumask_clear_cpu(raw_smp_processor_id(), &mask);
 			cpumask_and(&mask, cpu_online_mask, &mask);
 			for (i = 0; i < ncpus; i++) {
 				if (cpumask_test_cpu(i, &mask)) {
@@ -229,7 +229,7 @@ static void sun4m_cross_call(smpfunc_t func, cpumask_t mask, unsigned long arg1,
 /* Running cross calls. */
 void smp4m_cross_call_irq(void)
 {
-	int i = smp_processor_id();
+	int i = raw_smp_processor_id();
 
 	ccall_info.processors_in[i] = 1;
 	ccall_info.func(ccall_info.arg1, ccall_info.arg2, ccall_info.arg3,
@@ -241,7 +241,7 @@ void smp4m_percpu_timer_interrupt(struct pt_regs *regs)
 {
 	struct pt_regs *old_regs;
 	struct clock_event_device *ce;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	old_regs = set_irq_regs(regs);
 

@@ -1053,7 +1053,7 @@ static void drop_other_mm_ref(void *info)
 	active_mm = this_cpu_read(cpu_tlbstate.active_mm);
 
 	if (active_mm == mm && this_cpu_read(cpu_tlbstate.state) != TLBSTATE_OK)
-		leave_mm(smp_processor_id());
+		leave_mm(raw_smp_processor_id());
 
 	/* If this cpu still has a stale cr3 reference, then make sure
 	   it has been flushed. */
@@ -1070,7 +1070,7 @@ static void xen_drop_mm_ref(struct mm_struct *mm)
 		if (current->mm == mm)
 			load_cr3(swapper_pg_dir);
 		else
-			leave_mm(smp_processor_id());
+			leave_mm(raw_smp_processor_id());
 	}
 
 	/* Get the "official" set of cpus referring to our pagetable. */
@@ -1321,7 +1321,7 @@ static void xen_flush_tlb_others(const struct cpumask *cpus,
 
 	/* Remove us, and any offline CPUS. */
 	cpumask_and(to_cpumask(args->mask), cpus, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), to_cpumask(args->mask));
+	cpumask_clear_cpu(raw_smp_processor_id(), to_cpumask(args->mask));
 
 	args->op.cmd = MMUEXT_TLB_FLUSH_MULTI;
 	if (end != TLB_FLUSH_ALL && (end - start) <= PAGE_SIZE) {

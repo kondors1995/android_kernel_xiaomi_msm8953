@@ -160,13 +160,13 @@ void check_tsc_sync_source(int cpu)
 
 	if (nr_warps) {
 		pr_warning("TSC synchronization [CPU#%d -> CPU#%d]:\n",
-			smp_processor_id(), cpu);
+			raw_smp_processor_id(), cpu);
 		pr_warning("Measured %Ld cycles TSC warp between CPUs, "
 			   "turning off TSC clock.\n", max_warp);
 		mark_tsc_unstable("check_tsc_sync_source failed");
 	} else {
 		pr_debug("TSC synchronization [CPU#%d -> CPU#%d]: passed\n",
-			smp_processor_id(), cpu);
+			raw_smp_processor_id(), cpu);
 	}
 
 	/*
@@ -201,7 +201,7 @@ void check_tsc_sync_target(void)
 	while (atomic_read(&start_count) != cpus)
 		cpu_relax();
 
-	check_tsc_warp(loop_timeout(smp_processor_id()));
+	check_tsc_warp(loop_timeout(raw_smp_processor_id()));
 
 	/*
 	 * Ok, we are done:

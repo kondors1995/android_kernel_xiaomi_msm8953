@@ -261,7 +261,7 @@ static void trace_packet(const struct sk_buff *skb,
 	unsigned int rulenum = 0;
 	struct net *net = dev_net(in ? in : out);
 
-	table_base = private->entries[smp_processor_id()];
+	table_base = private->entries[raw_smp_processor_id()];
 	root = get_entry(table_base, private->hook_entry[hook]);
 
 	hookname = chainname = hooknames[hook];
@@ -326,7 +326,7 @@ ipt_do_table(struct sk_buff *skb,
 	local_bh_disable();
 	addend = xt_write_recseq_begin();
 	private = table->private;
-	cpu        = smp_processor_id();
+	cpu        = raw_smp_processor_id();
 	/*
 	 * Ensure we load private-> members after we've fetched the base
 	 * pointer.
@@ -1352,7 +1352,7 @@ do_add_counters(struct net *net, const void __user *user,
 
 	i = 0;
 	/* Choose the copy that is on our node */
-	curcpu = smp_processor_id();
+	curcpu = raw_smp_processor_id();
 	loc_cpu_entry = private->entries[curcpu];
 	addend = xt_write_recseq_begin();
 	xt_entry_foreach(iter, loc_cpu_entry, private->size) {

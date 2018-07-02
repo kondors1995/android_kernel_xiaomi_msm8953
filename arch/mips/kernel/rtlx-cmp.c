@@ -30,7 +30,7 @@ static void rtlx_interrupt(void)
 
 	info = *p;
 
-	if (info->ap_int_pending == 1 && smp_processor_id() == 0) {
+	if (info->ap_int_pending == 1 && raw_smp_processor_id() == 0) {
 		for (i = 0; i < RTLX_CHANNELS; i++) {
 			wake_up(&channel_wqs[i].lx_queue);
 			wake_up(&channel_wqs[i].rt_queue);

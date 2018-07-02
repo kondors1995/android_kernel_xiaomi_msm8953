@@ -115,7 +115,7 @@ void __init smp_cpus_done(unsigned int max_cpus)
 
 void cpu_panic(void)
 {
-	printk("CPU[%d]: Returns from cpu_idle!\n", smp_processor_id());
+	printk("CPU[%d]: Returns from cpu_idle!\n", raw_smp_processor_id());
 	panic("SMP bolixed\n");
 }
 
@@ -242,7 +242,7 @@ void __init smp_setup_cpu_possible_map(void)
 
 void __init smp_prepare_boot_cpu(void)
 {
-	int cpuid = hard_smp_processor_id();
+	int cpuid = hard_raw_smp_processor_id();
 
 	if (cpuid >= NR_CPUS) {
 		prom_printf("Serious problem, boot cpu id >= NR_CPUS\n");
@@ -314,7 +314,7 @@ static void arch_cpu_pre_starting(void *arg)
 
 static void arch_cpu_pre_online(void *arg)
 {
-	unsigned int cpuid = hard_smp_processor_id();
+	unsigned int cpuid = hard_raw_smp_processor_id();
 
 	register_percpu_ce(cpuid);
 
@@ -350,7 +350,7 @@ static void sparc_start_secondary(void *arg)
 	arch_cpu_pre_starting(arg);
 
 	preempt_disable();
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	/* Invoke the CPU_STARTING notifier callbacks */
 	notify_cpu_starting(cpu);

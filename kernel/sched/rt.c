@@ -1807,7 +1807,7 @@ static int find_lowest_rq(struct task_struct *task, int sync)
 {
 	struct sched_domain *sd;
 	struct cpumask *lowest_mask = this_cpu_cpumask_var_ptr(local_cpu_mask);
-	int this_cpu = smp_processor_id();
+	int this_cpu = raw_smp_processor_id();
 	int cpu      = task_cpu(task);
 	bool boosted, prefer_idle;
 

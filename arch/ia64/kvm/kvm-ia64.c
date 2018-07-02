@@ -615,7 +615,7 @@ static int kvm_vcpu_pre_transition(struct kvm_vcpu *vcpu)
 {
 	unsigned long psr;
 	int r;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (vcpu->arch.last_run_cpu != cpu ||
 			per_cpu(last_vcpu, cpu) != vcpu) {

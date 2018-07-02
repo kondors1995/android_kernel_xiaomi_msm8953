@@ -6609,7 +6609,7 @@ static void tg3_tx(struct tg3_napi *tnapi)
 
 	if (unlikely(netif_tx_queue_stopped(txq) &&
 		     (tg3_tx_avail(tnapi) > TG3_TX_WAKEUP_THRESH(tnapi)))) {
-		__netif_tx_lock(txq, smp_processor_id());
+		__netif_tx_lock(txq, raw_smp_processor_id());
 		if (netif_tx_queue_stopped(txq) &&
 		    (tg3_tx_avail(tnapi) > TG3_TX_WAKEUP_THRESH(tnapi)))
 			netif_tx_wake_queue(txq);

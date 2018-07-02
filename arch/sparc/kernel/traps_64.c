@@ -458,7 +458,7 @@ static void spitfire_log_udb_syndrome(unsigned long afar, unsigned long udbh, un
 			p = memmod_str;
 		printk(KERN_WARNING "CPU[%d]: UDBL Syndrome[%x] "
 		       "Memory Module \"%s\"\n",
-		       smp_processor_id(), scode, p);
+		       raw_smp_processor_id(), scode, p);
 	}
 
 	if (udbh & bit) {
@@ -469,7 +469,7 @@ static void spitfire_log_udb_syndrome(unsigned long afar, unsigned long udbh, un
 			p = memmod_str;
 		printk(KERN_WARNING "CPU[%d]: UDBH Syndrome[%x] "
 		       "Memory Module \"%s\"\n",
-		       smp_processor_id(), scode, p);
+		       raw_smp_processor_id(), scode, p);
 	}
 
 }
@@ -479,7 +479,7 @@ static void spitfire_cee_log(unsigned long afsr, unsigned long afar, unsigned lo
 
 	printk(KERN_WARNING "CPU[%d]: Correctable ECC Error "
 	       "AFSR[%lx] AFAR[%016lx] UDBL[%lx] UDBH[%lx] TL>1[%d]\n",
-	       smp_processor_id(), afsr, afar, udbl, udbh, tl1);
+	       raw_smp_processor_id(), afsr, afar, udbl, udbh, tl1);
 
 	spitfire_log_udb_syndrome(afar, udbh, udbl, UDBE_CE);
 
@@ -501,7 +501,7 @@ static void spitfire_ue_log(unsigned long afsr, unsigned long afar, unsigned lon
 
 	printk(KERN_WARNING "CPU[%d]: Uncorrectable Error AFSR[%lx] "
 	       "AFAR[%lx] UDBL[%lx] UDBH[%ld] TT[%lx] TL>1[%d]\n",
-	       smp_processor_id(), afsr, afar, udbl, udbh, tt, tl1);
+	       raw_smp_processor_id(), afsr, afar, udbl, udbh, tt, tl1);
 
 	/* XXX add more human friendly logging of the error status
 	 * XXX as is implemented for cheetah
@@ -554,7 +554,7 @@ void spitfire_access_error(struct pt_regs *regs, unsigned long status_encoded, u
 
 #ifdef CONFIG_PCI
 	if (tt == TRAP_TYPE_DAE &&
-	    pci_poke_in_progress && pci_poke_cpu == smp_processor_id()) {
+	    pci_poke_in_progress && pci_poke_cpu == raw_smp_processor_id()) {
 		spitfire_clean_and_reenable_l1_caches();
 		spitfire_enable_estate_errors();
 
@@ -601,7 +601,7 @@ void cheetah_enable_pcache(void)
 	unsigned long dcr;
 
 	printk("CHEETAH: Enabling P-Cache on cpu %d.\n",
-	       smp_processor_id());
+	       raw_smp_processor_id());
 
 	__asm__ __volatile__("ldxa [%%g0] %1, %0"
 			     : "=r" (dcr)
@@ -796,7 +796,7 @@ struct cheetah_err_info *cheetah_error_log;
 static inline struct cheetah_err_info *cheetah_get_error_log(unsigned long afsr)
 {
 	struct cheetah_err_info *p;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (!cheetah_error_log)
 		return NULL;
@@ -1143,24 +1143,24 @@ static void cheetah_log_errors(struct pt_regs *regs, struct cheetah_err_info *in
 	char unum[256];
 
 	printk("%s" "ERROR(%d): Cheetah error trap taken afsr[%016lx] afar[%016lx] TL1(%d)\n",
-	       (recoverable ? KERN_WARNING : KERN_CRIT), smp_processor_id(),
+	       (recoverable ? KERN_WARNING : KERN_CRIT), raw_smp_processor_id(),
 	       afsr, afar,
 	       (afsr & CHAFSR_TL1) ? 1 : 0);
 	printk("%s" "ERROR(%d): TPC[%lx] TNPC[%lx] O7[%lx] TSTATE[%lx]\n",
-	       (recoverable ? KERN_WARNING : KERN_CRIT), smp_processor_id(),
+	       (recoverable ? KERN_WARNING : KERN_CRIT), raw_smp_processor_id(),
 	       regs->tpc, regs->tnpc, regs->u_regs[UREG_I7], regs->tstate);
 	printk("%s" "ERROR(%d): ",
-	       (recoverable ? KERN_WARNING : KERN_CRIT), smp_processor_id());
+	       (recoverable ? KERN_WARNING : KERN_CRIT), raw_smp_processor_id());
 	printk("TPC<%pS>\n", (void *) regs->tpc);
 	printk("%s" "ERROR(%d): M_SYND(%lx),  E_SYND(%lx)%s%s\n",
-	       (recoverable ? KERN_WARNING : KERN_CRIT), smp_processor_id(),
+	       (recoverable ? KERN_WARNING : KERN_CRIT), raw_smp_processor_id(),
 	       (afsr & CHAFSR_M_SYNDROME) >> CHAFSR_M_SYNDROME_SHIFT,
 	       (afsr & CHAFSR_E_SYNDROME) >> CHAFSR_E_SYNDROME_SHIFT,
 	       (afsr & CHAFSR_ME) ? ", Multiple Errors" : "",
 	       (afsr & CHAFSR_PRIV) ? ", Privileged" : "");
 	hipri = cheetah_get_hipri(afsr);
 	printk("%s" "ERROR(%d): Highest priority error (%016lx) \"%s\"\n",
-	       (recoverable ? KERN_WARNING : KERN_CRIT), smp_processor_id(),
+	       (recoverable ? KERN_WARNING : KERN_CRIT), raw_smp_processor_id(),
 	       hipri, cheetah_get_string(hipri));
 
 	/* Try to get unumber if relevant. */
@@ -1181,7 +1181,7 @@ static void cheetah_log_errors(struct pt_regs *regs, struct cheetah_err_info *in
 		if (ret != -1)
 			printk("%s" "ERROR(%d): AFAR E-syndrome [%s]\n",
 			       (recoverable ? KERN_WARNING : KERN_CRIT),
-			       smp_processor_id(), unum);
+			       raw_smp_processor_id(), unum);
 	} else if (afsr & MSYND_ERRORS) {
 		int syndrome;
 		int ret;
@@ -1192,25 +1192,25 @@ static void cheetah_log_errors(struct pt_regs *regs, struct cheetah_err_info *in
 		if (ret != -1)
 			printk("%s" "ERROR(%d): AFAR M-syndrome [%s]\n",
 			       (recoverable ? KERN_WARNING : KERN_CRIT),
-			       smp_processor_id(), unum);
+			       raw_smp_processor_id(), unum);
 	}
 
 	/* Now dump the cache snapshots. */
 	printk("%s" "ERROR(%d): D-cache idx[%x] tag[%016llx] utag[%016llx] stag[%016llx]\n",
-	       (recoverable ? KERN_WARNING : KERN_CRIT), smp_processor_id(),
+	       (recoverable ? KERN_WARNING : KERN_CRIT), raw_smp_processor_id(),
 	       (int) info->dcache_index,
 	       info->dcache_tag,
 	       info->dcache_utag,
 	       info->dcache_stag);
 	printk("%s" "ERROR(%d): D-cache data0[%016llx] data1[%016llx] data2[%016llx] data3[%016llx]\n",
-	       (recoverable ? KERN_WARNING : KERN_CRIT), smp_processor_id(),
+	       (recoverable ? KERN_WARNING : KERN_CRIT), raw_smp_processor_id(),
 	       info->dcache_data[0],
 	       info->dcache_data[1],
 	       info->dcache_data[2],
 	       info->dcache_data[3]);
 	printk("%s" "ERROR(%d): I-cache idx[%x] tag[%016llx] utag[%016llx] stag[%016llx] "
 	       "u[%016llx] l[%016llx]\n",
-	       (recoverable ? KERN_WARNING : KERN_CRIT), smp_processor_id(),
+	       (recoverable ? KERN_WARNING : KERN_CRIT), raw_smp_processor_id(),
 	       (int) info->icache_index,
 	       info->icache_tag,
 	       info->icache_utag,
@@ -1218,22 +1218,22 @@ static void cheetah_log_errors(struct pt_regs *regs, struct cheetah_err_info *in
 	       info->icache_upper,
 	       info->icache_lower);
 	printk("%s" "ERROR(%d): I-cache INSN0[%016llx] INSN1[%016llx] INSN2[%016llx] INSN3[%016llx]\n",
-	       (recoverable ? KERN_WARNING : KERN_CRIT), smp_processor_id(),
+	       (recoverable ? KERN_WARNING : KERN_CRIT), raw_smp_processor_id(),
 	       info->icache_data[0],
 	       info->icache_data[1],
 	       info->icache_data[2],
 	       info->icache_data[3]);
 	printk("%s" "ERROR(%d): I-cache INSN4[%016llx] INSN5[%016llx] INSN6[%016llx] INSN7[%016llx]\n",
-	       (recoverable ? KERN_WARNING : KERN_CRIT), smp_processor_id(),
+	       (recoverable ? KERN_WARNING : KERN_CRIT), raw_smp_processor_id(),
 	       info->icache_data[4],
 	       info->icache_data[5],
 	       info->icache_data[6],
 	       info->icache_data[7]);
 	printk("%s" "ERROR(%d): E-cache idx[%x] tag[%016llx]\n",
-	       (recoverable ? KERN_WARNING : KERN_CRIT), smp_processor_id(),
+	       (recoverable ? KERN_WARNING : KERN_CRIT), raw_smp_processor_id(),
 	       (int) info->ecache_index, info->ecache_tag);
 	printk("%s" "ERROR(%d): E-cache data0[%016llx] data1[%016llx] data2[%016llx] data3[%016llx]\n",
-	       (recoverable ? KERN_WARNING : KERN_CRIT), smp_processor_id(),
+	       (recoverable ? KERN_WARNING : KERN_CRIT), raw_smp_processor_id(),
 	       info->ecache_data[0],
 	       info->ecache_data[1],
 	       info->ecache_data[2],
@@ -1292,7 +1292,7 @@ void cheetah_fecc_handler(struct pt_regs *regs, unsigned long afsr, unsigned lon
 		prom_printf("ERROR: Early Fast-ECC error afsr[%016lx] afar[%016lx]\n",
 			    afsr, afar);
 		prom_printf("ERROR: CPU(%d) TPC[%016lx] TNPC[%016lx] TSTATE[%016lx]\n",
-			    smp_processor_id(), regs->tpc, regs->tnpc, regs->tstate);
+			    raw_smp_processor_id(), regs->tpc, regs->tnpc, regs->tstate);
 		prom_halt();
 	}
 
@@ -1450,7 +1450,7 @@ void cheetah_cee_handler(struct pt_regs *regs, unsigned long afsr, unsigned long
 		prom_printf("ERROR: Early CEE error afsr[%016lx] afar[%016lx]\n",
 			    afsr, afar);
 		prom_printf("ERROR: CPU(%d) TPC[%016lx] TNPC[%016lx] TSTATE[%016lx]\n",
-			    smp_processor_id(), regs->tpc, regs->tnpc, regs->tstate);
+			    raw_smp_processor_id(), regs->tpc, regs->tnpc, regs->tstate);
 		prom_halt();
 	}
 
@@ -1547,7 +1547,7 @@ void cheetah_deferred_handler(struct pt_regs *regs, unsigned long afsr, unsigned
 
 #ifdef CONFIG_PCI
 	/* Check for the special PCI poke sequence. */
-	if (pci_poke_in_progress && pci_poke_cpu == smp_processor_id()) {
+	if (pci_poke_in_progress && pci_poke_cpu == raw_smp_processor_id()) {
 		cheetah_flush_icache();
 		cheetah_flush_dcache();
 
@@ -1585,7 +1585,7 @@ void cheetah_deferred_handler(struct pt_regs *regs, unsigned long afsr, unsigned
 		prom_printf("ERROR: Early deferred error afsr[%016lx] afar[%016lx]\n",
 			    afsr, afar);
 		prom_printf("ERROR: CPU(%d) TPC[%016lx] TNPC[%016lx] TSTATE[%016lx]\n",
-			    smp_processor_id(), regs->tpc, regs->tnpc, regs->tstate);
+			    raw_smp_processor_id(), regs->tpc, regs->tnpc, regs->tstate);
 		prom_halt();
 	}
 
@@ -1755,7 +1755,7 @@ void cheetah_plus_parity_error(int type, struct pt_regs *regs)
 
 	if (type & 0x2) {
 		printk(KERN_EMERG "CPU[%d]: Cheetah+ %c-cache parity error at TPC[%016lx]\n",
-		       smp_processor_id(),
+		       raw_smp_processor_id(),
 		       (type & 0x1) ? 'I' : 'D',
 		       regs->tpc);
 		printk(KERN_EMERG "TPC<%pS>\n", (void *) regs->tpc);
@@ -1763,7 +1763,7 @@ void cheetah_plus_parity_error(int type, struct pt_regs *regs)
 	}
 
 	printk(KERN_WARNING "CPU[%d]: Cheetah+ %c-cache parity error at TPC[%016lx]\n",
-	       smp_processor_id(),
+	       raw_smp_processor_id(),
 	       (type & 0x1) ? 'I' : 'D',
 	       regs->tpc);
 	printk(KERN_WARNING "TPC<%pS>\n", (void *) regs->tpc);
@@ -2689,11 +2689,11 @@ struct trap_per_cpu trap_block[NR_CPUS];
 EXPORT_SYMBOL(trap_block);
 
 /* This can get invoked before sched_init() so play it super safe
- * and use hard_smp_processor_id().
+ * and use hard_raw_smp_processor_id().
  */
 void notrace init_cur_cpu_trap(struct thread_info *t)
 {
-	int cpu = hard_smp_processor_id();
+	int cpu = hard_raw_smp_processor_id();
 	struct trap_per_cpu *p = &trap_block[cpu];
 
 	p->thread = t;

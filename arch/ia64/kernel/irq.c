@@ -31,7 +31,7 @@
  */
 void ack_bad_irq(unsigned int irq)
 {
-	printk(KERN_ERR "Unexpected irq vector 0x%x on CPU %u!\n", irq, smp_processor_id());
+	printk(KERN_ERR "Unexpected irq vector 0x%x on CPU %u!\n", irq, raw_smp_processor_id());
 }
 
 #ifdef CONFIG_IA64_GENERIC
@@ -158,7 +158,7 @@ void fixup_irqs(void)
 	/*
 	 * Find a new timesync master
 	 */
-	if (smp_processor_id() == time_keeper_id) {
+	if (raw_smp_processor_id() == time_keeper_id) {
 		time_keeper_id = cpumask_first(cpu_online_mask);
 		printk ("CPU %d is now promoted to time-keeper master\n", time_keeper_id);
 	}

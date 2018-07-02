@@ -58,7 +58,7 @@ static inline unsigned long calculate_ldr(int cpu)
 static void bigsmp_init_apic_ldr(void)
 {
 	unsigned long val;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	apic_write(APIC_DFR, APIC_DFR_FLAT);
 	val = calculate_ldr(cpu);

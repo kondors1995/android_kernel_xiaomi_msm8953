@@ -162,7 +162,7 @@ void switch_mm(struct mm_struct *prev, struct mm_struct *next,
 		 * the pgd.
 		 */
 
-		per_cpu(current_pgd, smp_processor_id()) = next->pgd;
+		per_cpu(current_pgd, raw_smp_processor_id()) = next->pgd;
 
 		/* switch context in the MMU */
 

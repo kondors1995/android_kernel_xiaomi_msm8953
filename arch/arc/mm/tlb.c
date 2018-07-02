@@ -218,7 +218,7 @@ noinline void local_flush_tlb_all(void)
 {
 	unsigned long flags;
 	unsigned int entry;
-	struct cpuinfo_arc_mmu *mmu = &cpuinfo_arc700[smp_processor_id()].mmu;
+	struct cpuinfo_arc_mmu *mmu = &cpuinfo_arc700[raw_smp_processor_id()].mmu;
 
 	local_irq_save(flags);
 
@@ -274,7 +274,7 @@ noinline void local_flush_tlb_mm(struct mm_struct *mm)
 void local_flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
 			   unsigned long end)
 {
-	const unsigned int cpu = smp_processor_id();
+	const unsigned int cpu = raw_smp_processor_id();
 	unsigned long flags;
 
 	/* If range @start to @end is more than 32 TLB entries deep,
@@ -347,7 +347,7 @@ void local_flush_tlb_kernel_range(unsigned long start, unsigned long end)
 
 void local_flush_tlb_page(struct vm_area_struct *vma, unsigned long page)
 {
-	const unsigned int cpu = smp_processor_id();
+	const unsigned int cpu = raw_smp_processor_id();
 	unsigned long flags;
 
 	/* Note that it is critical that interrupts are DISABLED between
@@ -475,7 +475,7 @@ void create_tlb(struct vm_area_struct *vma, unsigned long address, pte_t *ptep)
 
 	local_irq_save(flags);
 
-	tlb_paranoid_check(asid_mm(vma->vm_mm, smp_processor_id()), address);
+	tlb_paranoid_check(asid_mm(vma->vm_mm, raw_smp_processor_id()), address);
 
 	address &= PAGE_MASK;
 
@@ -562,7 +562,7 @@ void update_mmu_cache(struct vm_area_struct *vma, unsigned long vaddr_unaligned,
  */
 void read_decode_mmu_bcr(void)
 {
-	struct cpuinfo_arc_mmu *mmu = &cpuinfo_arc700[smp_processor_id()].mmu;
+	struct cpuinfo_arc_mmu *mmu = &cpuinfo_arc700[raw_smp_processor_id()].mmu;
 	unsigned int tmp;
 	struct bcr_mmu_1_2 {
 #ifdef CONFIG_CPU_BIG_ENDIAN
@@ -622,7 +622,7 @@ char *arc_mmu_mumbojumbo(int cpu_id, char *buf, int len)
 void arc_mmu_init(void)
 {
 	char str[256];
-	struct cpuinfo_arc_mmu *mmu = &cpuinfo_arc700[smp_processor_id()].mmu;
+	struct cpuinfo_arc_mmu *mmu = &cpuinfo_arc700[raw_smp_processor_id()].mmu;
 
 	printk(arc_mmu_mumbojumbo(0, str, sizeof(str)));
 
@@ -684,7 +684,7 @@ void do_tlb_overlap_fault(unsigned long cause, unsigned long address,
 {
 	int set, way, n;
 	unsigned long flags, is_valid;
-	struct cpuinfo_arc_mmu *mmu = &cpuinfo_arc700[smp_processor_id()].mmu;
+	struct cpuinfo_arc_mmu *mmu = &cpuinfo_arc700[raw_smp_processor_id()].mmu;
 	unsigned int pd0[mmu->ways], pd1[mmu->ways];
 
 	local_irq_save(flags);

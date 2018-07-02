@@ -55,7 +55,7 @@ static void dump_fir(int cpu)
 
 void cbe_system_error_exception(struct pt_regs *regs)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	printk(KERN_ERR "System Error Interrupt on CPU %d !\n", cpu);
 	dump_fir(cpu);
@@ -64,7 +64,7 @@ void cbe_system_error_exception(struct pt_regs *regs)
 
 void cbe_maintenance_exception(struct pt_regs *regs)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	/*
 	 * Nothing implemented for the maintenance interrupt at this point
@@ -76,7 +76,7 @@ void cbe_maintenance_exception(struct pt_regs *regs)
 
 void cbe_thermal_exception(struct pt_regs *regs)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	/*
 	 * Nothing implemented for the thermal interrupt at this point
@@ -88,7 +88,7 @@ void cbe_thermal_exception(struct pt_regs *regs)
 
 static int cbe_machine_check_handler(struct pt_regs *regs)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	printk(KERN_ERR "Machine Check Interrupt on CPU %d !\n", cpu);
 	dump_fir(cpu);
@@ -285,7 +285,7 @@ int cbe_sysreset_hack(void)
 	 * but cannot set the system reset reason in srr1,
 	 * so check an extra register here.
 	 */
-	if (sysreset_hack && (smp_processor_id() == 0)) {
+	if (sysreset_hack && (raw_smp_processor_id() == 0)) {
 		regs = cbe_get_cpu_pmd_regs(0);
 		if (!regs)
 			return 0;

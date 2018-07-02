@@ -94,7 +94,7 @@ static void __init get_cpuinfo(void)
 	struct cpuinfo_c6x *p;
 	struct device_node *node, *np;
 
-	p = &per_cpu(cpu_data, smp_processor_id());
+	p = &per_cpu(cpu_data, raw_smp_processor_id());
 
 	if (!IS_ERR(coreclk))
 		c6x_core_freq = clk_get_rate(coreclk);

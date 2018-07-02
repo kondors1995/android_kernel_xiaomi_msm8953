@@ -135,7 +135,7 @@ asmlinkage void start_secondary(void)
 
 	calibrate_delay();
 	preempt_disable();
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	cpu_data[cpu].udelay_val = loops_per_jiffy;
 
 	cpu_set(cpu, cpu_coherent_mask);
@@ -175,7 +175,7 @@ static void stop_this_cpu(void *dummy)
 	/*
 	 * Remove this CPU:
 	 */
-	set_cpu_online(smp_processor_id(), false);
+	set_cpu_online(raw_smp_processor_id(), false);
 	for (;;) {
 		if (cpu_wait)
 			(*cpu_wait)();		/* Wait if available. */
@@ -294,7 +294,7 @@ void flush_tlb_mm(struct mm_struct *mm)
 		unsigned int cpu;
 
 		for_each_online_cpu(cpu) {
-			if (cpu != smp_processor_id() && cpu_context(cpu, mm))
+			if (cpu != raw_smp_processor_id() && cpu_context(cpu, mm))
 				cpu_context(cpu, mm) = 0;
 		}
 	}
@@ -333,7 +333,7 @@ void flush_tlb_range(struct vm_area_struct *vma, unsigned long start, unsigned l
 		unsigned int cpu;
 
 		for_each_online_cpu(cpu) {
-			if (cpu != smp_processor_id() && cpu_context(cpu, mm))
+			if (cpu != raw_smp_processor_id() && cpu_context(cpu, mm))
 				cpu_context(cpu, mm) = 0;
 		}
 	}
@@ -379,7 +379,7 @@ void flush_tlb_page(struct vm_area_struct *vma, unsigned long page)
 		unsigned int cpu;
 
 		for_each_online_cpu(cpu) {
-			if (cpu != smp_processor_id() && cpu_context(cpu, vma->vm_mm))
+			if (cpu != raw_smp_processor_id() && cpu_context(cpu, vma->vm_mm))
 				cpu_context(cpu, vma->vm_mm) = 0;
 		}
 	}
@@ -407,7 +407,7 @@ void (*dump_ipi_function_ptr)(void *) = NULL;
 void dump_send_ipi(void (*dump_ipi_callback)(void *))
 {
 	int i;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	dump_ipi_function_ptr = dump_ipi_callback;
 	smp_mb();
@@ -441,7 +441,7 @@ void tick_broadcast(const struct cpumask *mask)
 
 static void tick_broadcast_callee(void *info)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	tick_receive_broadcast();
 	atomic_set(&per_cpu(tick_broadcast_count, cpu), 0);
 }

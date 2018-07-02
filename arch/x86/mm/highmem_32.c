@@ -42,7 +42,7 @@ void *kmap_atomic_prot(struct page *page, pgprot_t prot)
 		return page_address(page);
 
 	type = kmap_atomic_idx_push();
-	idx = type + KM_TYPE_NR*smp_processor_id();
+	idx = type + KM_TYPE_NR*raw_smp_processor_id();
 	vaddr = __fix_to_virt(FIX_KMAP_BEGIN + idx);
 	BUG_ON(!pte_none(*(kmap_pte-idx)));
 	set_pte(kmap_pte-idx, mk_pte(page, prot));
@@ -77,7 +77,7 @@ void __kunmap_atomic(void *kvaddr)
 		int idx, type;
 
 		type = kmap_atomic_idx();
-		idx = type + KM_TYPE_NR * smp_processor_id();
+		idx = type + KM_TYPE_NR * raw_smp_processor_id();
 
 #ifdef CONFIG_DEBUG_HIGHMEM
 		WARN_ON_ONCE(vaddr != __fix_to_virt(FIX_KMAP_BEGIN + idx));

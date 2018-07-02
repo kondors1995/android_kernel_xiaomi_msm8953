@@ -1136,7 +1136,7 @@ static int vec_to_irq(int vec)
 #ifdef SIC_ISR
 	sic_status[0] = bfin_read_SIC_IMASK() & bfin_read_SIC_ISR();
 #else
-	if (smp_processor_id()) {
+	if (raw_smp_processor_id()) {
 # ifdef SICB_ISR0
 		/* This will be optimized out in UP mode. */
 		sic_status[0] = bfin_read_SICB_ISR0() & bfin_read_SICB_IMASK0();

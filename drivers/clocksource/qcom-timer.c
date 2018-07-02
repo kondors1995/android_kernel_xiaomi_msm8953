@@ -121,7 +121,7 @@ static int msm_timer_has_ppi;
 
 static int msm_local_timer_setup(struct clock_event_device *evt)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int err;
 
 	evt->irq = msm_timer_irq;

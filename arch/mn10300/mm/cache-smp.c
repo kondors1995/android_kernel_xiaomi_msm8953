@@ -74,7 +74,7 @@ void smp_cache_interrupt(void)
 		break;
 	}
 
-	cpumask_clear_cpu(smp_processor_id(), &smp_cache_ipi_map);
+	cpumask_clear_cpu(raw_smp_processor_id(), &smp_cache_ipi_map);
 }
 
 /**
@@ -95,7 +95,7 @@ void smp_cache_call(unsigned long opr_mask,
 	smp_cache_start = start;
 	smp_cache_end = end;
 	cpumask_copy(&smp_cache_ipi_map, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), &smp_cache_ipi_map);
+	cpumask_clear_cpu(raw_smp_processor_id(), &smp_cache_ipi_map);
 
 	send_IPI_allbutself(FLUSH_CACHE_IPI);
 

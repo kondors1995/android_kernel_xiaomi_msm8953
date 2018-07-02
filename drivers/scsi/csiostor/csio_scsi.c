@@ -1809,7 +1809,7 @@ csio_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmnd)
 	struct fc_rport *rport = starget_to_rport(scsi_target(cmnd->device));
 
 	if (!blk_rq_cpu_valid(cmnd->request))
-		cpu = smp_processor_id();
+		cpu = raw_smp_processor_id();
 	else
 		cpu = cmnd->request->cpu;
 
@@ -1911,7 +1911,7 @@ static int
 csio_do_abrt_cls(struct csio_hw *hw, struct csio_ioreq *ioreq, bool abort)
 {
 	int rv;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct csio_lnode *ln = ioreq->lnode;
 	struct csio_scsi_qset *sqset = &hw->sqset[ln->portid][cpu];
 
@@ -2140,7 +2140,7 @@ csio_eh_lun_reset_handler(struct scsi_cmnd *cmnd)
 		goto fail;
 	}
 
-	sqset			= &hw->sqset[ln->portid][smp_processor_id()];
+	sqset			= &hw->sqset[ln->portid][raw_smp_processor_id()];
 	ioreq->nsge		= 0;
 	ioreq->lnode		= ln;
 	ioreq->rnode		= rn;

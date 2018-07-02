@@ -449,7 +449,7 @@ static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
 static int exynos4_local_timer_setup(struct clock_event_device *evt)
 {
 	struct mct_clock_event_device *mevt;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	mevt = container_of(evt, struct mct_clock_event_device, evt);
 

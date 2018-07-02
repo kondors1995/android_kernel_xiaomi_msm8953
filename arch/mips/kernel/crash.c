@@ -17,7 +17,7 @@ static cpumask_t cpus_in_crash = CPU_MASK_NONE;
 static void crash_shutdown_secondary(void *passed_regs)
 {
 	struct pt_regs *regs = passed_regs;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	/*
 	 * If we are passed registers, use those.  Otherwise get the
@@ -73,7 +73,7 @@ static void crash_kexec_prepare_cpus(void) {}
 void default_machine_crash_shutdown(struct pt_regs *regs)
 {
 	local_irq_disable();
-	crashing_cpu = smp_processor_id();
+	crashing_cpu = raw_smp_processor_id();
 	crash_save_cpu(regs, crashing_cpu);
 	crash_kexec_prepare_cpus();
 	cpu_set(crashing_cpu, cpus_in_crash);

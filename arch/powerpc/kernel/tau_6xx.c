@@ -122,7 +122,7 @@ void TAUupdate(int cpu)
 
 void TAUException(struct pt_regs * regs)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	irq_enter();
 	tau[cpu].interrupts++;
@@ -142,7 +142,7 @@ static void tau_timeout(void * info)
 
 	/* disabling interrupts *should* be okay */
 	local_irq_save(flags);
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 #ifndef CONFIG_TAU_INT
 	TAUupdate(cpu);
@@ -206,7 +206,7 @@ int tau_initialized = 0;
 
 void __init TAU_init_smp(void * info)
 {
-	unsigned long cpu = smp_processor_id();
+	unsigned long cpu = raw_smp_processor_id();
 
 	/* set these to a reasonable value and let the timer shrink the
 	 * window */

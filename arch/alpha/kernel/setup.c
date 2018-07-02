@@ -515,7 +515,7 @@ setup_arch(char **cmdline_p)
 	char *args = command_line;
 
 	hwrpb = (struct hwrpb_struct*) __va(INIT_HWRPB->phys_addr);
-	boot_cpuid = hard_smp_processor_id();
+	boot_cpuid = hard_raw_smp_processor_id();
 
         /*
 	 * Pre-process the system type to make sure it will be valid.

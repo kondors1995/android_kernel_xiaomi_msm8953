@@ -21,7 +21,7 @@ extern void cpu_resume_mmu(void);
 int __cpu_suspend(unsigned long arg, int (*fn)(unsigned long))
 {
 	struct mm_struct *mm = current->active_mm;
-	u32 __mpidr = cpu_logical_map(smp_processor_id());
+	u32 __mpidr = cpu_logical_map(raw_smp_processor_id());
 	int ret;
 
 	if (!idmap_pgd)
@@ -45,7 +45,7 @@ int __cpu_suspend(unsigned long arg, int (*fn)(unsigned long))
 #else
 int __cpu_suspend(unsigned long arg, int (*fn)(unsigned long))
 {
-	u32 __mpidr = cpu_logical_map(smp_processor_id());
+	u32 __mpidr = cpu_logical_map(raw_smp_processor_id());
 	return __cpu_suspend_enter(arg, fn, __mpidr);
 }
 #define	idmap_pgd	NULL

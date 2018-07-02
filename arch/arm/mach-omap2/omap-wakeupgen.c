@@ -406,7 +406,7 @@ int omap_secure_apis_support(void)
 int __init omap_wakeupgen_init(void)
 {
 	int i;
-	unsigned int boot_cpu = smp_processor_id();
+	unsigned int boot_cpu = raw_smp_processor_id();
 	u32 val;
 
 	/* Not supported on OMAP4 ES1.0 silicon */

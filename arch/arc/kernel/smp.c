@@ -112,7 +112,7 @@ const char *arc_platform_smp_cpuinfo(void)
 void start_kernel_secondary(void)
 {
 	struct mm_struct *mm = &init_mm;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	/* MMU, Caches, Vector Table, Interrupts etc */
 	setup_processor();
@@ -210,7 +210,7 @@ static void ipi_send_msg_one(int cpu, enum ipi_msg_type msg)
 	unsigned long old, new;
 	unsigned long flags;
 
-	pr_debug("%d Sending msg [%d] to %d\n", smp_processor_id(), msg, cpu);
+	pr_debug("%d Sending msg [%d] to %d\n", raw_smp_processor_id(), msg, cpu);
 
 	local_irq_save(flags);
 
@@ -254,7 +254,7 @@ void smp_send_stop(void)
 {
 	struct cpumask targets;
 	cpumask_copy(&targets, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), &targets);
+	cpumask_clear_cpu(raw_smp_processor_id(), &targets);
 	ipi_send_msg(&targets, IPI_CPU_STOP);
 }
 
@@ -305,7 +305,7 @@ irqreturn_t do_IPI(int irq, void *dev_id)
 	unsigned long pending;
 
 	pr_debug("IPI [%ld] received on cpu %d\n",
-		 *this_cpu_ptr(&ipi_data), smp_processor_id());
+		 *this_cpu_ptr(&ipi_data), raw_smp_processor_id());
 
 	if (plat_smp_ops.ipi_clear)
 		plat_smp_ops.ipi_clear(irq);

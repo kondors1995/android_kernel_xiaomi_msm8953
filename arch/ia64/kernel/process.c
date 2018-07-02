@@ -212,7 +212,7 @@ __setup("nohalt", nohalt_setup);
 /* We don't actually take CPU down, just spin without interrupts. */
 static inline void play_dead(void)
 {
-	unsigned int this_cpu = smp_processor_id();
+	unsigned int this_cpu = raw_smp_processor_id();
 
 	/* Ack it */
 	__this_cpu_write(cpu_state, CPU_DEAD);
@@ -649,7 +649,7 @@ void machine_shutdown(void)
 	int cpu;
 
 	for_each_online_cpu(cpu) {
-		if (cpu != smp_processor_id())
+		if (cpu != raw_smp_processor_id())
 			cpu_down(cpu);
 	}
 #endif

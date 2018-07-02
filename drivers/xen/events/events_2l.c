@@ -264,7 +264,7 @@ static void evtchn_2l_handle_events(unsigned cpu)
 irqreturn_t xen_debug_interrupt(int irq, void *dev_id)
 {
 	struct shared_info *sh = HYPERVISOR_shared_info;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	xen_ulong_t *cpu_evtchn = per_cpu(cpu_evtchn_mask, cpu);
 	int i;
 	unsigned long flags;

@@ -953,7 +953,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
 	select_idle_routine(c);
 
 #ifdef CONFIG_NUMA
-	numa_add_cpu(smp_processor_id());
+	numa_add_cpu(raw_smp_processor_id());
 #endif
 }
 
@@ -1298,7 +1298,7 @@ void cpu_init(void)
 	struct task_struct *me;
 	struct tss_struct *t;
 	unsigned long v;
-	int cpu = stack_smp_processor_id();
+	int cpu = stack_raw_smp_processor_id();
 	int i;
 
 	wait_for_master_cpu(cpu);
@@ -1397,7 +1397,7 @@ void cpu_init(void)
 
 void cpu_init(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct task_struct *curr = current;
 	struct tss_struct *t = &per_cpu(init_tss, cpu);
 	struct thread_struct *thread = &curr->thread;

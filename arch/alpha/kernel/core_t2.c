@@ -182,7 +182,7 @@ conf_read(unsigned long addr, unsigned char type1)
 	unsigned int value, cpu, taken;
 	unsigned long t2_cfg = 0;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	DBG(("conf_read(addr=0x%lx, type1=%d)\n", addr, type1));
 
@@ -236,7 +236,7 @@ conf_write(unsigned long addr, unsigned int value, unsigned char type1)
 	unsigned int cpu, taken;
 	unsigned long t2_cfg = 0;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	/* If Type1 access, must set T2 CFG.  */
 	if (type1) {
@@ -555,7 +555,7 @@ t2_clear_errors(int cpu)
 void
 t2_machine_check(unsigned long vector, unsigned long la_ptr)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 #ifdef CONFIG_VERBOSE_MCHECK
 	struct el_common *mchk_header = (struct el_common *)la_ptr;
 #endif

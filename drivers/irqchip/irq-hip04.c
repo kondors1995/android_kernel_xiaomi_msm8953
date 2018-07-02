@@ -249,7 +249,7 @@ static void hip04_irq_cpu_init(struct hip04_irq_data *intc)
 {
 	void __iomem *dist_base = intc->dist_base;
 	void __iomem *base = intc->cpu_base;
-	unsigned int cpu_mask, cpu = smp_processor_id();
+	unsigned int cpu_mask, cpu = raw_smp_processor_id();
 	int i;
 
 	/*

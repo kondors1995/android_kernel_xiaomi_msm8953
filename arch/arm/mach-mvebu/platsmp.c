@@ -52,7 +52,7 @@ static void __init set_secondary_cpus_clock(void)
 	unsigned long rate;
 	struct clk *cpu_clk;
 
-	thiscpu = smp_processor_id();
+	thiscpu = raw_smp_processor_id();
 	cpu_clk = get_cpu_clk(thiscpu);
 	if (!cpu_clk)
 		return;

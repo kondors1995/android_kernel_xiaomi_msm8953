@@ -461,7 +461,7 @@ static inline int has_valid_asid(const struct mm_struct *mm)
 
 	return 0;
 #else
-	return cpu_context(smp_processor_id(), mm);
+	return cpu_context(raw_smp_processor_id(), mm);
 #endif
 }
 
@@ -594,7 +594,7 @@ static inline void local_r4k_flush_cache_page(void *args)
 	}
 	if (exec) {
 		if (vaddr && cpu_has_vtag_icache && mm == current->active_mm) {
-			int cpu = smp_processor_id();
+			int cpu = raw_smp_processor_id();
 
 			if (cpu_context(cpu, mm) != 0)
 				drop_mmu_context(mm, cpu);

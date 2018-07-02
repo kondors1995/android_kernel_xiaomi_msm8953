@@ -461,7 +461,7 @@ int setup_APIC_eilvt(u8 offset, u8 vector, u8 msg_type, u8 mask)
 		pr_err(FW_BUG "cpu %d, try to use APIC%lX (LVT offset %d) for "
 		       "vector 0x%x, but the register is already in use for "
 		       "vector 0x%x on another cpu\n",
-		       smp_processor_id(), reg, offset, new, reserved);
+		       raw_smp_processor_id(), reg, offset, new, reserved);
 		return -EINVAL;
 	}
 
@@ -469,7 +469,7 @@ int setup_APIC_eilvt(u8 offset, u8 vector, u8 msg_type, u8 mask)
 		pr_err(FW_BUG "cpu %d, try to use APIC%lX (LVT offset %d) for "
 		       "vector 0x%x, but the register is already in use for "
 		       "vector 0x%x on this cpu\n",
-		       smp_processor_id(), reg, offset, new, old);
+		       raw_smp_processor_id(), reg, offset, new, old);
 		return -EBUSY;
 	}
 
@@ -577,7 +577,7 @@ static void setup_APIC_timer(void)
 	}
 
 	memcpy(levt, &lapic_clockevent, sizeof(*levt));
-	levt->cpumask = cpumask_of(smp_processor_id());
+	levt->cpumask = cpumask_of(raw_smp_processor_id());
 
 	if (this_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER)) {
 		levt->features &= ~(CLOCK_EVT_FEAT_PERIODIC |
@@ -898,7 +898,7 @@ void setup_secondary_APIC_clock(void)
  */
 static void local_apic_timer_interrupt(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct clock_event_device *evt = &per_cpu(lapic_events, cpu);
 
 	/*
@@ -1300,7 +1300,7 @@ static void lapic_setup_esr(void)
  */
 void setup_local_APIC(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	unsigned int value, queued;
 	int i, j, acked = 0;
 	unsigned long long tsc = 0, ntsc;
@@ -1345,10 +1345,10 @@ void setup_local_APIC(void)
 	 * actual value.
 	 */
 	i = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
-	WARN_ON(i != BAD_APICID && i != logical_smp_processor_id());
+	WARN_ON(i != BAD_APICID && i != logical_raw_smp_processor_id());
 	/* always use the value from LDR */
 	early_per_cpu(x86_cpu_to_logical_apicid, cpu) =
-		logical_smp_processor_id();
+		logical_raw_smp_processor_id();
 #endif
 
 	/*
@@ -1954,7 +1954,7 @@ static inline void __smp_spurious_interrupt(void)
 
 	/* see sw-dev-man vol 3, chapter 7.4.13.5 */
 	pr_info("spurious APIC interrupt on CPU#%d, "
-		"should never happen.\n", smp_processor_id());
+		"should never happen.\n", raw_smp_processor_id());
 }
 
 __visible void smp_spurious_interrupt(struct pt_regs *regs)
@@ -1999,7 +1999,7 @@ static inline void __smp_error_interrupt(struct pt_regs *regs)
 	atomic_inc(&irq_err_count);
 
 	apic_printk(APIC_DEBUG, KERN_DEBUG "APIC error on CPU%d: %02x",
-		    smp_processor_id(), v);
+		    raw_smp_processor_id(), v);
 
 	v &= 0xff;
 	while (v) {
@@ -2228,7 +2228,7 @@ int generic_processor_info(int apicid, int version)
 	return cpu;
 }
 
-int hard_smp_processor_id(void)
+int hard_raw_smp_processor_id(void)
 {
 	return read_apic_id();
 }
@@ -2239,7 +2239,7 @@ void default_init_apic_ldr(void)
 
 	apic_write(APIC_DFR, APIC_DFR_VALUE);
 	val = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
-	val |= SET_APIC_LOGICAL_ID(1UL << smp_processor_id());
+	val |= SET_APIC_LOGICAL_ID(1UL << raw_smp_processor_id());
 	apic_write(APIC_LDR, val);
 }
 

@@ -485,7 +485,7 @@ mark_bsp_online (void)
 {
 #ifdef CONFIG_SMP
 	/* If we register an early console, allow CPU 0 to printk */
-	set_cpu_online(smp_processor_id(), true);
+	set_cpu_online(raw_smp_processor_id(), true);
 #endif
 }
 
@@ -588,7 +588,7 @@ setup_arch (char **cmdline_p)
 #endif
 
 #ifdef CONFIG_SMP
-	cpu_physical_id(0) = hard_smp_processor_id();
+	cpu_physical_id(0) = hard_raw_smp_processor_id();
 #endif
 
 	cpu_init();	/* initialize the bootstrap CPU */
@@ -812,7 +812,7 @@ identify_cpu (struct cpuinfo_ia64 *c)
 
 	memcpy(c->vendor, cpuid.field.vendor, 16);
 #ifdef CONFIG_SMP
-	c->cpu = smp_processor_id();
+	c->cpu = raw_smp_processor_id();
 
 	/* below default values will be overwritten  by identify_siblings() 
 	 * for Multi-Threading/Multi-Core capable CPUs
@@ -932,7 +932,7 @@ cpu_init (void)
 	 * insert boot cpu into sibling and core mapes
 	 * (must be done after per_cpu area is setup)
 	 */
-	if (smp_processor_id() == 0) {
+	if (raw_smp_processor_id() == 0) {
 		cpu_set(0, per_cpu(cpu_sibling_map, 0));
 		cpu_set(0, cpu_core_map[0]);
 	} else {

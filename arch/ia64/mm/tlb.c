@@ -344,7 +344,7 @@ void ia64_tlb_init(void)
 	long status;
 	pal_vm_info_1_u_t vm_info_1;
 	pal_vm_info_2_u_t vm_info_2;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if ((status = ia64_pal_vm_page_size(&tr_pgbits, &purge.mask)) != 0) {
 		printk(KERN_ERR "PAL_VM_PAGE_SIZE failed with status=%ld; "
@@ -427,7 +427,7 @@ int ia64_itr_entry(u64 target_mask, u64 va, u64 pte, u64 log_size)
 	int i, r;
 	unsigned long psr;
 	struct ia64_tr_entry *p;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (!ia64_idtrs[cpu]) {
 		ia64_idtrs[cpu] = kmalloc(2 * IA64_TR_ALLOC_MAX *
@@ -526,7 +526,7 @@ EXPORT_SYMBOL_GPL(ia64_itr_entry);
  */
 void ia64_ptr_entry(u64 target_mask, int slot)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int i;
 	struct ia64_tr_entry *p;
 

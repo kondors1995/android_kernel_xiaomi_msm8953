@@ -38,7 +38,7 @@ static void ip27_machine_restart(char *command)
 	int i;
 #endif
 
-	printk("Reboot started from CPU %d\n", smp_processor_id());
+	printk("Reboot started from CPU %d\n", raw_smp_processor_id());
 #ifdef CONFIG_SMP
 	smp_send_stop();
 #endif

@@ -170,7 +170,7 @@ static irqreturn_t armada_370_xp_timer_interrupt(int irq, void *dev_id)
 static int armada_370_xp_timer_setup(struct clock_event_device *evt)
 {
 	u32 clr = 0, set = 0;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (timer25Mhz)
 		set = TIMER0_25MHZ;

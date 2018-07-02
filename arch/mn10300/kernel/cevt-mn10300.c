@@ -29,7 +29,7 @@
 static int next_event(unsigned long delta,
 		      struct clock_event_device *evt)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	if (cpu == 0) {
 		stop_jiffies_counter();
@@ -53,7 +53,7 @@ static DEFINE_PER_CPU(struct irqaction, timer_irq);
 static irqreturn_t timer_interrupt(int irq, void *dev_id)
 {
 	struct clock_event_device *cd;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	if (cpu == 0)
 		stop_jiffies_counter();
@@ -84,7 +84,7 @@ int __init init_clockevents(void)
 {
 	struct clock_event_device *cd;
 	struct irqaction *iact;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	cd = &per_cpu(mn10300_clockevent_device, cpu);
 
@@ -107,7 +107,7 @@ int __init init_clockevents(void)
 	cd->min_delta_ns	= clockevent_delta2ns(100, cd);
 
 	cd->rating		= 200;
-	cd->cpumask		= cpumask_of(smp_processor_id());
+	cd->cpumask		= cpumask_of(raw_smp_processor_id());
 	cd->set_mode		= set_clock_mode;
 	cd->event_handler	= event_handler;
 	cd->set_next_event	= next_event;

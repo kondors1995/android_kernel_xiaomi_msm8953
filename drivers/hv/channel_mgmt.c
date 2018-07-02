@@ -192,7 +192,7 @@ static void free_channel(struct vmbus_channel *channel)
 static void percpu_channel_enq(void *arg)
 {
 	struct vmbus_channel *channel = arg;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	list_add_tail(&channel->percpu_list, &hv_context.percpu_list[cpu]);
 }
@@ -803,7 +803,7 @@ cleanup:
 struct vmbus_channel *vmbus_get_outgoing_channel(struct vmbus_channel *primary)
 {
 	struct list_head *cur, *tmp;
-	int cur_cpu = hv_context.vp_index[smp_processor_id()];
+	int cur_cpu = hv_context.vp_index[raw_smp_processor_id()];
 	struct vmbus_channel *cur_channel;
 	struct vmbus_channel *outgoing_channel = primary;
 	int cpu_distance, new_cpu_distance;

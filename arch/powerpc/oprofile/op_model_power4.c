@@ -191,11 +191,11 @@ static int power4_cpu_setup(struct op_counter_config *ctr)
 		mmcra |= MMCRA_SAMPLE_ENABLE;
 	mtspr(SPRN_MMCRA, mmcra);
 
-	dbg("setup on cpu %d, mmcr0 %lx\n", smp_processor_id(),
+	dbg("setup on cpu %d, mmcr0 %lx\n", raw_smp_processor_id(),
 	    mfspr(SPRN_MMCR0));
-	dbg("setup on cpu %d, mmcr1 %lx\n", smp_processor_id(),
+	dbg("setup on cpu %d, mmcr1 %lx\n", raw_smp_processor_id(),
 	    mfspr(SPRN_MMCR1));
-	dbg("setup on cpu %d, mmcra %lx\n", smp_processor_id(),
+	dbg("setup on cpu %d, mmcra %lx\n", raw_smp_processor_id(),
 	    mfspr(SPRN_MMCRA));
 
 	return 0;
@@ -235,7 +235,7 @@ static int power4_start(struct op_counter_config *ctr)
 
 	oprofile_running = 1;
 
-	dbg("start on cpu %d, mmcr0 %x\n", smp_processor_id(), mmcr0);
+	dbg("start on cpu %d, mmcr0 %x\n", raw_smp_processor_id(), mmcr0);
 	return 0;
 }
 
@@ -250,7 +250,7 @@ static void power4_stop(void)
 
 	oprofile_running = 0;
 
-	dbg("stop on cpu %d, mmcr0 %x\n", smp_processor_id(), mmcr0);
+	dbg("stop on cpu %d, mmcr0 %x\n", raw_smp_processor_id(), mmcr0);
 
 	mb();
 }

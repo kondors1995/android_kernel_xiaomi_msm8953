@@ -724,7 +724,7 @@ void __irq_entry timer_interrupt(int irq, struct pt_regs *regs)
 {
 	struct pt_regs *old_regs = set_irq_regs(regs);
 	unsigned long tick_mask = tick_ops->softint_mask;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct clock_event_device *evt = &per_cpu(sparc64_events, cpu);
 
 	clear_softint(tick_mask);
@@ -768,7 +768,7 @@ void setup_sparc64_timer(void)
 	sevt = this_cpu_ptr(&sparc64_events);
 
 	memcpy(sevt, &sparc64_clockevent, sizeof(*sevt));
-	sevt->cpumask = cpumask_of(smp_processor_id());
+	sevt->cpumask = cpumask_of(raw_smp_processor_id());
 
 	clockevents_register_device(sevt);
 }

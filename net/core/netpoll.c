@@ -120,7 +120,7 @@ static void queue_process(struct work_struct *work)
 			skb_set_queue_mapping(skb, q_index);
 		}
 		txq = netdev_get_tx_queue(dev, q_index);
-		HARD_TX_LOCK(dev, txq, smp_processor_id());
+		HARD_TX_LOCK(dev, txq, raw_smp_processor_id());
 		if (netif_xmit_frozen_or_stopped(txq) ||
 		    netpoll_start_xmit(skb, dev, txq) != NETDEV_TX_OK) {
 			skb_queue_head(&npinfo->txq, skb);
@@ -173,7 +173,7 @@ static void poll_napi(struct net_device *dev, int budget)
 	struct napi_struct *napi;
 
 	list_for_each_entry(napi, &dev->napi_list, dev_list) {
-		if (napi->poll_owner != smp_processor_id() &&
+		if (napi->poll_owner != raw_smp_processor_id() &&
 		    spin_trylock(&napi->poll_lock)) {
 			budget = poll_one_napi(napi, budget);
 			spin_unlock(&napi->poll_lock);
@@ -314,7 +314,7 @@ static int netpoll_owner_active(struct net_device *dev)
 	struct napi_struct *napi;
 
 	list_for_each_entry(napi, &dev->napi_list, dev_list) {
-		if (napi->poll_owner == smp_processor_id())
+		if (napi->poll_owner == raw_smp_processor_id())
 			return 1;
 	}
 	return 0;

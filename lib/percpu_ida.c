@@ -182,7 +182,7 @@ int percpu_ida_alloc(struct percpu_ida *pool, int state)
 		if (tags->nr_free) {
 			tag = tags->freelist[--tags->nr_free];
 			if (tags->nr_free)
-				cpumask_set_cpu(smp_processor_id(),
+				cpumask_set_cpu(raw_smp_processor_id(),
 						&pool->cpus_have_tags);
 		}
 
@@ -234,7 +234,7 @@ void percpu_ida_free(struct percpu_ida *pool, unsigned tag)
 	spin_unlock(&tags->lock);
 
 	if (nr_free == 1) {
-		cpumask_set_cpu(smp_processor_id(),
+		cpumask_set_cpu(raw_smp_processor_id(),
 				&pool->cpus_have_tags);
 		wake_up(&pool->wait);
 	}

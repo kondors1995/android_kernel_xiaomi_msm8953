@@ -206,6 +206,6 @@ void __init native_init_IRQ(void)
 		setup_irq(2, &irq2);
 
 #ifdef CONFIG_X86_32
-	irq_ctx_init(smp_processor_id());
+	irq_ctx_init(raw_smp_processor_id());
 #endif
 }

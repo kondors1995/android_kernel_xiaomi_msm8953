@@ -1065,7 +1065,7 @@ static void ctcmpc_unpack_skb(struct channel *ch, struct sk_buff *pskb)
 	int sendrc = 0;
 
 	CTCM_PR_DEBUG("ctcmpc enter: %s() %s cp:%i ch:%s\n",
-			__func__, dev->name, smp_processor_id(), ch->id);
+			__func__, dev->name, raw_smp_processor_id(), ch->id);
 
 	header = (struct th_header *)pskb->data;
 	if ((header->th_seg == 0) &&
@@ -1253,7 +1253,7 @@ void ctcmpc_bh(unsigned long thischan)
 	struct mpc_group  *grp	= priv->mpcg;
 
 	CTCM_PR_DEBUG("%s cp:%i enter:  %s() %s\n",
-	       dev->name, smp_processor_id(), __func__, ch->id);
+	       dev->name, raw_smp_processor_id(), __func__, ch->id);
 	/* caller has requested driver to throttle back */
 	while ((fsm_getstate(grp->fsm) != MPCG_STATE_FLOWC) &&
 			(skb = skb_dequeue(&ch->io_queue))) {
@@ -1684,7 +1684,7 @@ static void mpc_action_side_xid(fsm_instance *fsm, void *arg, int side)
 					   spin_unlock_irqrestore */
 
 	CTCM_PR_DEBUG("Enter %s: cp=%i ch=0x%p id=%s\n",
-			__func__, smp_processor_id(), ch, ch->id);
+			__func__, raw_smp_processor_id(), ch, ch->id);
 
 	if (ctcm_checkalloc_buffer(ch))
 					goto done;
@@ -1859,7 +1859,7 @@ static void mpc_action_doxid0(fsm_instance *fsm, int event, void *arg)
 	struct mpc_group   *grp  = priv->mpcg;
 
 	CTCM_PR_DEBUG("Enter %s: cp=%i ch=0x%p id=%s\n",
-			__func__, smp_processor_id(), ch, ch->id);
+			__func__, raw_smp_processor_id(), ch, ch->id);
 
 	if (ch->xid == NULL) {
 		CTCM_DBF_TEXT_(MPC_ERROR, CTC_DBF_ERROR,
@@ -2036,7 +2036,7 @@ static void mpc_action_rcvd_xid7(fsm_instance *fsm, int event, void *arg)
 	struct mpc_group   *grp     = priv->mpcg;
 
 	CTCM_PR_DEBUG("Enter %s: cp=%i ch=0x%p id=%s\n",
-		__func__, smp_processor_id(), ch, ch->id);
+		__func__, raw_smp_processor_id(), ch, ch->id);
 	CTCM_PR_DEBUG("%s: outstanding_xid7: %i, outstanding_xid7_p2: %i\n",
 		__func__, grp->outstanding_xid7, grp->outstanding_xid7_p2);
 

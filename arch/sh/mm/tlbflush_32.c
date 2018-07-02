@@ -14,7 +14,7 @@
 
 void local_flush_tlb_page(struct vm_area_struct *vma, unsigned long page)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	if (vma->vm_mm && cpu_context(cpu, vma->vm_mm) != NO_CONTEXT) {
 		unsigned long flags;
@@ -40,7 +40,7 @@ void local_flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
 			   unsigned long end)
 {
 	struct mm_struct *mm = vma->vm_mm;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	if (cpu_context(cpu, mm) != NO_CONTEXT) {
 		unsigned long flags;
@@ -77,7 +77,7 @@ void local_flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
 
 void local_flush_tlb_kernel_range(unsigned long start, unsigned long end)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	unsigned long flags;
 	int size;
 
@@ -105,7 +105,7 @@ void local_flush_tlb_kernel_range(unsigned long start, unsigned long end)
 
 void local_flush_tlb_mm(struct mm_struct *mm)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	/* Invalidate all TLB of this process. */
 	/* Instead of invalidating each TLB, we get new MMU context. */

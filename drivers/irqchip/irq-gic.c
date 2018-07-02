@@ -584,7 +584,7 @@ static void gic_cpu_init(struct gic_chip_data *gic)
 {
 	void __iomem *dist_base = gic_data_dist_base(gic);
 	void __iomem *base = gic_data_cpu_base(gic);
-	unsigned int cpu_mask, cpu = smp_processor_id();
+	unsigned int cpu_mask, cpu = raw_smp_processor_id();
 	int i;
 
 	/*
@@ -897,7 +897,7 @@ void gic_migrate_target(unsigned int new_cpu_id)
 {
 	unsigned int cur_cpu_id, gic_irqs, gic_nr = 0;
 	void __iomem *dist_base;
-	int i, ror_val, cpu = smp_processor_id();
+	int i, ror_val, cpu = raw_smp_processor_id();
 	u32 val, cur_target_mask, active_mask;
 
 	if (gic_nr >= MAX_GIC_NR)

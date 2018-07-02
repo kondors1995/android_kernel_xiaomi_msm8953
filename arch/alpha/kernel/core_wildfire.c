@@ -332,7 +332,7 @@ wildfire_machine_check(unsigned long vector, unsigned long la_ptr)
 	mb();
 
 	process_mcheck_info(vector, la_ptr, "WILDFIRE",
-			    mcheck_expected(smp_processor_id()));
+			    mcheck_expected(raw_smp_processor_id()));
 }
 
 void

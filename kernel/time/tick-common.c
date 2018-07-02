@@ -97,7 +97,7 @@ static void tick_periodic(int cpu)
  */
 void tick_handle_periodic(struct clock_event_device *dev)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	ktime_t next = dev->next_event;
 
 	tick_periodic(cpu);
@@ -225,7 +225,7 @@ static void tick_setup_device(struct tick_device *td,
 void tick_install_replacement(struct clock_event_device *newdev)
 {
 	struct tick_device *td = this_cpu_ptr(&tick_cpu_device);
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	clockevents_exchange_device(td->evtdev, newdev);
 	tick_setup_device(td, newdev, cpu, cpumask_of(cpu));
@@ -276,7 +276,7 @@ static bool tick_check_preferred(struct clock_event_device *curdev,
 bool tick_check_replacement(struct clock_event_device *curdev,
 			    struct clock_event_device *newdev)
 {
-	if (!tick_check_percpu(curdev, newdev, smp_processor_id()))
+	if (!tick_check_percpu(curdev, newdev, raw_smp_processor_id()))
 		return false;
 
 	return tick_check_preferred(curdev, newdev);
@@ -292,7 +292,7 @@ void tick_check_new_device(struct clock_event_device *newdev)
 	struct tick_device *td;
 	int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	if (!cpumask_test_cpu(cpu, newdev->cpumask))
 		goto out_bc;
 

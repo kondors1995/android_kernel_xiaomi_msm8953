@@ -122,7 +122,7 @@ static void ipi_flush_icache(void *info)
  * there is chance to reschedule */
 static irqreturn_t ipi_handler_int0(int irq, void *dev_instance)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	platform_clear_ipi(cpu, IRQ_SUPPLE_0);
 	return IRQ_HANDLED;
@@ -131,7 +131,7 @@ static irqreturn_t ipi_handler_int0(int irq, void *dev_instance)
 DECLARE_PER_CPU(struct clock_event_device, coretmr_events);
 void ipi_timer(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct clock_event_device *evt = &per_cpu(coretmr_events, cpu);
 	evt->event_handler(evt);
 }
@@ -139,7 +139,7 @@ void ipi_timer(void)
 static irqreturn_t ipi_handler_int1(int irq, void *dev_instance)
 {
 	struct ipi_data *bfin_ipi_data;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	unsigned long pending;
 	unsigned long msg;
 
@@ -237,7 +237,7 @@ void smp_send_stop(void)
 
 	preempt_disable();
 	cpumask_copy(&callmap, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), &callmap);
+	cpumask_clear_cpu(raw_smp_processor_id(), &callmap);
 	if (!cpumask_empty(&callmap))
 		send_ipi(&callmap, BFIN_IPI_CPU_STOP);
 
@@ -279,7 +279,7 @@ static void setup_secondary(unsigned int cpu)
 
 void secondary_start_kernel(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct mm_struct *mm = &init_mm;
 
 	if (_bfin_swrst & SWRST_DBL_FAULT_B) {
@@ -404,7 +404,7 @@ EXPORT_SYMBOL(resync_core_dcache);
 #ifdef CONFIG_HOTPLUG_CPU
 int __cpu_disable(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	if (cpu == 0)
 		return -EPERM;

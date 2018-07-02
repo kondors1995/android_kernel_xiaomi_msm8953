@@ -298,7 +298,7 @@ static void hpet_legacy_clockevent_register(void)
 	 * Start hpet with the boot cpu mask and make it
 	 * global after the IO_APIC has been initialized.
 	 */
-	hpet_clockevent.cpumask = cpumask_of(smp_processor_id());
+	hpet_clockevent.cpumask = cpumask_of(raw_smp_processor_id());
 	clockevents_config_and_register(&hpet_clockevent, hpet_freq,
 					HPET_MIN_PROG_DELTA, 0x7FFFFFFF);
 	global_clock_event = &hpet_clockevent;
@@ -536,7 +536,7 @@ static void init_one_hpet_msi_clockevent(struct hpet_dev *hdev, int cpu)
 {
 	struct clock_event_device *evt = &hdev->evt;
 
-	WARN_ON(cpu != smp_processor_id());
+	WARN_ON(cpu != raw_smp_processor_id());
 	if (!(hdev->flags & HPET_DEV_VALID))
 		return;
 
@@ -669,7 +669,7 @@ struct hpet_work_struct {
 static void hpet_work(struct work_struct *w)
 {
 	struct hpet_dev *hdev;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct hpet_work_struct *hpet_work;
 
 	hpet_work = container_of(w, struct hpet_work_struct, work.work);

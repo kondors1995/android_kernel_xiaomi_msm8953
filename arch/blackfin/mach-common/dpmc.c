@@ -63,7 +63,7 @@ static void bfin_idle_this_cpu(void *info)
 {
 	unsigned long flags = 0;
 	unsigned long iwr0, iwr1, iwr2;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	local_irq_save_hw(flags);
 	bfin_iwr_set_sup0(&iwr0, &iwr1, &iwr2);
@@ -84,7 +84,7 @@ static void bfin_idle_cpu(void)
 static void bfin_wakeup_cpu(void)
 {
 	unsigned int cpu;
-	unsigned int this_cpu = smp_processor_id();
+	unsigned int this_cpu = raw_smp_processor_id();
 	cpumask_t mask;
 
 	cpumask_copy(&mask, cpu_online_mask);

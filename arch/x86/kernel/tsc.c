@@ -1232,7 +1232,7 @@ void __init tsc_init(void)
  */
 unsigned long calibrate_delay_is_known(void)
 {
-	int i, cpu = smp_processor_id();
+	int i, cpu = raw_smp_processor_id();
 
 	if (!tsc_disabled && !cpu_has(&cpu_data(cpu), X86_FEATURE_CONSTANT_TSC))
 		return 0;

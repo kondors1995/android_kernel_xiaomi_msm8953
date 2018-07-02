@@ -1322,7 +1322,7 @@ static void intel_pmu_reset(void)
 
 	local_irq_save(flags);
 
-	pr_info("clearing PMU state on CPU#%d\n", smp_processor_id());
+	pr_info("clearing PMU state on CPU#%d\n", raw_smp_processor_id());
 
 	for (idx = 0; idx < x86_pmu.num_counters; idx++) {
 		wrmsrl_safe(x86_pmu_config_addr(idx), 0ull);

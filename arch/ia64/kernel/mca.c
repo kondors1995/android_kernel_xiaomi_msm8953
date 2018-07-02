@@ -124,7 +124,7 @@ do {									\
 } while (0)
 
 /* Used by mca_asm.S */
-DEFINE_PER_CPU(u64, ia64_mca_data); /* == __per_cpu_mca[smp_processor_id()] */
+DEFINE_PER_CPU(u64, ia64_mca_data); /* == __per_cpu_mca[raw_smp_processor_id()] */
 DEFINE_PER_CPU(u64, ia64_mca_per_cpu_pte); /* PTE to map per-CPU area */
 DEFINE_PER_CPU(u64, ia64_mca_pal_pte);	    /* PTE to map PAL code */
 DEFINE_PER_CPU(u64, ia64_mca_pal_base);    /* vaddr PAL code granule */
@@ -335,7 +335,7 @@ static void ia64_mlogbuf_dump_from_init(void)
 static void inline
 ia64_mca_spin(const char *func)
 {
-	if (monarch_cpu == smp_processor_id())
+	if (monarch_cpu == raw_smp_processor_id())
 		ia64_mlogbuf_finish(0);
 	mprintk(KERN_EMERG "%s: spinning here, not returning to SAL\n", func);
 	while (1)
@@ -470,7 +470,7 @@ ia64_mca_log_sal_error_record(int sal_info_type)
 
 	if (irq_safe)
 		IA64_MCA_DEBUG("CPU %d: SAL log contains %s error record\n",
-			smp_processor_id(),
+			raw_smp_processor_id(),
 			sal_info_type < ARRAY_SIZE(rec_name) ? rec_name[sal_info_type] : "UNKNOWN");
 
 	/* Clear logs from corrected errors in case there's no user-level logger */
@@ -536,7 +536,7 @@ ia64_mca_cpe_int_handler (int cpe_irq, void *arg)
 	static DEFINE_SPINLOCK(cpe_history_lock);
 
 	IA64_MCA_DEBUG("%s: received interrupt vector = %#x on CPU %d\n",
-		       __func__, cpe_irq, smp_processor_id());
+		       __func__, cpe_irq, raw_smp_processor_id());
 
 	/* SAL spec states this should run w/ interrupts enabled */
 	local_irq_enable();
@@ -642,10 +642,10 @@ ia64_mca_cmc_vector_setup (void)
 	ia64_setreg(_IA64_REG_CR_CMCV, cmcv.cmcv_regval);
 
 	IA64_MCA_DEBUG("%s: CPU %d corrected machine check vector %#x registered.\n",
-		       __func__, smp_processor_id(), IA64_CMC_VECTOR);
+		       __func__, raw_smp_processor_id(), IA64_CMC_VECTOR);
 
 	IA64_MCA_DEBUG("%s: CPU %d CMCV = %#016lx\n",
-		       __func__, smp_processor_id(), ia64_getreg(_IA64_REG_CR_CMCV));
+		       __func__, raw_smp_processor_id(), ia64_getreg(_IA64_REG_CR_CMCV));
 }
 
 /*
@@ -671,7 +671,7 @@ ia64_mca_cmc_vector_disable (void *dummy)
 	ia64_setreg(_IA64_REG_CR_CMCV, cmcv.cmcv_regval);
 
 	IA64_MCA_DEBUG("%s: CPU %d corrected machine check vector %#x disabled.\n",
-		       __func__, smp_processor_id(), cmcv.cmcv_vector);
+		       __func__, raw_smp_processor_id(), cmcv.cmcv_vector);
 }
 
 /*
@@ -697,7 +697,7 @@ ia64_mca_cmc_vector_enable (void *dummy)
 	ia64_setreg(_IA64_REG_CR_CMCV, cmcv.cmcv_regval);
 
 	IA64_MCA_DEBUG("%s: CPU %d corrected machine check vector %#x enabled.\n",
-		       __func__, smp_processor_id(), cmcv.cmcv_vector);
+		       __func__, raw_smp_processor_id(), cmcv.cmcv_vector);
 }
 
 /*
@@ -776,7 +776,7 @@ static irqreturn_t
 ia64_mca_rendez_int_handler(int rendez_irq, void *arg)
 {
 	unsigned long flags;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct ia64_mca_notify_die nd =
 		{ .sos = NULL, .monarch_cpu = &monarch_cpu };
 
@@ -983,7 +983,7 @@ ia64_mca_modify_original_stack(struct pt_regs *regs,
 	u64 ar_bspstore = regs->ar_bspstore;
 	u64 ar_bsp = regs->ar_bspstore + (loadrs >> 16);
 	const char *msg;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	previous_current = curr_task(cpu);
 	set_curr_task(cpu, current);
@@ -1155,7 +1155,7 @@ ia64_mca_modify_original_stack(struct pt_regs *regs,
 
 no_mod:
 	mprintk(KERN_INFO "cpu %d, %s %s, original stack not modified\n",
-			smp_processor_id(), type, msg);
+			raw_smp_processor_id(), type, msg);
 	old_unat = regs->ar_unat;
 	finish_pt_regs(regs, sos, &old_unat);
 	return previous_current;
@@ -1225,7 +1225,7 @@ static void mca_insert_tr(u64 iord)
 	u64 old_rr;
 	struct ia64_tr_entry *p;
 	unsigned long psr;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (!ia64_idtrs[cpu])
 		return;
@@ -1282,7 +1282,7 @@ void
 ia64_mca_handler(struct pt_regs *regs, struct switch_stack *sw,
 		 struct ia64_sal_os_state *sos)
 {
-	int recover, cpu = smp_processor_id();
+	int recover, cpu = raw_smp_processor_id();
 	struct task_struct *previous_current;
 	struct ia64_mca_notify_die nd =
 		{ .sos = sos, .monarch_cpu = &monarch_cpu, .data = &recover };
@@ -1397,7 +1397,7 @@ ia64_mca_cmc_int_handler(int cmc_irq, void *arg)
 	static DEFINE_SPINLOCK(cmc_history_lock);
 
 	IA64_MCA_DEBUG("%s: received interrupt vector = %#x on CPU %d\n",
-		       __func__, cmc_irq, smp_processor_id());
+		       __func__, cmc_irq, raw_smp_processor_id());
 
 	/* SAL spec states this should run w/ interrupts enabled */
 	local_irq_enable();
@@ -1470,7 +1470,7 @@ ia64_mca_cmc_int_caller(int cmc_irq, void *arg)
 	static int start_count = -1;
 	unsigned int cpuid;
 
-	cpuid = smp_processor_id();
+	cpuid = raw_smp_processor_id();
 
 	/* If first cpu, update count */
 	if (start_count == -1)
@@ -1540,7 +1540,7 @@ ia64_mca_cpe_int_caller(int cpe_irq, void *arg)
 	static int poll_time = MIN_CPE_POLL_INTERVAL;
 	unsigned int cpuid;
 
-	cpuid = smp_processor_id();
+	cpuid = raw_smp_processor_id();
 
 	/* If first cpu, update count */
 	if (start_count == -1)
@@ -1667,7 +1667,7 @@ ia64_init_handler(struct pt_regs *regs, struct switch_stack *sw,
 	static atomic_t slaves;
 	static atomic_t monarchs;
 	struct task_struct *previous_current;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct ia64_mca_notify_die nd =
 		{ .sos = sos, .monarch_cpu = &monarch_cpu };
 
@@ -1844,7 +1844,7 @@ ia64_mca_cpu_init(void *cpu_data)
 	void *pal_vaddr;
 	void *data;
 	long sz = sizeof(struct ia64_mca_cpu);
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	static int first_time = 1;
 
 	/*

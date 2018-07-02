@@ -57,7 +57,7 @@ static inline void k8_check_syscfg_dram_mod_en(void)
 	if (lo & K8_MTRRFIXRANGE_DRAM_MODIFY) {
 		printk(KERN_ERR FW_WARN "MTRR: CPU %u: SYSCFG[MtrrFixDramModEn]"
 		       " not cleared by BIOS, clearing this bit\n",
-		       smp_processor_id());
+		       raw_smp_processor_id());
 		lo &= ~K8_MTRRFIXRANGE_DRAM_MODIFY;
 		mtrr_wrmsr(MSR_K8_SYSCFG, lo, hi);
 	}
@@ -456,7 +456,7 @@ void mtrr_wrmsr(unsigned msr, unsigned a, unsigned b)
 	if (wrmsr_safe(msr, a, b) < 0) {
 		printk(KERN_ERR
 			"MTRR: CPU %u: Writing MSR %x to %x:%x failed\n",
-			smp_processor_id(), msr, a, b);
+			raw_smp_processor_id(), msr, a, b);
 	}
 }
 

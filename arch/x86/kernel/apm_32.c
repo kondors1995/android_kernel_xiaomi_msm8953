@@ -1741,7 +1741,7 @@ static int apm(void *unused)
 	 * Method suggested by Ingo Molnar.
 	 */
 	set_cpus_allowed_ptr(current, cpumask_of(0));
-	BUG_ON(smp_processor_id() != 0);
+	BUG_ON(raw_smp_processor_id() != 0);
 
 	if (apm_info.connection_version == 0) {
 		apm_info.connection_version = apm_info.bios.version;

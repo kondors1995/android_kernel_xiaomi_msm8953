@@ -68,7 +68,7 @@ static void bL_do_switch(void *_arg)
 
 	pr_debug("%s\n", __func__);
 
-	ib_mpidr = cpu_logical_map(smp_processor_id());
+	ib_mpidr = cpu_logical_map(raw_smp_processor_id());
 	ib_cpu = MPIDR_AFFINITY_LEVEL(ib_mpidr, 0);
 	ib_cluster = MPIDR_AFFINITY_LEVEL(ib_mpidr, 1);
 
@@ -156,7 +156,7 @@ static int bL_switch_to(unsigned int new_cluster_id)
 	long volatile *handshake_ptr;
 	int ipi_nr, ret;
 
-	this_cpu = smp_processor_id();
+	this_cpu = raw_smp_processor_id();
 	ob_mpidr = read_mpidr();
 	ob_cpu = MPIDR_AFFINITY_LEVEL(ob_mpidr, 0);
 	ob_cluster = MPIDR_AFFINITY_LEVEL(ob_mpidr, 1);
@@ -173,7 +173,7 @@ static int bL_switch_to(unsigned int new_cluster_id)
 	pr_debug("before switch: CPU %d MPIDR %#x -> %#x\n",
 		 this_cpu, ob_mpidr, ib_mpidr);
 
-	this_cpu = smp_processor_id();
+	this_cpu = raw_smp_processor_id();
 
 	/* Close the gate for our entry vectors */
 	mcpm_set_entry_vector(ob_cpu, ob_cluster, NULL);

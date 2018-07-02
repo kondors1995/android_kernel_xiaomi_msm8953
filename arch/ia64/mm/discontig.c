@@ -603,7 +603,7 @@ void *per_cpu_init(void)
 			per_cpu(local_per_cpu_offset, cpu) = __per_cpu_offset[cpu];
 	}
 
-	return __per_cpu_start + __per_cpu_offset[smp_processor_id()];
+	return __per_cpu_start + __per_cpu_offset[raw_smp_processor_id()];
 }
 #endif /* CONFIG_SMP */
 

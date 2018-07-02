@@ -302,7 +302,7 @@ __attribute__((l1_text))
 
 irqreturn_t bfin_coretmr_interrupt(int irq, void *dev_id)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct clock_event_device *evt = &per_cpu(coretmr_events, cpu);
 
 	smp_mb();
@@ -322,7 +322,7 @@ static struct irqaction coretmr_irq = {
 void bfin_coretmr_clockevent_init(void)
 {
 	unsigned long clock_tick;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct clock_event_device *evt = &per_cpu(coretmr_events, cpu);
 
 #ifdef CONFIG_SMP

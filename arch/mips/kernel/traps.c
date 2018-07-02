@@ -626,7 +626,7 @@ static int simulate_rdhwr(struct pt_regs *regs, int rd, int rt)
 			1, regs, 0);
 	switch (rd) {
 	case 0:		/* CPU number */
-		regs->regs[rt] = smp_processor_id();
+		regs->regs[rt] = raw_smp_processor_id();
 		return 0;
 	case 1:		/* SYNCI length */
 		regs->regs[rt] = min(current_cpu_data.dcache.linesz,
@@ -1708,7 +1708,7 @@ void __noreturn nmi_exception_handler(struct pt_regs *regs)
 	raw_notifier_call_chain(&nmi_chain, 0, regs);
 	bust_spinlocks(1);
 	snprintf(str, 100, "CPU%d NMI taken, CP0_EPC=%lx\n",
-		 smp_processor_id(), regs->cp0_epc);
+		 raw_smp_processor_id(), regs->cp0_epc);
 	regs->cp0_epc = read_c0_errorepc();
 	die(str, regs);
 }
@@ -1950,7 +1950,7 @@ static void configure_exception_vector(void)
 
 void per_cpu_trap_init(bool is_boot_cpu)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	configure_status();
 	configure_hwrena();

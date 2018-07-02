@@ -82,7 +82,7 @@ static DEFINE_MUTEX(mce_inject_mutex);
 
 static int mce_raise_notify(unsigned int cmd, struct pt_regs *regs)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct mce *m = this_cpu_ptr(&injectm);
 	if (!cpumask_test_cpu(cpu, mce_inject_cpumask))
 		return NMI_DONE;
@@ -96,7 +96,7 @@ static int mce_raise_notify(unsigned int cmd, struct pt_regs *regs)
 
 static void mce_irq_ipi(void *info)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct mce *m = this_cpu_ptr(&injectm);
 
 	if (cpumask_test_cpu(cpu, mce_inject_cpumask) &&

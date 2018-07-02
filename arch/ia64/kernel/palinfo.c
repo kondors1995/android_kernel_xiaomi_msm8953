@@ -886,7 +886,7 @@ int palinfo_handle_smp(struct seq_file *m, pal_func_cpu_u_t *f)
 	/* will send IPI to other CPU and wait for completion of remote call */
 	if ((ret=smp_call_function_single(f->req_cpu, palinfo_smp_call, &ptr, 1))) {
 		printk(KERN_ERR "palinfo: remote CPU call from %d to %d on function %d: "
-		       "error %d\n", smp_processor_id(), f->req_cpu, f->func_id, ret);
+		       "error %d\n", raw_smp_processor_id(), f->req_cpu, f->func_id, ret);
 		return 0;
 	}
 	return ptr.ret;

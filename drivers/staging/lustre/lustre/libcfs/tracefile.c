@@ -166,7 +166,7 @@ cfs_trace_get_tage_try(struct cfs_trace_cpu_data *tcd, unsigned long len)
 		}
 
 		tage->used = 0;
-		tage->cpu = smp_processor_id();
+		tage->cpu = raw_smp_processor_id();
 		tage->type = tcd->tcd_type;
 		list_add_tail(&tage->linkage, &tcd->tcd_pages);
 		tcd->tcd_cur_pages++;
@@ -281,7 +281,7 @@ int libcfs_debug_vmsg2(struct libcfs_debug_msg_data *msgdata,
 	tcd = cfs_trace_get_tcd();
 
 	/* cfs_trace_get_tcd() grabs a lock, which disables preemption and
-	 * pins us to a particular CPU.  This avoids an smp_processor_id()
+	 * pins us to a particular CPU.  This avoids an raw_smp_processor_id()
 	 * warning on Linux when debugging is enabled. */
 	cfs_set_ptldebug_header(&header, msgdata, CDEBUG_STACK());
 

@@ -186,7 +186,7 @@ extern void cris_do_profile(struct pt_regs *regs);
 static inline irqreturn_t timer_interrupt(int irq, void *dev_id)
 {
 	struct pt_regs *regs = get_irq_regs();
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	reg_timer_r_masked_intr masked_intr;
 	reg_timer_rw_ack_intr ack_intr = { 0 };
 
@@ -225,7 +225,7 @@ static struct irqaction irq_timer = {
 
 void __init cris_timer_init(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	reg_timer_rw_tmr0_ctrl tmr0_ctrl = { 0 };
 	reg_timer_rw_tmr0_div tmr0_div = TIMER0_DIV;
 	reg_timer_rw_intr_mask timer_intr_mask;

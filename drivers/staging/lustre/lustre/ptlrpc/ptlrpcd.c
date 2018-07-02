@@ -107,7 +107,7 @@ ptlrpcd_select_pc(struct ptlrpc_request *req, pdl_policy_t policy, int index)
 
 	switch (policy) {
 	case PDL_POLICY_SAME:
-		idx = smp_processor_id() % ptlrpcds->pd_nthreads;
+		idx = raw_smp_processor_id() % ptlrpcds->pd_nthreads;
 		break;
 	case PDL_POLICY_LOCAL:
 		/* Before CPU partition patches available, process it the same
@@ -129,7 +129,7 @@ ptlrpcd_select_pc(struct ptlrpc_request *req, pdl_policy_t policy, int index)
 	case PDL_POLICY_ROUND:
 		/* We do not care whether it is strict load balance. */
 		idx = ptlrpcds->pd_index + 1;
-		if (idx == smp_processor_id())
+		if (idx == raw_smp_processor_id())
 			idx++;
 		idx %= ptlrpcds->pd_nthreads;
 		ptlrpcds->pd_index = idx;

@@ -196,7 +196,7 @@ static void kvm_on_user_return(struct user_return_notifier *urn)
 static void shared_msr_update(unsigned slot, u32 msr)
 {
 	u64 value;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct kvm_shared_msrs *smsr = per_cpu_ptr(shared_msrs, cpu);
 
 	/* only read, and nobody should modify it at this time,
@@ -231,7 +231,7 @@ static void kvm_shared_msr_cpu_online(void)
 
 int kvm_set_shared_msr(unsigned slot, u64 value, u64 mask)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct kvm_shared_msrs *smsr = per_cpu_ptr(shared_msrs, cpu);
 	int err;
 
@@ -253,7 +253,7 @@ EXPORT_SYMBOL_GPL(kvm_set_shared_msr);
 
 static void drop_user_return_notifiers(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct kvm_shared_msrs *smsr = per_cpu_ptr(shared_msrs, cpu);
 
 	if (smsr->registered)
@@ -5549,7 +5549,7 @@ static int kvmclock_cpufreq_notifier(struct notifier_block *nb, unsigned long va
 			if (vcpu->cpu != freq->cpu)
 				continue;
 			kvm_make_request(KVM_REQ_CLOCK_UPDATE, vcpu);
-			if (vcpu->cpu != smp_processor_id())
+			if (vcpu->cpu != raw_smp_processor_id())
 				send_ipi = 1;
 		}
 	}
@@ -7146,7 +7146,7 @@ int kvm_arch_hardware_enable(void)
 	stable = !check_tsc_unstable();
 	list_for_each_entry(kvm, &vm_list, vm_list) {
 		kvm_for_each_vcpu(i, vcpu, kvm) {
-			if (!stable && vcpu->cpu == smp_processor_id())
+			if (!stable && vcpu->cpu == raw_smp_processor_id())
 				kvm_make_request(KVM_REQ_CLOCK_UPDATE, vcpu);
 			if (stable && vcpu->arch.last_host_tsc > local_tsc) {
 				backwards_tsc = true;

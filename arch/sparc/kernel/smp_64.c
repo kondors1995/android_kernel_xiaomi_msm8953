@@ -90,7 +90,7 @@ static volatile unsigned long callin_flag = 0;
 
 void smp_callin(void)
 {
-	int cpuid = hard_smp_processor_id();
+	int cpuid = hard_raw_smp_processor_id();
 
 	__local_per_cpu_offset = __per_cpu_offset(cpuid);
 
@@ -135,7 +135,7 @@ void smp_callin(void)
 
 void cpu_panic(void)
 {
-	printk("CPU[%d]: Returns from cpu_idle!\n", smp_processor_id());
+	printk("CPU[%d]: Returns from cpu_idle!\n", raw_smp_processor_id());
 	panic("SMP bolixed\n");
 }
 
@@ -239,7 +239,7 @@ void smp_synchronize_tick_client(void)
 
 	printk(KERN_INFO "CPU %d: synchronized TICK with master CPU "
 	       "(last diff %ld cycles, maxerr %lu cycles)\n",
-	       smp_processor_id(), delta, rt);
+	       raw_smp_processor_id(), delta, rt);
 }
 
 static void smp_start_sync_tick_client(int cpu);
@@ -442,7 +442,7 @@ again:
 			     : : "r" (pstate));
 	if (stuck == 0) {
 		printk("CPU[%d]: mondo stuckage result[%016llx]\n",
-		       smp_processor_id(), result);
+		       raw_smp_processor_id(), result);
 	} else {
 		udelay(2);
 		goto again;
@@ -577,7 +577,7 @@ retry:
 			 * of freezing up on this cpu.
 			 */
 			printk("CPU[%d]: mondo stuckage result[%016llx]\n",
-			       smp_processor_id(), dispatch_stat);
+			       raw_smp_processor_id(), dispatch_stat);
 		} else {
 			int i, this_busy_nack = 0;
 
@@ -620,7 +620,7 @@ static void hypervisor_xcall_deliver(struct trap_per_cpu *tb, int cnt)
 	unsigned long status;
 	u16 *cpu_list;
 
-	this_cpu = smp_processor_id();
+	this_cpu = raw_smp_processor_id();
 
 	cpu_list = __va(tb->cpu_list_pa);
 
@@ -748,7 +748,7 @@ static void xcall_deliver(u64 data0, u64 data1, u64 data2, const cpumask_t *mask
 	 */
 	local_irq_save(flags);
 
-	this_cpu = smp_processor_id();
+	this_cpu = raw_smp_processor_id();
 	tb = &trap_block[this_cpu];
 
 	mondo = __va(tb->cpu_mondo_block_pa);
@@ -1149,7 +1149,7 @@ void smp_capture(void)
 
 #ifdef CAPTURE_DEBUG
 		printk("CPU[%d]: Sending penguins to jail...",
-		       smp_processor_id());
+		       raw_smp_processor_id());
 #endif
 		penguins_are_doing_time = 1;
 		atomic_inc(&smp_capture_registry);
@@ -1168,7 +1168,7 @@ void smp_release(void)
 #ifdef CAPTURE_DEBUG
 		printk("CPU[%d]: Giving pardon to "
 		       "imprisoned penguins\n",
-		       smp_processor_id());
+		       raw_smp_processor_id());
 #endif
 		penguins_are_doing_time = 0;
 		membar_safe("#StoreLoad");
@@ -1284,7 +1284,7 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
 #ifdef CONFIG_HOTPLUG_CPU
 void cpu_play_dead(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	unsigned long pstate;
 
 	idle_task_exit();
@@ -1319,7 +1319,7 @@ void cpu_play_dead(void)
 
 int __cpu_disable(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	cpuinfo_sparc *c;
 	int i;
 
@@ -1391,7 +1391,7 @@ void __init smp_cpus_done(unsigned int max_cpus)
 
 void smp_send_reschedule(int cpu)
 {
-	if (cpu == smp_processor_id()) {
+	if (cpu == raw_smp_processor_id()) {
 		WARN_ON_ONCE(preemptible());
 		set_softint(1 << PIL_SMP_RECEIVE_SIGNAL);
 	} else {
@@ -1525,7 +1525,7 @@ void __init setup_per_cpu_areas(void)
 		__per_cpu_offset(cpu) = delta + pcpu_unit_offsets[cpu];
 
 	/* Setup %g5 for the boot cpu.  */
-	__local_per_cpu_offset = __per_cpu_offset(smp_processor_id());
+	__local_per_cpu_offset = __per_cpu_offset(raw_smp_processor_id());
 
 	of_fill_in_cpu_data();
 	if (tlb_type == hypervisor)

@@ -76,7 +76,7 @@ stop_this_cpu(void)
 	/*
 	 * Remove this CPU:
 	 */
-	set_cpu_online(smp_processor_id(), false);
+	set_cpu_online(raw_smp_processor_id(), false);
 	max_xtp();
 	local_irq_disable();
 	cpu_halt();
@@ -157,7 +157,7 @@ send_IPI_allbutself (int op)
 	unsigned int i;
 
 	for_each_online_cpu(i) {
-		if (i != smp_processor_id())
+		if (i != raw_smp_processor_id())
 			send_IPI_single(i, op);
 	}
 }
@@ -194,7 +194,7 @@ send_IPI_all (int op)
 static inline void
 send_IPI_self (int op)
 {
-	send_IPI_single(smp_processor_id(), op);
+	send_IPI_single(raw_smp_processor_id(), op);
 }
 
 #ifdef CONFIG_KEXEC
@@ -208,7 +208,7 @@ void
 kdump_smp_send_init(void)
 {
 	unsigned int cpu, self_cpu;
-	self_cpu = smp_processor_id();
+	self_cpu = raw_smp_processor_id();
 	for_each_online_cpu(cpu) {
 		if (cpu != self_cpu) {
 			if(kdump_status[cpu] == 0)
@@ -246,7 +246,7 @@ smp_local_flush_tlb(void)
 	 * significant benefit for the brief periods where lots of cpus
 	 * are simultaneously flushing TLBs.
 	 */
-	ia64_fetchadd(1, &local_tlb_flush_counts[smp_processor_id()].count, acq);
+	ia64_fetchadd(1, &local_tlb_flush_counts[raw_smp_processor_id()].count, acq);
 	local_flush_tlb_all();
 }
 
@@ -260,7 +260,7 @@ smp_flush_tlb_cpumask(cpumask_t xcpumask)
 	int mycpu, cpu, flush_mycpu = 0;
 
 	preempt_disable();
-	mycpu = smp_processor_id();
+	mycpu = raw_smp_processor_id();
 
 	for_each_cpu_mask(cpu, cpumask)
 		counts[cpu] = local_tlb_flush_counts[cpu].count & 0xffff;

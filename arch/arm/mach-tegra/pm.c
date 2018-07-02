@@ -80,7 +80,7 @@ static void tegra_tear_down_cpu_init(void)
  */
 static void restore_cpu_complex(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	BUG_ON(cpu != 0);
 
@@ -104,7 +104,7 @@ static void restore_cpu_complex(void)
  */
 static void suspend_cpu_complex(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	BUG_ON(cpu != 0);
 
@@ -120,7 +120,7 @@ static void suspend_cpu_complex(void)
 
 void tegra_clear_cpu_in_lp2(void)
 {
-	int phy_cpu_id = cpu_logical_map(smp_processor_id());
+	int phy_cpu_id = cpu_logical_map(raw_smp_processor_id());
 	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;
 
 	spin_lock(&tegra_lp2_lock);
@@ -133,7 +133,7 @@ void tegra_clear_cpu_in_lp2(void)
 
 bool tegra_set_cpu_in_lp2(void)
 {
-	int phy_cpu_id = cpu_logical_map(smp_processor_id());
+	int phy_cpu_id = cpu_logical_map(raw_smp_processor_id());
 	bool last_cpu = false;
 	cpumask_t *cpu_lp2_mask = tegra_cpu_lp2_mask;
 	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;

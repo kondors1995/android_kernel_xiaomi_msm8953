@@ -52,7 +52,7 @@ static inline void show_leds(int cpuid)
 
 void sun4d_cpu_pre_starting(void *arg)
 {
-	int cpuid = hard_smp_processor_id();
+	int cpuid = hard_raw_smp_processor_id();
 
 	/* Show we are alive */
 	cpu_leds[cpuid] = 0x6;
@@ -67,7 +67,7 @@ void sun4d_cpu_pre_online(void *arg)
 	unsigned long flags;
 	int cpuid;
 
-	cpuid = hard_smp_processor_id();
+	cpuid = hard_raw_smp_processor_id();
 
 	/* Unblock the master CPU _only_ when the scheduler state
 	 * of all secondary CPUs will be up-to-date, so after
@@ -314,7 +314,7 @@ static void sun4d_cross_call(smpfunc_t func, cpumask_t mask, unsigned long arg1,
 		{
 			register int i;
 
-			cpumask_clear_cpu(smp_processor_id(), &mask);
+			cpumask_clear_cpu(raw_smp_processor_id(), &mask);
 			cpumask_and(&mask, cpu_online_mask, &mask);
 			for (i = 0; i <= high; i++) {
 				if (cpumask_test_cpu(i, &mask)) {
@@ -352,7 +352,7 @@ static void sun4d_cross_call(smpfunc_t func, cpumask_t mask, unsigned long arg1,
 /* Running cross calls. */
 void smp4d_cross_call_irq(void)
 {
-	int i = hard_smp_processor_id();
+	int i = hard_raw_smp_processor_id();
 
 	ccall_info.processors_in[i] = 1;
 	ccall_info.func(ccall_info.arg1, ccall_info.arg2, ccall_info.arg3,
@@ -363,7 +363,7 @@ void smp4d_cross_call_irq(void)
 void smp4d_percpu_timer_interrupt(struct pt_regs *regs)
 {
 	struct pt_regs *old_regs;
-	int cpu = hard_smp_processor_id();
+	int cpu = hard_raw_smp_processor_id();
 	struct clock_event_device *ce;
 	static int cpu_tick[NR_CPUS];
 	static char led_mask[] = { 0xe, 0xd, 0xb, 0x7, 0xb, 0xd };

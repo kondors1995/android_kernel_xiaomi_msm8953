@@ -124,7 +124,7 @@ unsigned long perf_misc_flags(struct pt_regs *regs)
 static void print_debug_cf(void)
 {
 	struct cpumf_ctr_info cf_info;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	memset(&cf_info, 0, sizeof(cf_info));
 	if (!qctri(&cf_info))
@@ -136,7 +136,7 @@ static void print_debug_cf(void)
 static void print_debug_sf(void)
 {
 	struct hws_qsi_info_block si;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	memset(&si, 0, sizeof(si));
 	if (qsi(&si))

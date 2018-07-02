@@ -656,7 +656,7 @@ static inline void __run_deferrable_timers(void)
 	if (time_after_eq(jiffies, tvec_base_deferrable.timer_jiffies)) {
 		if ((atomic_cmpxchg(&deferrable_pending, 1, 0) &&
 			tick_do_timer_cpu == TICK_DO_TIMER_NONE) ||
-			tick_do_timer_cpu == smp_processor_id())
+			tick_do_timer_cpu == raw_smp_processor_id())
 				__run_timers(&tvec_base_deferrable);
 
 	}
@@ -1423,7 +1423,7 @@ unsigned long get_next_timer_interrupt(unsigned long now)
 	 * Pretend that there is no timer pending if the cpu is offline.
 	 * Possible pending timers will be migrated later to an active cpu.
 	 */
-	if (cpu_is_offline(smp_processor_id()))
+	if (cpu_is_offline(raw_smp_processor_id()))
 		return expires;
 
 	spin_lock(&base->lock);
@@ -1754,7 +1754,7 @@ void __init init_timers(void)
 	BUILD_BUG_ON(__alignof__(struct tvec_base) & TIMER_FLAG_MASK);
 
 	err = timer_cpu_notify(&timers_nb, (unsigned long)CPU_UP_PREPARE,
-			       (void *)(long)smp_processor_id());
+			       (void *)(long)raw_smp_processor_id());
 	BUG_ON(err != NOTIFY_OK);
 
 	init_deferrable_timer();

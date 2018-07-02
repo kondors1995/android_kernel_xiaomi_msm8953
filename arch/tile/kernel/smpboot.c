@@ -38,7 +38,7 @@ unsigned long start_cpu_function_addr;
 /* Called very early during startup to mark boot cpu as online */
 void __init smp_prepare_boot_cpu(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	set_cpu_online(cpu, 1);
 	set_cpu_present(cpu, 1);
 	__this_cpu_write(cpu_state, CPU_ONLINE);
@@ -57,7 +57,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
 {
 	long rc;
 	int cpu, cpu_count;
-	int boot_cpu = smp_processor_id();
+	int boot_cpu = raw_smp_processor_id();
 
 	current_thread_info()->cpu = boot_cpu;
 
@@ -146,7 +146,7 @@ static void start_secondary(void)
 
 	preempt_disable();
 
-	cpuid = smp_processor_id();
+	cpuid = raw_smp_processor_id();
 
 	/* Set our thread pointer appropriately. */
 	set_my_cpu_offset(__per_cpu_offset[cpuid]);
@@ -198,9 +198,9 @@ void online_secondary(void)
 	/* This must be done before setting cpu_online_mask */
 	wmb();
 
-	notify_cpu_starting(smp_processor_id());
+	notify_cpu_starting(raw_smp_processor_id());
 
-	set_cpu_online(smp_processor_id(), 1);
+	set_cpu_online(raw_smp_processor_id(), 1);
 	__this_cpu_write(cpu_state, CPU_ONLINE);
 
 	/* Set up tile-specific state for this cpu. */

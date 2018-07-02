@@ -126,7 +126,7 @@ bool prcmu_pending_irq(void)
 /*
  * This function checks if the specified cpu is in in WFI. It's usage
  * makes sense only if the gic is decoupled with the db8500_prcmu_gic_decouple
- * function. Of course passing smp_processor_id() to this function will
+ * function. Of course passing raw_smp_processor_id() to this function will
  * always return false...
  */
 bool prcmu_is_cpu_in_wfi(int cpu)

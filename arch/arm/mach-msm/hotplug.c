@@ -81,9 +81,9 @@ void __ref msm_cpu_die(unsigned int cpu)
 {
 	int spurious = 0;
 
-	if (unlikely(cpu != smp_processor_id())) {
+	if (unlikely(cpu != raw_smp_processor_id())) {
 		pr_crit("%s: running on %u, should be %u\n",
-			__func__, smp_processor_id(), cpu);
+			__func__, raw_smp_processor_id(), cpu);
 		BUG();
 	}
 	/*

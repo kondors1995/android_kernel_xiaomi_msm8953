@@ -465,7 +465,7 @@ void __init parse_early_param(void)
 
 static void __init boot_cpu_init(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	/* Mark the boot cpu "present", "online" etc for SMP and UP case */
 	set_cpu_online(cpu, true);
 	set_cpu_active(cpu, true);

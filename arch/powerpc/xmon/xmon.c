@@ -309,7 +309,7 @@ static int xmon_speaker;
 
 static void get_output_lock(void)
 {
-	int me = smp_processor_id() + 0x100;
+	int me = raw_smp_processor_id() + 0x100;
 	int last_speaker = 0, prev;
 	long timeout;
 
@@ -387,7 +387,7 @@ static int xmon_core(struct pt_regs *regs, int fromipi)
 	remove_cpu_bpts();
 
 #ifdef CONFIG_SMP
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	if (cpumask_test_cpu(cpu, &cpus_in_xmon)) {
 		get_output_lock();
 		excprint(regs);
@@ -647,7 +647,7 @@ static int xmon_iabr_match(struct pt_regs *regs)
 static int xmon_ipi(struct pt_regs *regs)
 {
 #ifdef CONFIG_SMP
-	if (in_xmon && !cpumask_test_cpu(smp_processor_id(), &cpus_in_xmon))
+	if (in_xmon && !cpumask_test_cpu(raw_smp_processor_id(), &cpus_in_xmon))
 		xmon_core(regs, 1);
 #endif
 	return 0;
@@ -815,7 +815,7 @@ cmds(struct pt_regs *excp)
 
 	for(;;) {
 #ifdef CONFIG_SMP
-		printf("%x:", smp_processor_id());
+		printf("%x:", raw_smp_processor_id());
 #endif /* CONFIG_SMP */
 		printf("mon> ");
 		flush_input();
@@ -1027,7 +1027,7 @@ static int cpu_cmd(void)
 				break;
 			/* take control back */
 			mb();
-			xmon_owner = smp_processor_id();
+			xmon_owner = raw_smp_processor_id();
 			printf("cpu 0x%x didn't take control\n", cpu);
 			return 0;
 		}
@@ -1439,7 +1439,7 @@ static void excprint(struct pt_regs *fp)
 	unsigned long trap;
 
 #ifdef CONFIG_SMP
-	printf("cpu 0x%x: ", smp_processor_id());
+	printf("cpu 0x%x: ", raw_smp_processor_id());
 #endif /* CONFIG_SMP */
 
 	trap = TRAP(fp);
@@ -2700,7 +2700,7 @@ void dump_segments(void)
 	unsigned long esid,vsid,valid;
 	unsigned long llp;
 
-	printf("SLB contents of cpu 0x%x\n", smp_processor_id());
+	printf("SLB contents of cpu 0x%x\n", raw_smp_processor_id());
 
 	for (i = 0; i < mmu_slb_size; i++) {
 		asm volatile("slbmfee  %0,%1" : "=r" (esid) : "r" (i));

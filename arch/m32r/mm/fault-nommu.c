@@ -38,8 +38,8 @@ asmlinkage unsigned int tlb_entry_d_dat;
 #else
 unsigned int tlb_entry_i_dat[NR_CPUS];
 unsigned int tlb_entry_d_dat[NR_CPUS];
-#define tlb_entry_i tlb_entry_i_dat[smp_processor_id()]
-#define tlb_entry_d tlb_entry_d_dat[smp_processor_id()]
+#define tlb_entry_i tlb_entry_i_dat[raw_smp_processor_id()]
+#define tlb_entry_d tlb_entry_d_dat[raw_smp_processor_id()]
 #endif
 
 void do_BUG(const char *file, int line)

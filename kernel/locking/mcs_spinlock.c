@@ -41,7 +41,7 @@ osq_wait_next(struct optimistic_spin_queue *lock,
 	      struct optimistic_spin_node *prev)
 {
 	struct optimistic_spin_node *next = NULL;
-	int curr = encode_cpu(smp_processor_id());
+	int curr = encode_cpu(raw_smp_processor_id());
 	int old;
 
 	/*
@@ -89,7 +89,7 @@ bool osq_lock(struct optimistic_spin_queue *lock)
 	struct optimistic_spin_node *node = this_cpu_ptr(&osq_node);
 	struct optimistic_spin_node *prev, *next;
 	struct task_struct *task = current;
-	int curr = encode_cpu(smp_processor_id());
+	int curr = encode_cpu(raw_smp_processor_id());
 	int old;
 
 	node->locked = 0;
@@ -201,7 +201,7 @@ unqueue:
 void osq_unlock(struct optimistic_spin_queue *lock)
 {
 	struct optimistic_spin_node *node, *next;
-	int curr = encode_cpu(smp_processor_id());
+	int curr = encode_cpu(raw_smp_processor_id());
 
 	/*
 	 * Fast path for the uncontended case.

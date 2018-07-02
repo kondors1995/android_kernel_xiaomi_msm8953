@@ -63,7 +63,7 @@ static void remote_function(void *data)
 
 	if (p) {
 		tfc->ret = -EAGAIN;
-		if (task_cpu(p) != smp_processor_id() || !task_curr(p))
+		if (task_cpu(p) != raw_smp_processor_id() || !task_curr(p))
 			return;
 	}
 
@@ -802,7 +802,7 @@ void perf_cpu_hrtimer_cancel(int cpu)
 	struct pmu *pmu;
 	unsigned long flags;
 
-	if (WARN_ON(cpu != smp_processor_id()))
+	if (WARN_ON(cpu != raw_smp_processor_id()))
 		return;
 
 	local_irq_save(flags);
@@ -1515,7 +1515,7 @@ core_initcall(perf_workqueue_init);
 static inline int
 event_filter_match(struct perf_event *event)
 {
-	return (event->cpu == -1 || event->cpu == smp_processor_id())
+	return (event->cpu == -1 || event->cpu == raw_smp_processor_id())
 	    && perf_cgroup_match(event);
 }
 
@@ -1849,7 +1849,7 @@ event_sched_in(struct perf_event *event,
 		return 0;
 
 	event->state = PERF_EVENT_STATE_ACTIVE;
-	event->oncpu = smp_processor_id();
+	event->oncpu = raw_smp_processor_id();
 
 	/*
 	 * Unthrottle events, since we scheduled we might have missed several
@@ -8608,10 +8608,10 @@ static int event_idle_notif(struct notifier_block *nb, unsigned long action,
 {
 	switch (action) {
 	case IDLE_START:
-		per_cpu(is_idle, smp_processor_id()) = true;
+		per_cpu(is_idle, raw_smp_processor_id()) = true;
 		break;
 	case IDLE_END:
-		per_cpu(is_idle, smp_processor_id()) = false;
+		per_cpu(is_idle, raw_smp_processor_id()) = false;
 		break;
 	}
 

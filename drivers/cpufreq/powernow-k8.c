@@ -150,7 +150,7 @@ static void fidvid_msr_init(void)
 	fid = lo & MSR_S_LO_CURRENT_FID;
 	lo = fid | (vid << MSR_C_LO_VID_SHIFT);
 	hi = MSR_C_HI_STP_GNT_BENIGN;
-	pr_debug("cpu%d, init lo 0x%x, hi 0x%x\n", smp_processor_id(), lo, hi);
+	pr_debug("cpu%d, init lo 0x%x, hi 0x%x\n", raw_smp_processor_id(), lo, hi);
 	wrmsr(MSR_FIDVID_CTL, lo, hi);
 }
 
@@ -277,13 +277,13 @@ static int transition_fid_vid(struct powernow_k8_data *data,
 
 	if ((reqfid != data->currfid) || (reqvid != data->currvid)) {
 		pr_err("failed (cpu%d): req 0x%x 0x%x, curr 0x%x 0x%x\n",
-				smp_processor_id(),
+				raw_smp_processor_id(),
 				reqfid, reqvid, data->currfid, data->currvid);
 		return 1;
 	}
 
 	pr_debug("transitioned (cpu%d): new fid 0x%x, vid 0x%x\n",
-		smp_processor_id(), data->currfid, data->currvid);
+		raw_smp_processor_id(), data->currfid, data->currvid);
 
 	return 0;
 }
@@ -297,7 +297,7 @@ static int core_voltage_pre_transition(struct powernow_k8_data *data,
 	u32 maxvid, lo, rvomult = 1;
 
 	pr_debug("ph1 (cpu%d): start, currfid 0x%x, currvid 0x%x, reqvid 0x%x, rvo 0x%x\n",
-		smp_processor_id(),
+		raw_smp_processor_id(),
 		data->currfid, data->currvid, reqvid, data->rvo);
 
 	if ((savefid < LO_FID_TABLE_TOP) && (reqfid < LO_FID_TABLE_TOP))
@@ -355,7 +355,7 @@ static int core_frequency_transition(struct powernow_k8_data *data, u32 reqfid)
 	}
 
 	pr_debug("ph2 (cpu%d): starting, currfid 0x%x, currvid 0x%x, reqfid 0x%x\n",
-		smp_processor_id(),
+		raw_smp_processor_id(),
 		data->currfid, data->currvid, reqfid);
 
 	vcoreqfid = convert_fid_to_vco_fid(reqfid);
@@ -422,7 +422,7 @@ static int core_voltage_post_transition(struct powernow_k8_data *data,
 	u32 savereqvid = reqvid;
 
 	pr_debug("ph3 (cpu%d): starting, currfid 0x%x, currvid 0x%x\n",
-		smp_processor_id(),
+		raw_smp_processor_id(),
 		data->currfid, data->currvid);
 
 	if (reqvid != data->currvid) {
@@ -903,7 +903,7 @@ static int transition_frequency_fidvid(struct powernow_k8_data *data,
 	int res;
 	struct cpufreq_freqs freqs;
 
-	pr_debug("cpu %d transition to index %u\n", smp_processor_id(), index);
+	pr_debug("cpu %d transition to index %u\n", raw_smp_processor_id(), index);
 
 	/* fid/vid correctness check for k8 */
 	/* fid are the lower 8 bits of the index we stored into
@@ -925,11 +925,11 @@ static int transition_frequency_fidvid(struct powernow_k8_data *data,
 	}
 
 	pr_debug("cpu %d, changing to fid 0x%x, vid 0x%x\n",
-		smp_processor_id(), fid, vid);
+		raw_smp_processor_id(), fid, vid);
 	freqs.old = find_khz_freq_from_fid(data->currfid);
 	freqs.new = find_khz_freq_from_fid(fid);
 
-	policy = cpufreq_cpu_get(smp_processor_id());
+	policy = cpufreq_cpu_get(raw_smp_processor_id());
 	cpufreq_cpu_put(policy);
 
 	cpufreq_freq_transition_begin(policy, &freqs);

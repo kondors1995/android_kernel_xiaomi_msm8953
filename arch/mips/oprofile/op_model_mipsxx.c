@@ -50,9 +50,9 @@ static int (*save_perf_irq)(void);
 #ifdef CONFIG_MIPS_MT_SMP
 static int cpu_has_mipsmt_pertccounters;
 #define WHAT		(M_TC_EN_VPE | \
-			 M_PERFCTL_VPEID(cpu_data[smp_processor_id()].vpe_id))
+			 M_PERFCTL_VPEID(cpu_data[raw_smp_processor_id()].vpe_id))
 #define vpe_id()	(cpu_has_mipsmt_pertccounters ? \
-			0 : cpu_data[smp_processor_id()].vpe_id)
+			0 : cpu_data[raw_smp_processor_id()].vpe_id)
 
 /*
  * The number of bits to shift to convert between counters per core and
@@ -178,7 +178,7 @@ static void mipsxx_cpu_setup(void *args)
 {
 	unsigned int counters = op_model_mipsxx_ops.num_counters;
 
-	if (oprofile_skip_cpu(smp_processor_id()))
+	if (oprofile_skip_cpu(raw_smp_processor_id()))
 		return;
 
 	switch (counters) {
@@ -202,7 +202,7 @@ static void mipsxx_cpu_start(void *args)
 {
 	unsigned int counters = op_model_mipsxx_ops.num_counters;
 
-	if (oprofile_skip_cpu(smp_processor_id()))
+	if (oprofile_skip_cpu(raw_smp_processor_id()))
 		return;
 
 	switch (counters) {
@@ -222,7 +222,7 @@ static void mipsxx_cpu_stop(void *args)
 {
 	unsigned int counters = op_model_mipsxx_ops.num_counters;
 
-	if (oprofile_skip_cpu(smp_processor_id()))
+	if (oprofile_skip_cpu(raw_smp_processor_id()))
 		return;
 
 	switch (counters) {

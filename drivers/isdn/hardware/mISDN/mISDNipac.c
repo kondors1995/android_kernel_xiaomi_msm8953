@@ -1218,10 +1218,10 @@ mISDNipac_irq(struct ipac_hw *ipac, int maxloop)
 		return IRQ_NONE;
 	if (cnt < maxloop)
 		pr_debug("%s: %d irqloops cpu%d\n", ipac->name,
-			 maxloop - cnt, smp_processor_id());
+			 maxloop - cnt, raw_smp_processor_id());
 	if (maxloop && !cnt)
 		pr_notice("%s: %d IRQ LOOP cpu%d\n", ipac->name,
-			  maxloop, smp_processor_id());
+			  maxloop, raw_smp_processor_id());
 	return IRQ_HANDLED;
 }
 EXPORT_SYMBOL(mISDNipac_irq);

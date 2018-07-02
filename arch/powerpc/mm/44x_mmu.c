@@ -240,7 +240,7 @@ void mmu_init_secondary(int cpu)
 	 * WARNING: This is called with only the first 256M of the
 	 * linear mapping in the TLB and we can't take faults yet
 	 * so beware of what this code uses. It runs off a temporary
-	 * stack. current (r2) isn't initialized, smp_processor_id()
+	 * stack. current (r2) isn't initialized, raw_smp_processor_id()
 	 * will not work, current thread info isn't accessible, ...
 	 */
 	for (addr = memstart + PPC_PIN_SIZE; addr < lowmem_end_addr;

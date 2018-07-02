@@ -83,7 +83,7 @@ static void cpu_unmask_irq(struct irq_data *d)
 void cpu_ack_irq(struct irq_data *d)
 {
 	unsigned long mask = EIEM_MASK(d->irq);
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	/* Clear in EIEM so we can no longer process */
 	per_cpu(local_ack_eiem, cpu) &= ~mask;
@@ -98,7 +98,7 @@ void cpu_ack_irq(struct irq_data *d)
 void cpu_eoi_irq(struct irq_data *d)
 {
 	unsigned long mask = EIEM_MASK(d->irq);
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	/* set it in the eiems---it's no longer in process */
 	per_cpu(local_ack_eiem, cpu) |= mask;
@@ -406,7 +406,7 @@ static inline void stack_overflow_check(struct pt_regs *regs)
 	unsigned long sp = regs->gr[30];
 	unsigned long stack_usage;
 	unsigned int *last_usage;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	/* if sr7 != 0, we interrupted a userspace process which we do not want
 	 * to check for stack overflow. We will only check the kernel stack. */
@@ -469,7 +469,7 @@ static void execute_on_irq_stack(void *func, unsigned long param1)
 	unsigned long irq_stack;
 	volatile unsigned int *irq_stack_in_use;
 
-	union_ptr = &per_cpu(irq_stack_union, smp_processor_id());
+	union_ptr = &per_cpu(irq_stack_union, raw_smp_processor_id());
 	irq_stack = (unsigned long) &union_ptr->stack;
 	irq_stack = ALIGN(irq_stack + sizeof(irq_stack_union.slock),
 			 64); /* align for stack frame usage */
@@ -506,7 +506,7 @@ void do_cpu_irq_mask(struct pt_regs *regs)
 {
 	struct pt_regs *old_regs;
 	unsigned long eirr_val;
-	int irq, cpu = smp_processor_id();
+	int irq, cpu = raw_smp_processor_id();
 	struct irq_desc *desc;
 #ifdef CONFIG_SMP
 	cpumask_t dest;
@@ -529,11 +529,11 @@ void do_cpu_irq_mask(struct pt_regs *regs)
 #ifdef CONFIG_SMP
 	cpumask_copy(&dest, desc->irq_data.affinity);
 	if (irqd_is_per_cpu(&desc->irq_data) &&
-	    !cpu_isset(smp_processor_id(), dest)) {
+	    !cpu_isset(raw_smp_processor_id(), dest)) {
 		int cpu = first_cpu(dest);
 
 		printk(KERN_DEBUG "redirecting irq %d from CPU %d to %d\n",
-		       irq, smp_processor_id(), cpu);
+		       irq, raw_smp_processor_id(), cpu);
 		gsc_writel(irq + CPU_IRQ_BASE,
 			   per_cpu(cpu_data, cpu).hpa);
 		goto set_out;

@@ -732,7 +732,7 @@ static int __rtas_suspend_last_cpu(struct rtas_suspend_me_data *data, int wake_w
 	int cpu;
 
 	slb_set_size(SLB_MIN_SIZE);
-	printk(KERN_DEBUG "calling ibm,suspend-me on cpu %i\n", smp_processor_id());
+	printk(KERN_DEBUG "calling ibm,suspend-me on cpu %i\n", raw_smp_processor_id());
 
 	while (rc == H_MULTI_THREADS_ACTIVE && !atomic_read(&data->done) &&
 	       !atomic_read(&data->error))
@@ -753,7 +753,7 @@ static int __rtas_suspend_last_cpu(struct rtas_suspend_me_data *data, int wake_w
 		atomic_set(&data->done, 1);
 
 		for_each_online_cpu(cpu)
-			plpar_hcall_norets(H_PROD, get_hard_smp_processor_id(cpu));
+			plpar_hcall_norets(H_PROD, get_hard_raw_smp_processor_id(cpu));
 	}
 
 	if (atomic_dec_return(&data->working) == 0)
@@ -795,7 +795,7 @@ static int __rtas_suspend_cpu(struct rtas_suspend_me_data *data, int wake_when_d
 		return __rtas_suspend_last_cpu(data, wake_when_done);
 	} else {
 		printk(KERN_ERR "H_JOIN on cpu %i failed with rc = %ld\n",
-		       smp_processor_id(), rc);
+		       raw_smp_processor_id(), rc);
 		atomic_set(&data->error, rc);
 	}
 
@@ -807,7 +807,7 @@ static int __rtas_suspend_cpu(struct rtas_suspend_me_data *data, int wake_when_d
 		 * Extra prods are harmless.
 		 */
 		for_each_online_cpu(cpu)
-			plpar_hcall_norets(H_PROD, get_hard_smp_processor_id(cpu));
+			plpar_hcall_norets(H_PROD, get_hard_raw_smp_processor_id(cpu));
 	}
 out:
 	if (atomic_dec_return(&data->working) == 0)

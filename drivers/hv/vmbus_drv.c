@@ -580,7 +580,7 @@ static void vmbus_onmessage_work(struct work_struct *work)
 
 static void vmbus_on_msg_dpc(unsigned long data)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	void *page_addr = hv_context.synic_message_page[cpu];
 	struct hv_message *msg = (struct hv_message *)page_addr +
 				  VMBUS_MESSAGE_SINT;
@@ -623,7 +623,7 @@ static void vmbus_on_msg_dpc(unsigned long data)
 
 static void vmbus_isr(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	void *page_addr;
 	struct hv_message *msg;
 	union hv_synic_event_flags *event;

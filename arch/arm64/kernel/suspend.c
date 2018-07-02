@@ -61,7 +61,7 @@ void __init cpu_suspend_set_dbg_restorer(void (*hw_bp_restore)(void *))
  */
 int cpu_suspend(unsigned long arg)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	/*
 	 * If cpu_ops have not been registered or suspend
@@ -125,7 +125,7 @@ int __cpu_suspend(unsigned long arg, int (*fn)(unsigned long))
 		 * Restore per-cpu offset before any kernel
 		 * subsystem relying on it has a chance to run.
 		 */
-		set_my_cpu_offset(per_cpu_offset(smp_processor_id()));
+		set_my_cpu_offset(per_cpu_offset(raw_smp_processor_id()));
 
 		/*
 		 * Restore HW breakpoint registers to sane values

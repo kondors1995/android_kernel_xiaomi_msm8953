@@ -106,7 +106,7 @@ static void kvmppc_core_vcpu_load_pr(struct kvm_vcpu *vcpu, int cpu)
 	    cpu_has_feature(CPU_FTR_ARCH_207S))
 		mtspr(SPRN_LPCR, mfspr(SPRN_LPCR) & ~LPCR_AIL);
 
-	vcpu->cpu = smp_processor_id();
+	vcpu->cpu = raw_smp_processor_id();
 #ifdef CONFIG_PPC_BOOK3S_32
 	current->thread.kvm_shadow_vcpu = vcpu->arch.shadow_vcpu;
 #endif

@@ -242,7 +242,7 @@ void xen_vcpu_restore(void)
 	int cpu;
 
 	for_each_possible_cpu(cpu) {
-		bool other_cpu = (cpu != smp_processor_id());
+		bool other_cpu = (cpu != raw_smp_processor_id());
 		bool is_up = HYPERVISOR_vcpu_op(VCPUOP_is_up, cpu, NULL);
 
 		if (other_cpu && is_up &&
@@ -990,7 +990,7 @@ static u32 xen_apic_read(u32 reg)
 
 	/* Shouldn't need this as APIC is turned off for PV, and we only
 	 * get called on the bootup processor. But just in case. */
-	if (!xen_initial_domain() || smp_processor_id())
+	if (!xen_initial_domain() || raw_smp_processor_id())
 		return 0;
 
 	if (reg == APIC_LVR)
@@ -1147,7 +1147,7 @@ static int xen_write_msr_safe(unsigned int msr, unsigned low, unsigned high)
 		break;
 
 	case MSR_IA32_CR_PAT:
-		if (smp_processor_id() == 0)
+		if (raw_smp_processor_id() == 0)
 			xen_set_pat(((u64)high << 32) | low);
 		break;
 

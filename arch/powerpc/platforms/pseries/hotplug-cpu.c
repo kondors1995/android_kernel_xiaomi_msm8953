@@ -101,7 +101,7 @@ static void rtas_stop_self(void)
 	BUG_ON(rtas_stop_self_token == RTAS_UNKNOWN_SERVICE);
 
 	printk("cpu %u (hwid %u) Ready to die...\n",
-	       smp_processor_id(), hard_smp_processor_id());
+	       raw_smp_processor_id(), hard_raw_smp_processor_id());
 	enter_rtas(__pa(&args));
 
 	panic("Alas, I survived.\n");
@@ -109,8 +109,8 @@ static void rtas_stop_self(void)
 
 static void pseries_mach_cpu_die(void)
 {
-	unsigned int cpu = smp_processor_id();
-	unsigned int hwcpu = hard_smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
+	unsigned int hwcpu = hard_raw_smp_processor_id();
 	u8 cede_latency_hint = 0;
 
 	local_irq_disable();
@@ -170,7 +170,7 @@ static void pseries_mach_cpu_die(void)
 
 static int pseries_cpu_disable(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	set_cpu_online(cpu, false);
 	vdso_data->processorCount--;
@@ -200,7 +200,7 @@ static void pseries_cpu_die(unsigned int cpu)
 {
 	int tries;
 	int cpu_status = 1;
-	unsigned int pcpu = get_hard_smp_processor_id(cpu);
+	unsigned int pcpu = get_hard_raw_smp_processor_id(cpu);
 
 	if (get_preferred_offline_state(cpu) == CPU_STATE_INACTIVE) {
 		cpu_status = 1;
@@ -293,7 +293,7 @@ static int pseries_add_processor(struct device_node *np)
 	for_each_cpu(cpu, tmp) {
 		BUG_ON(cpu_present(cpu));
 		set_cpu_present(cpu, true);
-		set_hard_smp_processor_id(cpu, be32_to_cpu(*intserv++));
+		set_hard_raw_smp_processor_id(cpu, be32_to_cpu(*intserv++));
 	}
 	err = 0;
 out_unlock:
@@ -325,11 +325,11 @@ static void pseries_remove_processor(struct device_node *np)
 	for (i = 0; i < nthreads; i++) {
 		thread = be32_to_cpu(intserv[i]);
 		for_each_present_cpu(cpu) {
-			if (get_hard_smp_processor_id(cpu) != thread)
+			if (get_hard_raw_smp_processor_id(cpu) != thread)
 				continue;
 			BUG_ON(cpu_online(cpu));
 			set_cpu_present(cpu, false);
-			set_hard_smp_processor_id(cpu, -1);
+			set_hard_raw_smp_processor_id(cpu, -1);
 			break;
 		}
 		if (cpu >= nr_cpu_ids)

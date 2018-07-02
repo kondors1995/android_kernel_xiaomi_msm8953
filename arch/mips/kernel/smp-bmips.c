@@ -254,13 +254,13 @@ static void bmips_init_secondary(void)
 		old_vec = __raw_readl(cbr + relo_vector);
 		__raw_writel(old_vec & ~0x20000000, cbr + relo_vector);
 
-		clear_c0_cause(smp_processor_id() ? C_SW1 : C_SW0);
+		clear_c0_cause(raw_smp_processor_id() ? C_SW1 : C_SW0);
 		break;
 	case CPU_BMIPS5000:
 		write_c0_brcm_bootvec(read_c0_brcm_bootvec() &
-			(smp_processor_id() & 0x01 ? ~0x20000000 : ~0x2000));
+			(raw_smp_processor_id() & 0x01 ? ~0x20000000 : ~0x2000));
 
-		write_c0_brcm_action(ACTION_CLR_IPI(smp_processor_id(), 0));
+		write_c0_brcm_action(ACTION_CLR_IPI(raw_smp_processor_id(), 0));
 		break;
 	}
 }
@@ -270,7 +270,7 @@ static void bmips_init_secondary(void)
  */
 static void bmips_smp_finish(void)
 {
-	pr_info("SMP: CPU%d is running\n", smp_processor_id());
+	pr_info("SMP: CPU%d is running\n", raw_smp_processor_id());
 
 	/* make sure there won't be a timer interrupt for a little while */
 	write_c0_compare(read_c0_count() + mips_hpt_frequency / HZ);
@@ -297,7 +297,7 @@ static irqreturn_t bmips5000_ipi_interrupt(int irq, void *dev_id)
 {
 	int action = irq - IPI0_IRQ;
 
-	write_c0_brcm_action(ACTION_CLR_IPI(smp_processor_id(), action));
+	write_c0_brcm_action(ACTION_CLR_IPI(raw_smp_processor_id(), action));
 
 	if (action == 0)
 		scheduler_ipi();
@@ -372,7 +372,7 @@ static void bmips43xx_send_ipi_mask(const struct cpumask *mask,
 
 static int bmips_cpu_disable(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	if (cpu == 0)
 		return -EBUSY;

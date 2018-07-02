@@ -122,7 +122,7 @@ void __init setup_arch(char **cmdline_p)
 #endif
 	unwind_init();
 
-	init_per_cpu(smp_processor_id());	/* Set Modes & Enable FP */
+	init_per_cpu(raw_smp_processor_id());	/* Set Modes & Enable FP */
 
 #ifdef CONFIG_64BIT
 	printk(KERN_INFO "The 64-bit Kernel has started...\n");
@@ -381,7 +381,7 @@ void start_parisc(void)
 	int ret, cpunum;
 	struct pdc_coproc_cfg coproc_cfg;
 
-	cpunum = smp_processor_id();
+	cpunum = raw_smp_processor_id();
 
 	set_firmware_width_unlocked();
 

@@ -256,7 +256,7 @@ static void __init pas_progress(char *s, unsigned short hex)
 
 static int pas_machine_check_handler(struct pt_regs *regs)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	unsigned long srr0, srr1, dsisr;
 	int dump_slb = 0;
 	int i;

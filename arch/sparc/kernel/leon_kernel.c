@@ -282,7 +282,7 @@ static u32 leon_cycles_offset(void)
 static irqreturn_t leon_percpu_timer_ce_interrupt(int irq, void *unused)
 {
 	struct clock_event_device *ce;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	leon_clear_profile_irq(cpu);
 

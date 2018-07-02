@@ -44,7 +44,7 @@ static void read_arc_build_cfg_regs(void)
 {
 	struct bcr_perip uncached_space;
 	struct bcr_generic bcr;
-	struct cpuinfo_arc *cpu = &cpuinfo_arc700[smp_processor_id()];
+	struct cpuinfo_arc *cpu = &cpuinfo_arc700[raw_smp_processor_id()];
 	FIX_PTR(cpu);
 
 	READ_BCR(AUX_IDENTITY, cpu->core);
@@ -244,7 +244,7 @@ static char *arc_extn_mumbojumbo(int cpu_id, char *buf, int len)
 
 static void arc_chk_core_config(void)
 {
-	struct cpuinfo_arc *cpu = &cpuinfo_arc700[smp_processor_id()];
+	struct cpuinfo_arc *cpu = &cpuinfo_arc700[raw_smp_processor_id()];
 	int fpu_enabled;
 
 	if (!cpu->timers.t0)
@@ -297,7 +297,7 @@ static void arc_chk_core_config(void)
 void setup_processor(void)
 {
 	char str[512];
-	int cpu_id = smp_processor_id();
+	int cpu_id = raw_smp_processor_id();
 
 	read_arc_build_cfg_regs();
 	arc_init_IRQ();

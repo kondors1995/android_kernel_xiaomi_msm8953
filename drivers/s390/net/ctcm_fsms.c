@@ -561,7 +561,7 @@ static void ctcm_chx_setmode(fsm_instance *fi, int event, void *arg)
 	if (IS_MPC(ch)) {
 		timeout = 1500;
 		CTCM_PR_DEBUG("enter %s: cp=%i ch=0x%p id=%s\n",
-				__func__, smp_processor_id(), ch, ch->id);
+				__func__, raw_smp_processor_id(), ch, ch->id);
 	}
 	fsm_addtimer(&ch->timer, timeout, CTC_EVENT_TIMER, ch);
 	fsm_newstate(fi, CTC_STATE_SETUPWAIT);
@@ -999,7 +999,7 @@ static void ctcm_chx_txretry(fsm_instance *fi, int event, void *arg)
 	struct sk_buff *skb;
 
 	CTCM_PR_DEBUG("Enter: %s: cp=%i ch=0x%p id=%s\n",
-			__func__, smp_processor_id(), ch, ch->id);
+			__func__, raw_smp_processor_id(), ch, ch->id);
 
 	fsm_deltimer(&ch->timer);
 	if (ch->retry++ > 3) {
@@ -1232,7 +1232,7 @@ static void ctcmpc_chx_txdone(fsm_instance *fi, int event, void *arg)
 	struct timespec done_stamp = current_kernel_time(); /* xtime */
 
 	CTCM_PR_DEBUG("Enter %s: %s cp:%i\n",
-			__func__, dev->name, smp_processor_id());
+			__func__, dev->name, raw_smp_processor_id());
 
 	duration =
 		(done_stamp.tv_sec - ch->prof.send_stamp.tv_sec) * 1000000 +
@@ -1398,7 +1398,7 @@ static void ctcmpc_chx_rx(fsm_instance *fi, int event, void *arg)
 	int len	= ch->max_bufsize - ch->irb->scsw.cmd.count;
 
 	CTCM_PR_DEBUG("%s: %s: cp:%i %s maxbuf : %04x, len: %04x\n",
-			CTCM_FUNTAIL, dev->name, smp_processor_id(),
+			CTCM_FUNTAIL, dev->name, raw_smp_processor_id(),
 				ch->id, ch->max_bufsize, len);
 	fsm_deltimer(&ch->timer);
 
@@ -1554,7 +1554,7 @@ void ctcmpc_chx_rxidle(fsm_instance *fi, int event, void *arg)
 
 	fsm_deltimer(&ch->timer);
 	CTCM_PR_DEBUG("%s: %s: %s: cp:%i, chstate:%i grpstate:%i\n",
-			__func__, ch->id, dev->name, smp_processor_id(),
+			__func__, ch->id, dev->name, raw_smp_processor_id(),
 				fsm_getstate(fi), fsm_getstate(grp->fsm));
 
 	fsm_newstate(fi, CTC_STATE_RXIDLE);
@@ -1606,7 +1606,7 @@ static void ctcmpc_chx_attn(fsm_instance *fsm, int event, void *arg)
 	struct mpc_group  *grp = priv->mpcg;
 
 	CTCM_PR_DEBUG("%s(%s): %s(ch=0x%p), cp=%i, ChStat:%s, GrpStat:%s\n",
-		__func__, dev->name, ch->id, ch, smp_processor_id(),
+		__func__, dev->name, ch->id, ch, raw_smp_processor_id(),
 			fsm_getstate_str(ch->fsm), fsm_getstate_str(grp->fsm));
 
 	switch (fsm_getstate(grp->fsm)) {
@@ -1772,7 +1772,7 @@ static void ctcmpc_chx_send_sweep(fsm_instance *fsm, int event, void *arg)
 	unsigned long saveflags = 0;
 
 	CTCM_PR_DEBUG("ctcmpc enter: %s(): cp=%i ch=0x%p id=%s\n",
-			__func__, smp_processor_id(), ach, ach->id);
+			__func__, raw_smp_processor_id(), ach, ach->id);
 
 	if (grp->in_sweep == 0)
 				goto done;

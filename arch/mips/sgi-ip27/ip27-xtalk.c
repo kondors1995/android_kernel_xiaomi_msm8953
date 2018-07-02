@@ -32,7 +32,7 @@ static int probe_one_port(nasid_t nasid, int widget, int masterwid)
 	partnum = XWIDGET_PART_NUM(widget_id);
 
 	printk(KERN_INFO "Cpu %d, Nasid 0x%x, widget 0x%x (partnum 0x%x) is ",
-			smp_processor_id(), nasid, widget, partnum);
+			raw_smp_processor_id(), nasid, widget, partnum);
 
 	switch (partnum) {
 	case BRIDGE_WIDGET_PART_NUM:
@@ -118,7 +118,7 @@ void xtalk_probe_node(cnodeid_t nid)
 	partnum = XWIDGET_PART_NUM(widget_id);
 
 	printk(KERN_INFO "Cpu %d, Nasid 0x%x: partnum 0x%x is ",
-			smp_processor_id(), nasid, partnum);
+			raw_smp_processor_id(), nasid, partnum);
 
 	switch (partnum) {
 	case BRIDGE_WIDGET_PART_NUM:

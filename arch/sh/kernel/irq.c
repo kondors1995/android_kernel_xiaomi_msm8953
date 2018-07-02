@@ -72,7 +72,7 @@ static inline void handle_one_irq(unsigned int irq)
 	union irq_ctx *curctx, *irqctx;
 
 	curctx = (union irq_ctx *)current_thread_info();
-	irqctx = hardirq_ctx[smp_processor_id()];
+	irqctx = hardirq_ctx[raw_smp_processor_id()];
 
 	/*
 	 * this is where we switch to the IRQ stack. However, if we are
@@ -156,7 +156,7 @@ void do_softirq_own_stack(void)
 	u32 *isp;
 
 	curctx = current_thread_info();
-	irqctx = softirq_ctx[smp_processor_id()];
+	irqctx = softirq_ctx[raw_smp_processor_id()];
 	irqctx->tinfo.task = curctx->task;
 	irqctx->tinfo.previous_sp = current_stack_pointer;
 
@@ -213,7 +213,7 @@ void __init init_IRQ(void)
 
 	intc_finalize();
 
-	irq_ctx_init(smp_processor_id());
+	irq_ctx_init(raw_smp_processor_id());
 }
 
 #ifdef CONFIG_HOTPLUG_CPU
@@ -224,7 +224,7 @@ void __init init_IRQ(void)
  */
 void migrate_irqs(void)
 {
-	unsigned int irq, cpu = smp_processor_id();
+	unsigned int irq, cpu = raw_smp_processor_id();
 
 	for_each_active_irq(irq) {
 		struct irq_data *data = irq_get_irq_data(irq);

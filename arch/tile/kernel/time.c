@@ -169,7 +169,7 @@ void setup_tile_timer(void)
 	evt->max_delta_ns = clockevent_delta2ns(MAX_TICK, evt);
 
 	/* Mark as being for this cpu only. */
-	evt->cpumask = cpumask_of(smp_processor_id());
+	evt->cpumask = cpumask_of(raw_smp_processor_id());
 
 	/* Start out with timer not firing. */
 	arch_local_irq_mask_now(INT_TILE_TIMER);

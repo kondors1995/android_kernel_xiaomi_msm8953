@@ -287,7 +287,7 @@ static void trace_packet(const struct sk_buff *skb,
 	unsigned int rulenum = 0;
 	struct net *net = dev_net(in ? in : out);
 
-	table_base = private->entries[smp_processor_id()];
+	table_base = private->entries[raw_smp_processor_id()];
 	root = get_entry(table_base, private->hook_entry[hook]);
 
 	hookname = chainname = hooknames[hook];
@@ -354,7 +354,7 @@ ip6t_do_table(struct sk_buff *skb,
 	 * pointer.
 	 */
 	smp_read_barrier_depends();
-	cpu        = smp_processor_id();
+	cpu        = raw_smp_processor_id();
 	table_base = private->entries[cpu];
 	jumpstack  = (struct ip6t_entry **)private->jumpstack[cpu];
 	stackptr   = per_cpu_ptr(private->stackptr, cpu);
@@ -1362,7 +1362,7 @@ do_add_counters(struct net *net, const void __user *user, unsigned int len,
 
 	i = 0;
 	/* Choose the copy that is on our node */
-	curcpu = smp_processor_id();
+	curcpu = raw_smp_processor_id();
 	addend = xt_write_recseq_begin();
 	loc_cpu_entry = private->entries[curcpu];
 	xt_entry_foreach(iter, loc_cpu_entry, private->size) {

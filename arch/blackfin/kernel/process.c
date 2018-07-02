@@ -102,7 +102,7 @@ asmlinkage int bfin_clone(unsigned long clone_flags, unsigned long newsp)
 {
 #ifdef __ARCH_SYNC_CORE_DCACHE
 	if (current->nr_cpus_allowed == num_possible_cpus())
-		set_cpus_allowed_ptr(current, cpumask_of(smp_processor_id()));
+		set_cpus_allowed_ptr(current, cpumask_of(raw_smp_processor_id()));
 #endif
 	if (newsp)
 		newsp -= 12;

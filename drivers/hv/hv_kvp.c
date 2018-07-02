@@ -129,7 +129,7 @@ kvp_work_func(struct work_struct *dummy)
 
 static void poll_channel(struct vmbus_channel *channel)
 {
-	if (channel->target_cpu != smp_processor_id())
+	if (channel->target_cpu != raw_smp_processor_id())
 		smp_call_function_single(channel->target_cpu,
 					 hv_kvp_onchannelcallback,
 					 channel, true);

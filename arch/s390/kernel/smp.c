@@ -389,7 +389,7 @@ void smp_send_stop(void)
 
 	debug_set_critical();
 	cpumask_copy(&cpumask, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), &cpumask);
+	cpumask_clear_cpu(raw_smp_processor_id(), &cpumask);
 
 	if (oops_in_progress)
 		smp_emergency_stop(&cpumask);
@@ -412,7 +412,7 @@ static void smp_handle_ext_call(void)
 	unsigned long bits;
 
 	/* handle bit signal external calls */
-	bits = xchg(&pcpu_devices[smp_processor_id()].ec_mask, 0);
+	bits = xchg(&pcpu_devices[raw_smp_processor_id()].ec_mask, 0);
 	if (test_bit(ec_stop_cpu, &bits))
 		smp_stop_cpu();
 	if (test_bit(ec_schedule, &bits))
@@ -686,8 +686,8 @@ static void smp_start_secondary(void *cpuvoid)
 	init_cpu_timer();
 	vtime_init();
 	pfault_init();
-	notify_cpu_starting(smp_processor_id());
-	set_cpu_online(smp_processor_id(), true);
+	notify_cpu_starting(raw_smp_processor_id());
+	set_cpu_online(raw_smp_processor_id(), true);
 	inc_irq_stat(CPU_RST);
 	local_irq_enable();
 	cpu_startup_entry(CPUHP_ONLINE);
@@ -734,7 +734,7 @@ int __cpu_disable(void)
 
 	/* Handle possible pending IPIs */
 	smp_handle_ext_call();
-	set_cpu_online(smp_processor_id(), false);
+	set_cpu_online(raw_smp_processor_id(), false);
 	/* Disable pseudo page faults on this cpu. */
 	pfault_fini();
 	/* Disable interrupt sources via control register. */
@@ -765,7 +765,7 @@ void __cpu_die(unsigned int cpu)
 void __noreturn cpu_die(void)
 {
 	idle_task_exit();
-	pcpu_sigp_retry(pcpu_devices + smp_processor_id(), SIGP_STOP, 0);
+	pcpu_sigp_retry(pcpu_devices + raw_smp_processor_id(), SIGP_STOP, 0);
 	for (;;) ;
 }
 

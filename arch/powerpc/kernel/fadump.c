@@ -406,7 +406,7 @@ void crash_fadump(struct pt_regs *regs, const char *str)
 		return;
 
 	fdh = __va(fw_dump.fadumphdr_addr);
-	crashing_cpu = smp_processor_id();
+	crashing_cpu = raw_smp_processor_id();
 	fdh->crashing_cpu = crashing_cpu;
 	crash_save_vmcoreinfo();
 

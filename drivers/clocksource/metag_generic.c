@@ -191,7 +191,7 @@ int __init metag_generic_timer_init(void)
 	setup_irq(tbisig_map(TBID_SIGNUM_TRT), &metag_timer_irq);
 
 	/* Configure timer on boot CPU */
-	arch_timer_setup(smp_processor_id());
+	arch_timer_setup(raw_smp_processor_id());
 
 	/* Hook cpu boot to configure other CPU's timers */
 	register_cpu_notifier(&arch_timer_cpu_nb);

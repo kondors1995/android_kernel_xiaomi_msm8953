@@ -103,7 +103,7 @@ static void flush_tlb_others(cpumask_t cpumask, struct mm_struct *mm,
 	 */
 	BUG_ON(!mm);
 	BUG_ON(cpumask_empty(&cpumask));
-	BUG_ON(cpumask_test_cpu(smp_processor_id(), &cpumask));
+	BUG_ON(cpumask_test_cpu(raw_smp_processor_id(), &cpumask));
 
 	cpumask_and(&tmp, &cpumask, cpu_online_mask);
 	BUG_ON(!cpumask_equal(&cpumask, &tmp));
@@ -146,7 +146,7 @@ void flush_tlb_mm(struct mm_struct *mm)
 
 	preempt_disable();
 	cpumask_copy(&cpu_mask, mm_cpumask(mm));
-	cpumask_clear_cpu(smp_processor_id(), &cpu_mask);
+	cpumask_clear_cpu(raw_smp_processor_id(), &cpu_mask);
 
 	local_flush_tlb();
 	if (!cpumask_empty(&cpu_mask))
@@ -165,7 +165,7 @@ void flush_tlb_current_task(void)
 
 	preempt_disable();
 	cpumask_copy(&cpu_mask, mm_cpumask(mm));
-	cpumask_clear_cpu(smp_processor_id(), &cpu_mask);
+	cpumask_clear_cpu(raw_smp_processor_id(), &cpu_mask);
 
 	local_flush_tlb();
 	if (!cpumask_empty(&cpu_mask))
@@ -186,7 +186,7 @@ void flush_tlb_page(struct vm_area_struct *vma, unsigned long va)
 
 	preempt_disable();
 	cpumask_copy(&cpu_mask, mm_cpumask(mm));
-	cpumask_clear_cpu(smp_processor_id(), &cpu_mask);
+	cpumask_clear_cpu(raw_smp_processor_id(), &cpu_mask);
 
 	local_flush_tlb_page(mm, va);
 	if (!cpumask_empty(&cpu_mask))

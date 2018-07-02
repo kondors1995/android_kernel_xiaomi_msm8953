@@ -34,7 +34,7 @@ static void __cr16_delay(unsigned long __loops)
 	int cpu;
 
 	preempt_disable();
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	bclock = mfctl(16);
 	for (;;) {
 		now = mfctl(16);
@@ -56,9 +56,9 @@ static void __cr16_delay(unsigned long __loops)
 		 * make sure we waited long enough. Rebalance the
 		 * counter for this CPU.
 		 */
-		if (unlikely(cpu != smp_processor_id())) {
+		if (unlikely(cpu != raw_smp_processor_id())) {
 			loops -= (now - bclock);
-			cpu = smp_processor_id();
+			cpu = raw_smp_processor_id();
 			bclock = mfctl(16);
 		}
 	}

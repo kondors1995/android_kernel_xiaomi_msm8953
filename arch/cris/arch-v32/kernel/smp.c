@@ -90,7 +90,7 @@ void smp_prepare_boot_cpu(void)
 	 * update the MMU.
 	 */
   	pgd_t **pgd;
-	pgd = (pgd_t**)&per_cpu(current_pgd, smp_processor_id());
+	pgd = (pgd_t**)&per_cpu(current_pgd, raw_smp_processor_id());
 
 	SUPP_BANK_SEL(1);
 	SUPP_REG_WR(RW_MM_TLB_PGD, pgd);
@@ -224,7 +224,7 @@ void flush_tlb_common(struct mm_struct* mm, struct vm_area_struct* vma, unsigned
 
 	spin_lock_irqsave(&tlbstate_lock, flags);
 	cpu_mask = (mm == FLUSH_ALL ? cpu_all_mask : *mm_cpumask(mm));
-	cpumask_clear_cpu(smp_processor_id(), &cpu_mask);
+	cpumask_clear_cpu(raw_smp_processor_id(), &cpu_mask);
 	flush_mm = mm;
 	flush_vma = vma;
 	flush_addr = addr;
@@ -244,7 +244,7 @@ void flush_tlb_mm(struct mm_struct *mm)
 	flush_tlb_common(mm, FLUSH_ALL, 0);
 	/* No more mappings in other CPUs */
 	cpumask_clear(mm_cpumask(mm));
-	cpumask_set_cpu(smp_processor_id(), mm_cpumask(mm));
+	cpumask_set_cpu(raw_smp_processor_id(), mm_cpumask(mm));
 }
 
 void flush_tlb_page(struct vm_area_struct *vma,
@@ -291,7 +291,7 @@ int send_ipi(int vector, int wait, cpumask_t cpu_mask)
 
 			/* Timeout? */
 			if (ipi.vector) {
-				printk("SMP call timeout from %d to %d\n", smp_processor_id(), i);
+				printk("SMP call timeout from %d to %d\n", raw_smp_processor_id(), i);
 				ret = -ETIMEDOUT;
 				dump_stack();
 			}
@@ -311,7 +311,7 @@ int smp_call_function(void (*func)(void *info), void *info, int wait)
 	int ret;
 
 	cpumask_setall(&cpu_mask);
-	cpumask_clear_cpu(smp_processor_id(), &cpu_mask);
+	cpumask_clear_cpu(raw_smp_processor_id(), &cpu_mask);
 
 	WARN_ON(irqs_disabled());
 
@@ -333,7 +333,7 @@ irqreturn_t crisv32_ipi_interrupt(int irq, void *dev_id)
 	void *info = call_data->info;
 	reg_intr_vect_rw_ipi ipi;
 
-	ipi = REG_RD(intr_vect, irq_regs[smp_processor_id()], rw_ipi);
+	ipi = REG_RD(intr_vect, irq_regs[raw_smp_processor_id()], rw_ipi);
 
 	if (ipi.vector & IPI_SCHEDULE) {
 		scheduler_ipi();
@@ -351,7 +351,7 @@ irqreturn_t crisv32_ipi_interrupt(int irq, void *dev_id)
 	}
 
 	ipi.vector = 0;
-	REG_WR(intr_vect, irq_regs[smp_processor_id()], rw_ipi, ipi);
+	REG_WR(intr_vect, irq_regs[raw_smp_processor_id()], rw_ipi, ipi);
 
 	return IRQ_HANDLED;
 }

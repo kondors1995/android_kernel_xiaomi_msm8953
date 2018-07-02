@@ -359,7 +359,7 @@ int set_l2_mode(struct low_power_ops *ops, int mode, bool notify_rpm)
 	int lpm = mode;
 	int rc = 0;
 	struct low_power_ops *cpu_ops = per_cpu(cpu_cluster,
-			smp_processor_id())->lpm_dev;
+			raw_smp_processor_id())->lpm_dev;
 
 	if (cpu_ops->tz_flag & MSM_SCM_L2_OFF ||
 			cpu_ops->tz_flag & MSM_SCM_L2_GDHS)
@@ -403,7 +403,7 @@ int set_l2_mode(struct low_power_ops *ops, int mode, bool notify_rpm)
 int set_l3_mode(struct low_power_ops *ops, int mode, bool notify_rpm)
 {
 	struct low_power_ops *cpu_ops = per_cpu(cpu_cluster,
-			smp_processor_id())->lpm_dev;
+			raw_smp_processor_id())->lpm_dev;
 
 	switch (mode) {
 	case MSM_SPM_MODE_STANDALONE_POWER_COLLAPSE:
@@ -1550,5 +1550,3 @@ void lpm_cpu_hotplug_enter(unsigned int cpu)
 
 	msm_cpu_pm_enter_sleep(mode, false);
 }
-
-

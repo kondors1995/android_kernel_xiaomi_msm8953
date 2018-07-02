@@ -280,7 +280,7 @@ static void watchdog_check_hardlockup_other_cpu(void)
 		return;
 
 	/* check for a hardlockup on the next cpu */
-	next_cpu = watchdog_next_cpu(smp_processor_id());
+	next_cpu = watchdog_next_cpu(raw_smp_processor_id());
 	if (next_cpu >= nr_cpu_ids)
 		return;
 
@@ -351,7 +351,7 @@ static void watchdog_overflow_callback(struct perf_event *event,
 	 * then this is a good indication the cpu is stuck
 	 */
 	if (is_hardlockup()) {
-		int this_cpu = smp_processor_id();
+		int this_cpu = raw_smp_processor_id();
 
 		/* only print hardlockups once */
 		if (__this_cpu_read(hard_watchdog_warn) == true)
@@ -463,7 +463,7 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
 		}
 
 		pr_emerg("BUG: soft lockup - CPU#%d stuck for %us! [%s:%d]\n",
-			smp_processor_id(), duration,
+			raw_smp_processor_id(), duration,
 			current->comm, task_pid_nr(current));
 		__this_cpu_write(softlockup_task_ptr_saved, current);
 		print_modules();
@@ -512,7 +512,7 @@ static void watchdog_enable(unsigned int cpu)
 	/* Enable the perf event */
 	watchdog_nmi_enable(cpu);
 
-	/* done here because hrtimer_start can only pin to smp_processor_id() */
+	/* done here because hrtimer_start can only pin to raw_smp_processor_id() */
 	hrtimer_start(hrtimer, ns_to_ktime(sample_period),
 		      HRTIMER_MODE_REL_PINNED);
 

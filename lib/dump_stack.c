@@ -36,7 +36,7 @@ asmlinkage __visible void dump_stack(void)
 	 */
 retry:
 	local_irq_save(flags);
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	old = atomic_cmpxchg(&dump_lock, -1, cpu);
 	if (old == -1) {
 		was_locked = 0;

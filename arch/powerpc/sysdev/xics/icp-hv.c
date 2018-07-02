@@ -63,7 +63,7 @@ static inline void icp_hv_set_xirr(unsigned int value)
 
 static inline void icp_hv_set_qirr(int n_cpu , u8 value)
 {
-	int hw_cpu = get_hard_smp_processor_id(n_cpu);
+	int hw_cpu = get_hard_raw_smp_processor_id(n_cpu);
 	long rc;
 
 	/* Make sure all previous accesses are ordered before IPI sending */
@@ -86,7 +86,7 @@ static void icp_hv_eoi(struct irq_data *d)
 
 static void icp_hv_teardown_cpu(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	/* Clear any pending IPI */
 	icp_hv_set_qirr(cpu, 0xff);
@@ -145,7 +145,7 @@ static void icp_hv_cause_ipi(int cpu, unsigned long data)
 
 static irqreturn_t icp_hv_ipi_action(int irq, void *dev_id)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	icp_hv_set_qirr(cpu, 0xff);
 

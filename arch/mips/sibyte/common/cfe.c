@@ -63,7 +63,7 @@ static void __noreturn cfe_linux_exit(void *arg)
 {
 	int warm = *(int *)arg;
 
-	if (smp_processor_id()) {
+	if (raw_smp_processor_id()) {
 		static int reboot_smp;
 
 		/* Don't repeat the process from another CPU */

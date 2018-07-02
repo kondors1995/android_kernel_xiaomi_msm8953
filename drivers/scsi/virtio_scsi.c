@@ -587,7 +587,7 @@ static struct virtio_scsi_vq *virtscsi_pick_vq(struct virtio_scsi *vscsi,
 			goto unlock;
 		}
 
-		queue_num = smp_processor_id();
+		queue_num = raw_smp_processor_id();
 		while (unlikely(queue_num >= vscsi->num_queues))
 			queue_num -= vscsi->num_queues;
 		tgt->req_vq = vq = &vscsi->req_vqs[queue_num];

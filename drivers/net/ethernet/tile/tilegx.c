@@ -2077,7 +2077,7 @@ static int tile_net_tx(struct sk_buff *skb, struct net_device *dev)
 static u16 tile_net_select_queue(struct net_device *dev, struct sk_buff *skb,
 				 void *accel_priv, select_queue_fallback_t fallback)
 {
-	return smp_processor_id();
+	return raw_smp_processor_id();
 }
 
 /* Deal with a transmit timeout. */
@@ -2238,7 +2238,7 @@ static void tile_net_dev_init(const char *name, const uint8_t *mac)
 static void tile_net_init_module_percpu(void *unused)
 {
 	struct tile_net_info *info = this_cpu_ptr(&per_cpu_info);
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	int instance;
 
 	for (instance = 0; instance < NR_MPIPE_MAX; instance++) {

@@ -126,7 +126,7 @@ static void flush_tlb_func(void *info)
 			trace_tlb_flush(TLB_REMOTE_SHOOTDOWN, nr_pages);
 		}
 	} else
-		leave_mm(smp_processor_id());
+		leave_mm(raw_smp_processor_id());
 
 }
 
@@ -143,7 +143,7 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
 	if (is_uv_system()) {
 		unsigned int cpu;
 
-		cpu = smp_processor_id();
+		cpu = raw_smp_processor_id();
 		cpumask = uv_flush_tlb_others(cpumask, mm, start, end, cpu);
 		if (cpumask)
 			smp_call_function_many(cpumask, flush_tlb_func,
@@ -162,7 +162,7 @@ void flush_tlb_current_task(void)
 	count_vm_tlb_event(NR_TLB_LOCAL_FLUSH_ALL);
 	local_flush_tlb();
 	trace_tlb_flush(TLB_LOCAL_SHOOTDOWN, TLB_FLUSH_ALL);
-	if (cpumask_any_but(mm_cpumask(mm), smp_processor_id()) < nr_cpu_ids)
+	if (cpumask_any_but(mm_cpumask(mm), raw_smp_processor_id()) < nr_cpu_ids)
 		flush_tlb_others(mm_cpumask(mm), mm, 0UL, TLB_FLUSH_ALL);
 	preempt_enable();
 }
@@ -191,7 +191,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
 		goto out;
 
 	if (!current->mm) {
-		leave_mm(smp_processor_id());
+		leave_mm(raw_smp_processor_id());
 		goto out;
 	}
 
@@ -215,7 +215,7 @@ out:
 		start = 0UL;
 		end = TLB_FLUSH_ALL;
 	}
-	if (cpumask_any_but(mm_cpumask(mm), smp_processor_id()) < nr_cpu_ids)
+	if (cpumask_any_but(mm_cpumask(mm), raw_smp_processor_id()) < nr_cpu_ids)
 		flush_tlb_others(mm_cpumask(mm), mm, start, end);
 	preempt_enable();
 }
@@ -230,10 +230,10 @@ void flush_tlb_page(struct vm_area_struct *vma, unsigned long start)
 		if (current->mm)
 			__flush_tlb_one(start);
 		else
-			leave_mm(smp_processor_id());
+			leave_mm(raw_smp_processor_id());
 	}
 
-	if (cpumask_any_but(mm_cpumask(mm), smp_processor_id()) < nr_cpu_ids)
+	if (cpumask_any_but(mm_cpumask(mm), raw_smp_processor_id()) < nr_cpu_ids)
 		flush_tlb_others(mm_cpumask(mm), mm, start, 0UL);
 
 	preempt_enable();
@@ -244,7 +244,7 @@ static void do_flush_tlb_all(void *info)
 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
 	__flush_tlb_all();
 	if (this_cpu_read(cpu_tlbstate.state) == TLBSTATE_LAZY)
-		leave_mm(smp_processor_id());
+		leave_mm(raw_smp_processor_id());
 }
 
 void flush_tlb_all(void)

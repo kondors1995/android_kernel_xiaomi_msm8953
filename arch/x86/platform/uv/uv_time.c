@@ -343,7 +343,7 @@ static void uv_rtc_timer_setup(enum clock_event_mode mode,
 
 static void uv_rtc_interrupt(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct clock_event_device *ced = &per_cpu(cpu_ced, cpu);
 
 	if (!ced || !ced->event_handler)
@@ -368,7 +368,7 @@ static __init void uv_rtc_register_clockevents(struct work_struct *dummy)
 	struct clock_event_device *ced = this_cpu_ptr(&cpu_ced);
 
 	*ced = clock_event_device_uv;
-	ced->cpumask = cpumask_of(smp_processor_id());
+	ced->cpumask = cpumask_of(raw_smp_processor_id());
 	clockevents_register_device(ced);
 }
 

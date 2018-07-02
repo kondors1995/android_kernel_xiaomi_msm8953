@@ -150,7 +150,7 @@ static DEFINE_PER_CPU(struct split_state, split_state);
 
 static void wait_for_sync_step(int step)
 {
-	int i, cpu = smp_processor_id();
+	int i, cpu = raw_smp_processor_id();
 
 	for (i = cpu + 1; i < cpu + threads_per_core; i++)
 		while(per_cpu(split_state, i).step < step)
@@ -167,7 +167,7 @@ static void unsplit_core(void)
 
 	mask = HID0_POWER8_2LPARMODE | HID0_POWER8_4LPARMODE;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	if (cpu_thread_in_core(cpu) != 0) {
 		while (mfspr(SPRN_HID0) & mask)
 			power7_nap(0);
@@ -203,7 +203,7 @@ static void split_core(int new_mode)
 	i = (new_mode >> 1) - 1;
 	BUG_ON(i < 0 || i > 1);
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	if (cpu_thread_in_core(cpu) != 0) {
 		split_core_secondary_loop(&per_cpu(split_state, cpu).step);
 		return;
@@ -236,7 +236,7 @@ static void cpu_do_split(int new_mode)
 		split_core(new_mode);
 
 	mb();
-	per_cpu(split_state, smp_processor_id()).step = SYNC_STEP_FINISHED;
+	per_cpu(split_state, raw_smp_processor_id()).step = SYNC_STEP_FINISHED;
 }
 
 bool cpu_core_split_required(void)

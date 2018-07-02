@@ -132,7 +132,7 @@ static unsigned long write_mmustat_enable(unsigned long val)
 	unsigned long ra, orig_ra;
 
 	if (val)
-		ra = __pa(&per_cpu(mmu_stats, smp_processor_id()));
+		ra = __pa(&per_cpu(mmu_stats, raw_smp_processor_id()));
 	else
 		ra = 0UL;
 

@@ -33,7 +33,7 @@ static inline void kmap_waitqueues_init(void)
 
 static inline enum fixed_addresses kmap_idx(int type, unsigned long color)
 {
-	return (type + KM_TYPE_NR * smp_processor_id()) * DCACHE_N_COLORS +
+	return (type + KM_TYPE_NR * raw_smp_processor_id()) * DCACHE_N_COLORS +
 		color;
 }
 

@@ -141,7 +141,7 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
 	if (bit < 0)
 		goto out;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	data = per_cpu_ptr(tr->trace_buffer.data, cpu);
 	if (!atomic_read(&data->disabled)) {
 		local_save_flags(flags);

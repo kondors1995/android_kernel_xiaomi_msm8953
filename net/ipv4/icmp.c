@@ -205,7 +205,7 @@ static const struct icmp_control icmp_pointers[NR_ICMP_TYPES+1];
  */
 static struct sock *icmp_sk(struct net *net)
 {
-	return net->ipv4.icmp_sk[smp_processor_id()];
+	return net->ipv4.icmp_sk[raw_smp_processor_id()];
 }
 
 static inline struct sock *icmp_xmit_lock(struct net *net)

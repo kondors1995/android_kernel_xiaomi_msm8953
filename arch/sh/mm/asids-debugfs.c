@@ -38,7 +38,7 @@ static int asids_seq_show(struct seq_file *file, void *iter)
 
 		if (p->mm)
 			seq_printf(file, "%5d : %04lx\n", pid,
-				   cpu_asid(smp_processor_id(), p->mm));
+				   cpu_asid(raw_smp_processor_id(), p->mm));
 	}
 
 	read_unlock(&tasklist_lock);

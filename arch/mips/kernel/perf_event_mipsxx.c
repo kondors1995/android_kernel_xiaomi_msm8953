@@ -146,14 +146,14 @@ static DEFINE_RWLOCK(pmuint_rwlock);
 
 #if defined(CONFIG_CPU_BMIPS5000)
 #define vpe_id()	(cpu_has_mipsmt_pertccounters ? \
-			 0 : (smp_processor_id() & MIPS_CPUID_TO_COUNTER_MASK))
+			 0 : (raw_smp_processor_id() & MIPS_CPUID_TO_COUNTER_MASK))
 #else
 /*
  * FIXME: For VSMP, vpe_id() is redefined for Perf-events, because
  * cpu_data[cpuid].vpe_id reports 0 for _both_ CPUs.
  */
 #define vpe_id()	(cpu_has_mipsmt_pertccounters ? \
-			 0 : smp_processor_id())
+			 0 : raw_smp_processor_id())
 #endif
 
 /* Copied from op_model_mipsxx.c */

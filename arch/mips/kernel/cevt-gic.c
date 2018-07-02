@@ -40,7 +40,7 @@ void gic_set_clock_mode(enum clock_event_mode mode,
 irqreturn_t gic_compare_interrupt(int irq, void *dev_id)
 {
 	struct clock_event_device *cd;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	gic_write_compare(gic_read_compare());
 	cd = &per_cpu(gic_clockevent_device, cpu);
@@ -61,7 +61,7 @@ void gic_event_handler(struct clock_event_device *dev)
 
 int gic_clockevent_init(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct clock_event_device *cd;
 	unsigned int irq;
 

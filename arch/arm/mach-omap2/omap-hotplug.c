@@ -55,7 +55,7 @@ void __ref omap4_cpu_die(unsigned int cpu)
 			boot_cpu =
 				readl_relaxed(base + OMAP_AUX_CORE_BOOT_0) >> 5;
 
-		if (boot_cpu == smp_processor_id()) {
+		if (boot_cpu == raw_smp_processor_id()) {
 			/*
 			 * OK, proper wakeup, we're done
 			 */

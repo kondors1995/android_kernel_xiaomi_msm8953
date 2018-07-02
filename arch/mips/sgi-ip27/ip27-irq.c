@@ -85,7 +85,7 @@ static void ip27_do_irq_mask0(void)
 {
 	int irq, swlevel;
 	hubreg_t pend0, mask0;
-	cpuid_t cpu = smp_processor_id();
+	cpuid_t cpu = raw_smp_processor_id();
 	int pi_int_mask0 =
 		(cputoslice(cpu) == 0) ?  PI_INT_MASK0_A : PI_INT_MASK0_B;
 
@@ -128,7 +128,7 @@ static void ip27_do_irq_mask1(void)
 {
 	int irq, swlevel;
 	hubreg_t pend1, mask1;
-	cpuid_t cpu = smp_processor_id();
+	cpuid_t cpu = raw_smp_processor_id();
 	int pi_int_mask1 = (cputoslice(cpu) == 0) ?  PI_INT_MASK1_A : PI_INT_MASK1_B;
 	struct slice_data *si = cpu_data[cpu].data;
 
@@ -151,12 +151,12 @@ static void ip27_do_irq_mask1(void)
 
 static void ip27_prof_timer(void)
 {
-	panic("CPU %d got a profiling interrupt", smp_processor_id());
+	panic("CPU %d got a profiling interrupt", raw_smp_processor_id());
 }
 
 static void ip27_hub_error(void)
 {
-	panic("CPU %d got a hub error interrupt", smp_processor_id());
+	panic("CPU %d got a hub error interrupt", raw_smp_processor_id());
 }
 
 asmlinkage void plat_irq_dispatch(void)
@@ -183,7 +183,7 @@ void __init arch_init_irq(void)
 void install_ipi(void)
 {
 	int slice = LOCAL_HUB_L(PI_CPU_NUM);
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct slice_data *si = cpu_data[cpu].data;
 	struct hub_data *hub = hub_data(cpu_to_node(cpu));
 	int resched, call;

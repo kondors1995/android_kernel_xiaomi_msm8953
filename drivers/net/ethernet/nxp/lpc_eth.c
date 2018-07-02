@@ -1017,7 +1017,7 @@ static int lpc_eth_poll(struct napi_struct *napi, int budget)
 	int rx_done = 0;
 	struct netdev_queue *txq = netdev_get_tx_queue(ndev, 0);
 
-	__netif_tx_lock(txq, smp_processor_id());
+	__netif_tx_lock(txq, raw_smp_processor_id());
 	__lpc_handle_xmit(ndev);
 	__netif_tx_unlock(txq);
 	rx_done = __lpc_handle_recv(ndev, budget);

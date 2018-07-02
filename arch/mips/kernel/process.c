@@ -47,7 +47,7 @@
 void arch_cpu_idle_dead(void)
 {
 	/* What the heck is this check doing ? */
-	if (!cpu_isset(smp_processor_id(), cpu_callin_map))
+	if (!cpu_isset(raw_smp_processor_id(), cpu_callin_map))
 		play_dead();
 }
 #endif

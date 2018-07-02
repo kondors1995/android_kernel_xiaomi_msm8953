@@ -30,7 +30,7 @@
 static irqreturn_t ipi_interrupt_handler(int irq, void *arg)
 {
 	unsigned int message = (unsigned int)(long)arg;
-	unsigned int cpu = hard_smp_processor_id();
+	unsigned int cpu = hard_raw_smp_processor_id();
 	unsigned int offs = 4 * cpu;
 	unsigned int x;
 
@@ -102,7 +102,7 @@ static void shx3_start_cpu(unsigned int cpu, unsigned long entry_point)
 	__raw_writel(STBCR_RESET | STBCR_LTSLP, STBCR_REG(cpu));
 }
 
-static unsigned int shx3_smp_processor_id(void)
+static unsigned int shx3_raw_smp_processor_id(void)
 {
 	return __raw_readl(0xff000048); /* CPIDR */
 }
@@ -158,7 +158,7 @@ struct plat_smp_ops shx3_smp_ops = {
 	.smp_setup		= shx3_smp_setup,
 	.prepare_cpus		= shx3_prepare_cpus,
 	.start_cpu		= shx3_start_cpu,
-	.smp_processor_id	= shx3_smp_processor_id,
+	.raw_smp_processor_id	= shx3_raw_smp_processor_id,
 	.send_ipi		= shx3_send_ipi,
 	.cpu_die		= native_cpu_die,
 	.cpu_disable		= native_cpu_disable,

@@ -142,7 +142,7 @@ void __init plat_time_init(void)
 {
 	struct clock_event_device *cd = &r4030_clockevent;
 	struct irqaction *action = &r4030_timer_irqaction;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	BUG_ON(HZ != 100);
 

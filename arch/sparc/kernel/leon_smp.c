@@ -76,7 +76,7 @@ void leon_cpu_pre_starting(void *arg)
 
 void leon_cpu_pre_online(void *arg)
 {
-	int cpuid = hard_smp_processor_id();
+	int cpuid = hard_raw_smp_processor_id();
 
 	/* Allow master to continue. The master will then give us the
 	 * go-ahead by setting the smp_commenced_mask and will wait without
@@ -109,7 +109,7 @@ extern struct linux_prom_registers smp_penguin_ctable;
 void leon_configure_cache_smp(void)
 {
 	unsigned long cfg = sparc_leon3_get_dcachecfg();
-	int me = smp_processor_id();
+	int me = raw_smp_processor_id();
 
 	if (ASI_LEON3_SYSCTRL_CFG_SSIZE(cfg) > 4) {
 		printk(KERN_INFO "Note: SMP with snooping only works on 4k cache, found %dk(0x%x) on cpu %d, disabling caches\n",
@@ -159,7 +159,7 @@ int leon_smp_nrcpus(void)
 void __init leon_boot_cpus(void)
 {
 	int nrcpu = leon_smp_nrcpus();
-	int me = smp_processor_id();
+	int me = raw_smp_processor_id();
 
 	/* Setup IPI */
 	leon_ipi_init();
@@ -404,7 +404,7 @@ static void leon_cross_call(smpfunc_t func, cpumask_t mask, unsigned long arg1,
 		{
 			register int i;
 
-			cpumask_clear_cpu(smp_processor_id(), &mask);
+			cpumask_clear_cpu(raw_smp_processor_id(), &mask);
 			cpumask_and(&mask, cpu_online_mask, &mask);
 			for (i = 0; i <= high; i++) {
 				if (cpumask_test_cpu(i, &mask)) {
@@ -445,7 +445,7 @@ static void leon_cross_call(smpfunc_t func, cpumask_t mask, unsigned long arg1,
 /* Running cross calls. */
 void leon_cross_call_irq(void)
 {
-	int i = smp_processor_id();
+	int i = raw_smp_processor_id();
 
 	ccall_info.processors_in[i] = 1;
 	ccall_info.func(ccall_info.arg1, ccall_info.arg2, ccall_info.arg3,

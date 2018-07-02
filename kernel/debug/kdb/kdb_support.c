@@ -724,7 +724,7 @@ static int get_dap_lock(void)
 {
 	static int dap_locked = -1;
 	int count;
-	if (dap_locked == smp_processor_id())
+	if (dap_locked == raw_smp_processor_id())
 		count = 1;
 	else
 		count = 1000;
@@ -737,7 +737,7 @@ static int get_dap_lock(void)
 			break;
 		udelay(1000);
 	}
-	dap_locked = smp_processor_id();
+	dap_locked = raw_smp_processor_id();
 	__acquire(dap_lock);
 	return 0;
 }

@@ -105,7 +105,7 @@ static void kmap_atomic_register(struct page *page, int type,
 	/* With interrupts disabled, now fill in the per-cpu info. */
 	amp = this_cpu_ptr(&amps.per_type[type]);
 	amp->page = page;
-	amp->cpu = smp_processor_id();
+	amp->cpu = raw_smp_processor_id();
 	amp->va = va;
 
 	/* For generic kmap_atomic(), choose the PTE writability now. */
@@ -130,7 +130,7 @@ static void kmap_atomic_unregister(struct page *page, unsigned long va)
 {
 	unsigned long flags;
 	struct atomic_mapped_page *amp;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	spin_lock_irqsave(&amp_lock, flags);
 	list_for_each_entry(amp, &amp_list, list) {
 		if (amp->page == page && amp->cpu == cpu && amp->va == va)
@@ -211,7 +211,7 @@ void *kmap_atomic_prot(struct page *page, pgprot_t prot)
 		return page_address(page);
 
 	type = kmap_atomic_idx_push();
-	idx = type + KM_TYPE_NR*smp_processor_id();
+	idx = type + KM_TYPE_NR*raw_smp_processor_id();
 	vaddr = __fix_to_virt(FIX_KMAP_BEGIN + idx);
 	pte = kmap_get_pte(vaddr);
 	BUG_ON(!pte_none(*pte));
@@ -241,7 +241,7 @@ void __kunmap_atomic(void *kvaddr)
 		int idx, type;
 
 		type = kmap_atomic_idx();
-		idx = type + KM_TYPE_NR*smp_processor_id();
+		idx = type + KM_TYPE_NR*raw_smp_processor_id();
 
 		/*
 		 * Force other mappings to Oops if they try to access this pte

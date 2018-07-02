@@ -471,7 +471,7 @@ static void dm_stat_for_entry(struct dm_stat *s, size_t entry,
 #else
 	preempt_disable();
 #endif
-	p = &s->stat_percpu[smp_processor_id()][entry];
+	p = &s->stat_percpu[raw_smp_processor_id()][entry];
 
 	if (!end) {
 		dm_stat_round(shared, p);
@@ -573,7 +573,7 @@ static void __dm_stat_init_temporary_percpu_totals(struct dm_stat_shared *shared
 	struct dm_stat_percpu *p;
 
 	local_irq_disable();
-	p = &s->stat_percpu[smp_processor_id()][x];
+	p = &s->stat_percpu[raw_smp_processor_id()][x];
 	dm_stat_round(shared, p);
 	local_irq_enable();
 
@@ -607,7 +607,7 @@ static void __dm_stat_clear(struct dm_stat *s, size_t idx_start, size_t idx_end,
 		if (init_tmp_percpu_totals)
 			__dm_stat_init_temporary_percpu_totals(shared, s, x);
 		local_irq_disable();
-		p = &s->stat_percpu[smp_processor_id()][x];
+		p = &s->stat_percpu[raw_smp_processor_id()][x];
 		p->sectors[READ] -= shared->tmp.sectors[READ];
 		p->sectors[WRITE] -= shared->tmp.sectors[WRITE];
 		p->ios[READ] -= shared->tmp.ios[READ];

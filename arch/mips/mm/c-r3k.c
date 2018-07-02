@@ -245,10 +245,10 @@ static void r3k_flush_cache_page(struct vm_area_struct *vma,
 	pte_t *ptep;
 
 	pr_debug("cpage[%08lx,%08lx]\n",
-		 cpu_context(smp_processor_id(), mm), addr);
+		 cpu_context(raw_smp_processor_id(), mm), addr);
 
 	/* No ASID => no such page in the cache.  */
-	if (cpu_context(smp_processor_id(), mm) == 0)
+	if (cpu_context(raw_smp_processor_id(), mm) == 0)
 		return;
 
 	pgdp = pgd_offset(mm, addr);

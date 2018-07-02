@@ -27,7 +27,7 @@ static DEFINE_SPINLOCK(master_lock);
 static inline int ux500_enter_idle(struct cpuidle_device *dev,
 				   struct cpuidle_driver *drv, int index)
 {
-	int this_cpu = smp_processor_id();
+	int this_cpu = raw_smp_processor_id();
 	bool recouple = false;
 
 	if (atomic_inc_return(&master) == num_online_cpus()) {

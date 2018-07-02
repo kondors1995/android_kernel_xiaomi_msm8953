@@ -401,7 +401,7 @@ efi_get_pal_addr (void)
 
 		printk(KERN_INFO "CPU %d: mapping PAL code "
                        "[0x%lx-0x%lx) into [0x%lx-0x%lx)\n",
-                       smp_processor_id(), md->phys_addr,
+                       raw_smp_processor_id(), md->phys_addr,
                        md->phys_addr + efi_md_size(md),
                        vaddr & mask, (vaddr & mask) + IA64_GRANULE_SIZE);
 #endif

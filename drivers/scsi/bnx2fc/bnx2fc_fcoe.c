@@ -575,7 +575,7 @@ static void bnx2fc_recv_frame(struct sk_buff *skb)
 		return;
 	}
 
-	stats = per_cpu_ptr(lport->stats, smp_processor_id());
+	stats = per_cpu_ptr(lport->stats, raw_smp_processor_id());
 	stats->RxFrames++;
 	stats->RxWords += fr_len / FCOE_WORD_TO_BYTE;
 

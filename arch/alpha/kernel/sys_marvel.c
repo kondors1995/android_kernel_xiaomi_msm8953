@@ -402,7 +402,7 @@ marvel_init_rtc(void)
 static void
 marvel_smp_callin(void)
 {
-	int cpuid = hard_smp_processor_id();
+	int cpuid = hard_raw_smp_processor_id();
 	struct io7 *io7 = marvel_find_io7(cpuid);
 	unsigned int i;
 

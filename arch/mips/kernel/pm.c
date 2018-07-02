@@ -42,7 +42,7 @@ static int mips_cpu_save(void)
  */
 static void mips_cpu_restore(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	/* Restore ASID */
 	if (current->mm)

@@ -403,7 +403,7 @@ void __init mem_init(void)
 	 * If smp is enabled, next_tlbcam_idx is initialized in the cpu up
 	 * functions.... do it here for the non-smp case.
 	 */
-	per_cpu(next_tlbcam_idx, smp_processor_id()) =
+	per_cpu(next_tlbcam_idx, raw_smp_processor_id()) =
 		(mfspr(SPRN_TLB1CFG) & TLBnCFG_N_ENTRY) - 1;
 #endif
 

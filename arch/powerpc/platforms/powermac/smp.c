@@ -165,7 +165,7 @@ static inline void psurge_clr_ipi(int cpu)
  */
 static irqreturn_t psurge_ipi_intr(int irq, void *d)
 {
-	psurge_clr_ipi(smp_processor_id());
+	psurge_clr_ipi(raw_smp_processor_id());
 	smp_ipi_demux();
 
 	return IRQ_HANDLED;
@@ -757,7 +757,7 @@ static void __init smp_core99_setup(int ncpus)
 
 		/* XXX should get this from reg properties */
 		for (i = 1; i < ncpus; ++i)
-			set_hard_smp_processor_id(i, i);
+			set_hard_raw_smp_processor_id(i, i);
 	}
 #endif
 
@@ -932,7 +932,7 @@ static int smp_core99_cpu_disable(void)
 
 static void pmac_cpu_die(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	local_irq_disable();
 	idle_task_exit();
@@ -947,7 +947,7 @@ static void pmac_cpu_die(void)
 
 static void pmac_cpu_die(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	local_irq_disable();
 	idle_task_exit();

@@ -202,7 +202,7 @@ __visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
 
 		if (irq != VECTOR_RETRIGGERED) {
 			pr_emerg_ratelimited("%s: %d.%d No irq handler for vector (irq %d)\n",
-					     __func__, smp_processor_id(),
+					     __func__, raw_smp_processor_id(),
 					     vector, irq);
 		} else {
 			__this_cpu_write(vector_irq[vector], VECTOR_UNDEFINED);
@@ -293,7 +293,7 @@ int check_irq_vectors_for_cpu_disable(void)
 	struct irq_desc *desc;
 	struct irq_data *data;
 
-	this_cpu = smp_processor_id();
+	this_cpu = raw_smp_processor_id();
 	cpumask_copy(&online_new, cpu_online_mask);
 	cpu_clear(this_cpu, online_new);
 

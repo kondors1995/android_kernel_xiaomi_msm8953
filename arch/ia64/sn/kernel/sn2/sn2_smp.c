@@ -193,7 +193,7 @@ sn2_global_tlb_purge(struct mm_struct *mm, unsigned long start,
 
 	preempt_disable();
 
-	if (likely(i == 1 && lcpu == smp_processor_id() && mymm)) {
+	if (likely(i == 1 && lcpu == raw_smp_processor_id() && mymm)) {
 		do {
 			ia64_ptcl(start, nbits << 2);
 			start += (1UL << nbits);

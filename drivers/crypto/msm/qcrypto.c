@@ -1654,7 +1654,7 @@ static void req_done(struct qcrypto_req_control *pqcrypto_req_control)
 		type = crypto_tfm_alg_type(areq->tfm);
 		tfm_ctx = crypto_tfm_ctx(areq->tfm);
 	}
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	pengine->irq_cpu = cpu;
 	if (pengine->first_engine) {
 		if (cpu  != cp->cpu_getting_irqs_frm_first_ce)
@@ -2372,7 +2372,7 @@ static int _start_qcrypto_process(struct crypto_priv *cp,
 		return 0;
 
 	if (in_interrupt()) {
-		cpu = smp_processor_id();
+		cpu = raw_smp_processor_id();
 		if (cpu >= MAX_SMP_CPU)
 			cpu = MAX_SMP_CPU - 1;
 	} else

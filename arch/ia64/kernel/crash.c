@@ -59,7 +59,7 @@ crash_save_this_cpu(void)
 	void *buf;
 	unsigned long cfm, sof, sol;
 
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct elf_prstatus *prstatus = &per_cpu(elf_prstatus, cpu);
 
 	elf_greg_t *dst = (elf_greg_t *)&(prstatus->pr_reg);
@@ -160,7 +160,7 @@ kdump_cpu_freeze(struct unw_frame_info *info, void *arg)
 	int cpuid;
 
 	local_irq_disable();
-	cpuid = smp_processor_id();
+	cpuid = raw_smp_processor_id();
 	crash_save_this_cpu();
 	current->thread.ksp = (__u64)info->sw - 16;
 

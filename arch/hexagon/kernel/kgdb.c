@@ -199,7 +199,7 @@ static int __kgdb_notify(struct die_args *args, unsigned long cmd)
 {
 	/* cpu roundup */
 	if (atomic_read(&kgdb_active) != -1) {
-		kgdb_nmicallback(smp_processor_id(), args->regs);
+		kgdb_nmicallback(raw_smp_processor_id(), args->regs);
 		return NOTIFY_STOP;
 	}
 

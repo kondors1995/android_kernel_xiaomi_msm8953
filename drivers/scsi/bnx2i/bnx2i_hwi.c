@@ -1933,7 +1933,7 @@ static int bnx2i_queue_scsi_cmd_resp(struct iscsi_session *session,
 	sc = task->sc;
 
 	if (!blk_rq_cpu_valid(sc->request))
-		cpu = smp_processor_id();
+		cpu = raw_smp_processor_id();
 	else
 		cpu = sc->request->cpu;
 

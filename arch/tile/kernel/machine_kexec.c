@@ -285,7 +285,7 @@ void machine_kexec(struct kimage *image)
 	 * code page, which we map in the vmalloc area.
 	 */
 	homecache_change_page_home(image->control_code_page, 0,
-				   smp_processor_id());
+				   raw_smp_processor_id());
 	reboot_code_buffer = page_address(image->control_code_page);
 	BUG_ON(reboot_code_buffer == NULL);
 	ptep = virt_to_pte(NULL, (unsigned long)reboot_code_buffer);

@@ -85,7 +85,7 @@ prom_query_input_device()
 		local_irq_save(flags);
 		st_p = (*romvec->pv_v2devops.v2_inst2pkg)(*romvec->pv_v2bootargs.fd_stdin);
 		__asm__ __volatile__("ld [%0], %%g6\n\t" : :
-				     "r" (&current_set[smp_processor_id()]) :
+				     "r" (&current_set[raw_smp_processor_id()]) :
 				     "memory");
 		local_irq_restore(flags);
 		if(prom_node_has_property(st_p, "keyboard"))
@@ -133,7 +133,7 @@ prom_query_output_device()
 		local_irq_save(flags);
 		st_p = (*romvec->pv_v2devops.v2_inst2pkg)(*romvec->pv_v2bootargs.fd_stdout);
 		__asm__ __volatile__("ld [%0], %%g6\n\t" : :
-				     "r" (&current_set[smp_processor_id()]) :
+				     "r" (&current_set[raw_smp_processor_id()]) :
 				     "memory");
 		local_irq_restore(flags);
 		propl = prom_getproperty(st_p, "device_type", propb, sizeof(propb));

@@ -636,14 +636,14 @@ get_target_cpu (unsigned int gsi, int irq)
 	 * distribute interrupts.
 	 */
 	if (smp_int_redirect & SMP_IRQ_REDIRECTION)
-		return cpu_physical_id(smp_processor_id());
+		return cpu_physical_id(raw_smp_processor_id());
 
 	/*
 	 * Some interrupts (ACPI SCI, for instance) are registered
 	 * before the BSP is marked as online.
 	 */
-	if (!cpu_online(smp_processor_id()))
-		return cpu_physical_id(smp_processor_id());
+	if (!cpu_online(raw_smp_processor_id()))
+		return cpu_physical_id(raw_smp_processor_id());
 
 #ifdef CONFIG_ACPI
 	if (cpe_vector > 0 && irq_to_vector(irq) == IA64_CPEP_VECTOR)
@@ -694,7 +694,7 @@ skip_numa_setup:
 
 	return cpu_physical_id(cpu);
 #else  /* CONFIG_SMP */
-	return cpu_physical_id(smp_processor_id());
+	return cpu_physical_id(raw_smp_processor_id());
 #endif
 }
 
@@ -918,7 +918,7 @@ void iosapic_override_isa_irq(unsigned int isa_irq, unsigned int gsi,
 			      unsigned long polarity, unsigned long trigger)
 {
 	int vector, irq;
-	unsigned int dest = cpu_physical_id(smp_processor_id());
+	unsigned int dest = cpu_physical_id(raw_smp_processor_id());
 	unsigned char dmode;
 
 	irq = vector = isa_irq_to_vector(isa_irq);

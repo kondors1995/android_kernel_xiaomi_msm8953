@@ -593,7 +593,7 @@ void tracing_snapshot(void)
 	}
 
 	local_irq_save(flags);
-	update_max_tr(tr, current, smp_processor_id());
+	update_max_tr(tr, current, raw_smp_processor_id());
 	local_irq_restore(flags);
 }
 EXPORT_SYMBOL_GPL(tracing_snapshot);
@@ -5262,7 +5262,7 @@ tracing_snapshot_write(struct file *filp, const char __user *ubuf, size_t cnt,
 		local_irq_disable();
 		/* Now, we're going to swap */
 		if (iter->cpu_file == RING_BUFFER_ALL_CPUS)
-			update_max_tr(tr, current, smp_processor_id());
+			update_max_tr(tr, current, raw_smp_processor_id());
 		else
 			update_max_tr_single(tr, current, iter->cpu_file);
 		local_irq_enable();

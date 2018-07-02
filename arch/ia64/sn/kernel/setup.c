@@ -569,7 +569,7 @@ void sn_cpu_init(void)
 	int i;
 	static int wars_have_been_checked, set_cpu0_number;
 
-	cpuid = smp_processor_id();
+	cpuid = raw_smp_processor_id();
 	if (cpuid == 0 && IS_MEDUSA()) {
 		if (ia64_sn_is_fake_prom())
 			sn_prom_type = 2;

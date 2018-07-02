@@ -761,7 +761,7 @@ void __init ps3_init_IRQ(void)
 		struct ps3_private *pd = &per_cpu(ps3_private, cpu);
 
 		lv1_get_logical_ppe_id(&pd->ppe_id);
-		pd->thread_id = get_hard_smp_processor_id(cpu);
+		pd->thread_id = get_hard_raw_smp_processor_id(cpu);
 		spin_lock_init(&pd->bmp_lock);
 
 		DBG("%s:%d: ppe_id %llu, thread_id %llu, bmp %lxh\n",
@@ -784,7 +784,7 @@ void ps3_shutdown_IRQ(int cpu)
 {
 	int result;
 	u64 ppe_id;
-	u64 thread_id = get_hard_smp_processor_id(cpu);
+	u64 thread_id = get_hard_raw_smp_processor_id(cpu);
 
 	lv1_get_logical_ppe_id(&ppe_id);
 	result = lv1_configure_irq_state_bitmap(ppe_id, thread_id, 0);

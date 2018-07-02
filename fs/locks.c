@@ -517,7 +517,7 @@ static int posix_same_owner(struct file_lock *fl1, struct file_lock *fl2)
 static void locks_insert_global_locks(struct file_lock *fl)
 {
 	lg_local_lock(&file_lock_lglock);
-	fl->fl_link_cpu = smp_processor_id();
+	fl->fl_link_cpu = raw_smp_processor_id();
 	hlist_add_head(&fl->fl_link, this_cpu_ptr(&file_lock_list));
 	lg_local_unlock(&file_lock_lglock);
 }

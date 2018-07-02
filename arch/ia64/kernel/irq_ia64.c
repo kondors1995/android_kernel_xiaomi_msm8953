@@ -309,7 +309,7 @@ void irq_complete_move(unsigned irq)
 	if (likely(!cfg->move_in_progress))
 		return;
 
-	if (unlikely(cpu_isset(smp_processor_id(), cfg->old_domain)))
+	if (unlikely(cpu_isset(raw_smp_processor_id(), cfg->old_domain)))
 		return;
 
 	cpumask_and(&cleanup_mask, &cfg->old_domain, cpu_online_mask);
@@ -321,7 +321,7 @@ void irq_complete_move(unsigned irq)
 
 static irqreturn_t smp_irq_move_cleanup_interrupt(int irq, void *dev_id)
 {
-	int me = smp_processor_id();
+	int me = raw_smp_processor_id();
 	ia64_vector vector;
 	unsigned long flags;
 
@@ -494,7 +494,7 @@ ia64_handle_irq (ia64_vector vector, struct pt_regs *regs)
 				printk(KERN_ERR "%s: Unexpected interrupt "
 				       "vector %d on CPU %d is not mapped "
 				       "to any IRQ!\n", __func__, vector,
-				       smp_processor_id());
+				       raw_smp_processor_id());
 			} else
 				generic_handle_irq(irq);
 
@@ -560,7 +560,7 @@ void ia64_process_pending_intr(void)
 				printk(KERN_ERR "%s: Unexpected interrupt "
 				       "vector %d on CPU %d not being mapped "
 				       "to any IRQ!!\n", __func__, vector,
-				       smp_processor_id());
+				       raw_smp_processor_id());
 			} else {
 				vectors_in_migration[irq]=0;
 				generic_handle_irq(irq);

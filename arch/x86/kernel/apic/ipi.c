@@ -39,7 +39,7 @@ void default_send_IPI_mask_sequence_phys(const struct cpumask *mask, int vector)
 void default_send_IPI_mask_allbutself_phys(const struct cpumask *mask,
 						 int vector)
 {
-	unsigned int this_cpu = smp_processor_id();
+	unsigned int this_cpu = raw_smp_processor_id();
 	unsigned int query_cpu;
 	unsigned long flags;
 
@@ -82,7 +82,7 @@ void default_send_IPI_mask_allbutself_logical(const struct cpumask *mask,
 {
 	unsigned long flags;
 	unsigned int query_cpu;
-	unsigned int this_cpu = smp_processor_id();
+	unsigned int this_cpu = raw_smp_processor_id();
 
 	/* See Hack comment above */
 
@@ -148,14 +148,14 @@ static int convert_apicid_to_cpu(int apic_id)
 	return -1;
 }
 
-int safe_smp_processor_id(void)
+int safe_raw_smp_processor_id(void)
 {
 	int apicid, cpuid;
 
 	if (!cpu_has_apic)
 		return 0;
 
-	apicid = hard_smp_processor_id();
+	apicid = hard_raw_smp_processor_id();
 	if (apicid == BAD_APICID)
 		return 0;
 

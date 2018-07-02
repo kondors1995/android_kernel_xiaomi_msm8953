@@ -45,7 +45,7 @@ __x2apic_send_IPI_mask(const struct cpumask *mask, int vector, int apic_dest)
 
 	local_irq_save(flags);
 
-	this_cpu = smp_processor_id();
+	this_cpu = raw_smp_processor_id();
 	for_each_cpu(query_cpu, mask) {
 		if (apic_dest == APIC_DEST_ALLBUT && this_cpu == query_cpu)
 			continue;

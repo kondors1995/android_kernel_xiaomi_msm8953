@@ -25,7 +25,7 @@ void gic_send_ipi_single(int cpu, unsigned int action)
 	unsigned int core = cpu_data[cpu].core;
 
 	pr_debug("CPU%d: %s cpu %d action %u status %08x\n",
-		 smp_processor_id(), __func__, cpu, action, read_c0_status());
+		 raw_smp_processor_id(), __func__, cpu, action, read_c0_status());
 
 	local_irq_save(flags);
 

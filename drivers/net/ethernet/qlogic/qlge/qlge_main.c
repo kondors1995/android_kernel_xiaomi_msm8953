@@ -2540,7 +2540,7 @@ static irqreturn_t qlge_isr(int irq, void *dev_id)
 			  "Got MPI processor interrupt.\n");
 		ql_disable_completion_interrupt(qdev, intr_context->intr);
 		ql_write32(qdev, INTR_MASK, (INTR_MASK_PI << 16));
-		queue_delayed_work_on(smp_processor_id(),
+		queue_delayed_work_on(raw_smp_processor_id(),
 				qdev->workqueue, &qdev->mpi_work, 0);
 		work_done++;
 	}

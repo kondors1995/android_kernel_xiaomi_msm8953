@@ -125,7 +125,7 @@ void pat_init(void)
 
 	if (boot_cpu)
 		printk(KERN_INFO "x86 PAT enabled: cpu %d, old 0x%Lx, new 0x%Lx\n",
-		       smp_processor_id(), boot_pat_state, pat);
+		       raw_smp_processor_id(), boot_pat_state, pat);
 }
 
 #undef PAT

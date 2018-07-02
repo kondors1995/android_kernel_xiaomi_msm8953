@@ -111,7 +111,7 @@ processor_get_freq (
 
 	saved_mask = current->cpus_allowed;
 	set_cpus_allowed_ptr(current, cpumask_of(cpu));
-	if (smp_processor_id() != cpu)
+	if (raw_smp_processor_id() != cpu)
 		goto migrate_end;
 
 	/* processor_get_pstate gets the instantaneous frequency */
@@ -148,7 +148,7 @@ processor_set_freq (
 
 	saved_mask = current->cpus_allowed;
 	set_cpus_allowed_ptr(current, cpumask_of(policy->cpu));
-	if (smp_processor_id() != policy->cpu) {
+	if (raw_smp_processor_id() != policy->cpu) {
 		retval = -EAGAIN;
 		goto migrate_end;
 	}

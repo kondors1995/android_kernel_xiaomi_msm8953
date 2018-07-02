@@ -126,7 +126,7 @@ void *per_cpu_init(void)
 		cpu_data += PERCPU_PAGE_SIZE;
 	}
 skip:
-	return __per_cpu_start + __per_cpu_offset[smp_processor_id()];
+	return __per_cpu_start + __per_cpu_offset[raw_smp_processor_id()];
 }
 
 static inline void

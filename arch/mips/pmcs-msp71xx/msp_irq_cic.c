@@ -88,7 +88,7 @@ static void unmask_cic_irq(struct irq_data *d)
 	* Make sure we have IRQ affinity.  It may have changed while
 	* we were processing the IRQ.
 	*/
-	if (!cpumask_test_cpu(smp_processor_id(), d->affinity))
+	if (!cpumask_test_cpu(raw_smp_processor_id(), d->affinity))
 		return;
 #endif
 

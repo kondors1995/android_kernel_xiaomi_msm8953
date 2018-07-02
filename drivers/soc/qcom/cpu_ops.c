@@ -143,9 +143,9 @@ static int msm8953_cpu_boot(unsigned int cpu)
 #ifdef CONFIG_HOTPLUG_CPU
 static void msm8953_wfi_cpu_die(unsigned int cpu)
 {
-	if (unlikely(cpu != smp_processor_id())) {
+	if (unlikely(cpu != raw_smp_processor_id())) {
 		pr_crit("%s: running on %u, should be %u\n",
-			__func__, smp_processor_id(), cpu);
+			__func__, raw_smp_processor_id(), cpu);
 		BUG();
 	}
 	for (;;) {
@@ -176,9 +176,9 @@ static int msm8937_cpu_boot(unsigned int cpu)
 #ifdef CONFIG_HOTPLUG_CPU
 static void msm8937_wfi_cpu_die(unsigned int cpu)
 {
-	if (unlikely(cpu != smp_processor_id())) {
+	if (unlikely(cpu != raw_smp_processor_id())) {
 		pr_crit("%s: running on %u, should be %u\n",
-			__func__, smp_processor_id(), cpu);
+			__func__, raw_smp_processor_id(), cpu);
 		BUG();
 	}
 	for (;;) {
@@ -232,9 +232,9 @@ void msm_cpu_postboot(void)
 #ifdef CONFIG_HOTPLUG_CPU
 static void msm_wfi_cpu_die(unsigned int cpu)
 {
-	if (unlikely(cpu != smp_processor_id())) {
+	if (unlikely(cpu != raw_smp_processor_id())) {
 		pr_crit("%s: running on %u, should be %u\n",
-			__func__, smp_processor_id(), cpu);
+			__func__, raw_smp_processor_id(), cpu);
 		BUG();
 	}
 	for (;;) {

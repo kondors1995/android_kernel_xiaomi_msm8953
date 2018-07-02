@@ -143,7 +143,7 @@ static inline void __cpuidle_unset_driver(struct cpuidle_driver *drv)
  */
 static void cpuidle_setup_broadcast_timer(void *arg)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	clockevents_notify((long)(arg), &cpu);
 }
 

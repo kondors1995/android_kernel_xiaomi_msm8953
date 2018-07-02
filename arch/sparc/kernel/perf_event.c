@@ -1557,7 +1557,7 @@ void perf_event_print_debug(void)
 
 	local_irq_save(flags);
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	pr_info("\n");
 	for (i = 0; i < sparc_pmu->num_pcrs; i++)

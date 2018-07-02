@@ -1976,7 +1976,7 @@ void esas2r_queue_fw_event(struct esas2r_adapter *a,
 	list_add_tail(&fw_event->list, &a->fw_event_list);
 	INIT_DELAYED_WORK(&fw_event->work, esas2r_firmware_event_work);
 	queue_delayed_work_on(
-		smp_processor_id(), a->fw_event_q, &fw_event->work,
+		raw_smp_processor_id(), a->fw_event_q, &fw_event->work,
 		msecs_to_jiffies(1));
 	spin_unlock_irqrestore(&a->fw_event_lock, flags);
 }

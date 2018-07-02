@@ -97,7 +97,7 @@ static int ohci_hcd_tilegx_drv_probe(struct platform_device *pdev)
 	struct usb_hcd *hcd;
 	struct tilegx_usb_platform_data *pdata = dev_get_platdata(&pdev->dev);
 	pte_t pte = { 0 };
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	int ret;
 
 	if (usb_disabled())

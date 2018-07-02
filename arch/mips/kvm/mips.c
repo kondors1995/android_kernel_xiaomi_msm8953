@@ -107,7 +107,7 @@ static void kvm_mips_init_tlbs(struct kvm *kvm)
 	mtc0_tlbw_hazard();
 	kvm->arch.commpage_tlb = wired;
 
-	kvm_debug("[%d] commpage TLB: %d\n", smp_processor_id(),
+	kvm_debug("[%d] commpage TLB: %d\n", raw_smp_processor_id(),
 		  kvm->arch.commpage_tlb);
 }
 

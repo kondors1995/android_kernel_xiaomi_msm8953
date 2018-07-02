@@ -142,7 +142,7 @@ void native_send_call_func_ipi(const struct cpumask *mask)
 	}
 
 	cpumask_copy(allbutself, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), allbutself);
+	cpumask_clear_cpu(raw_smp_processor_id(), allbutself);
 
 	if (cpumask_equal(mask, allbutself) &&
 	    cpumask_equal(cpu_online_mask, cpu_callout_mask))
@@ -200,7 +200,7 @@ static void native_stop_other_cpus(int wait)
 	 */
 	if (num_online_cpus() > 1) {
 		/* did someone beat us here? */
-		if (atomic_cmpxchg(&stopping_cpu, -1, safe_smp_processor_id()) != -1)
+		if (atomic_cmpxchg(&stopping_cpu, -1, safe_raw_smp_processor_id()) != -1)
 			return;
 
 		/* sync above data before sending IRQ */

@@ -23,7 +23,7 @@ void doorbell_setup_this_cpu(void)
 {
 	unsigned long tag = mfspr(SPRN_DOORBELL_CPUTAG) & PPC_DBELL_TAG_MASK;
 
-	smp_muxed_ipi_set_data(smp_processor_id(), tag);
+	smp_muxed_ipi_set_data(raw_smp_processor_id(), tag);
 }
 
 void doorbell_cause_ipi(int cpu, unsigned long data)

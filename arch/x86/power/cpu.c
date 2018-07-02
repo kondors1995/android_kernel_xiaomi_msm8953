@@ -71,7 +71,7 @@ static void __save_processor_state(struct saved_context *ctxt)
 	 * 'pmode_gdt' in wakeup_start.
 	 */
 	ctxt->gdt_desc.size = GDT_SIZE - 1;
-	ctxt->gdt_desc.address = (unsigned long)get_cpu_gdt_table(smp_processor_id());
+	ctxt->gdt_desc.address = (unsigned long)get_cpu_gdt_table(raw_smp_processor_id());
 
 	store_tr(ctxt->tr);
 
@@ -134,7 +134,7 @@ static void do_fpu_end(void)
 
 static void fix_processor_context(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct tss_struct *t = &per_cpu(init_tss, cpu);
 #ifdef CONFIG_X86_64
 	struct desc_struct *desc = get_cpu_gdt_table(cpu);

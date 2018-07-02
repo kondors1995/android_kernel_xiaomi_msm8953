@@ -439,7 +439,7 @@ char *gru_get_cb_exception_detail_str(int ret, void *cb,
 		gru_get_cb_exception_detail(cb, &excdet);
 		snprintf(buf, size,
 			"GRU:%d exception: cb %p, opc %d, exopc %d, ecause 0x%x,"
-			"excdet0 0x%lx, excdet1 0x%x", smp_processor_id(),
+			"excdet0 0x%lx, excdet1 0x%x", raw_smp_processor_id(),
 			gen, excdet.opc, excdet.exopc, excdet.ecause,
 			excdet.exceptdet0, excdet.exceptdet1);
 	} else {
@@ -964,24 +964,24 @@ static int quicktest0(unsigned long arg)
 
 	gru_vload(cb, uv_gpa(&word0), gru_get_tri(dsr), XTYPE_DW, 1, 1, IMA);
 	if (gru_wait(cb) != CBS_IDLE) {
-		printk(KERN_DEBUG "GRU:%d quicktest0: CBR failure 1\n", smp_processor_id());
+		printk(KERN_DEBUG "GRU:%d quicktest0: CBR failure 1\n", raw_smp_processor_id());
 		goto done;
 	}
 
 	if (*p != MAGIC) {
-		printk(KERN_DEBUG "GRU:%d quicktest0 bad magic 0x%lx\n", smp_processor_id(), *p);
+		printk(KERN_DEBUG "GRU:%d quicktest0 bad magic 0x%lx\n", raw_smp_processor_id(), *p);
 		goto done;
 	}
 	gru_vstore(cb, uv_gpa(&word1), gru_get_tri(dsr), XTYPE_DW, 1, 1, IMA);
 	if (gru_wait(cb) != CBS_IDLE) {
-		printk(KERN_DEBUG "GRU:%d quicktest0: CBR failure 2\n", smp_processor_id());
+		printk(KERN_DEBUG "GRU:%d quicktest0: CBR failure 2\n", raw_smp_processor_id());
 		goto done;
 	}
 
 	if (word0 != word1 || word1 != MAGIC) {
 		printk(KERN_DEBUG
 		       "GRU:%d quicktest0 err: found 0x%lx, expected 0x%lx\n",
-		     smp_processor_id(), word1, MAGIC);
+		     raw_smp_processor_id(), word1, MAGIC);
 		goto done;
 	}
 	ret = 0;
@@ -1020,7 +1020,7 @@ static int quicktest1(unsigned long arg)
 	}
 	if (ret != MQE_QUEUE_FULL || i != 4) {
 		printk(KERN_DEBUG "GRU:%d quicktest1: unexpect status %d, i %d\n",
-		       smp_processor_id(), ret, i);
+		       raw_smp_processor_id(), ret, i);
 		goto done;
 	}
 
@@ -1032,7 +1032,7 @@ static int quicktest1(unsigned long arg)
 	}
 	if (i != 4) {
 		printk(KERN_DEBUG "GRU:%d quicktest2: bad message, i %d, m %p, m8 %d\n",
-			smp_processor_id(), i, m, m ? m[8] : -1);
+			raw_smp_processor_id(), i, m, m ? m[8] : -1);
 		goto done;
 	}
 	ret = 0;
@@ -1083,12 +1083,12 @@ static int quicktest2(unsigned long arg)
 		if (i == numcb)
 			continue;
 		if (istatus != CBS_IDLE) {
-			printk(KERN_DEBUG "GRU:%d quicktest2: cb %d, exception\n", smp_processor_id(), i);
+			printk(KERN_DEBUG "GRU:%d quicktest2: cb %d, exception\n", raw_smp_processor_id(), i);
 			ret = -EFAULT;
 		} else if (buf[4 * i] || buf[4 * i + 1] || buf[4 * i + 2] ||
 				buf[4 * i + 3]) {
 			printk(KERN_DEBUG "GRU:%d quicktest2:cb %d,  buf 0x%lx, 0x%lx, 0x%lx, 0x%lx\n",
-			       smp_processor_id(), i, buf[4 * i], buf[4 * i + 1], buf[4 * i + 2], buf[4 * i + 3]);
+			       raw_smp_processor_id(), i, buf[4 * i], buf[4 * i + 1], buf[4 * i + 2], buf[4 * i + 3]);
 			ret = -EIO;
 		}
 		k--;
@@ -1114,7 +1114,7 @@ static int quicktest3(unsigned long arg)
 	memset(buf1, get_cycles() & 255, sizeof(buf1));
 	gru_copy_gpa(uv_gpa(buf2), uv_gpa(buf1), BUFSIZE);
 	if (memcmp(buf1, buf2, BUFSIZE)) {
-		printk(KERN_DEBUG "GRU:%d quicktest3 error\n", smp_processor_id());
+		printk(KERN_DEBUG "GRU:%d quicktest3 error\n", raw_smp_processor_id());
 		ret = -EIO;
 	}
 	return ret;

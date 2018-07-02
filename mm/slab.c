@@ -1660,7 +1660,7 @@ static void store_stackinfo(struct kmem_cache *cachep, unsigned long *addr,
 
 	*addr++ = 0x12345678;
 	*addr++ = caller;
-	*addr++ = smp_processor_id();
+	*addr++ = raw_smp_processor_id();
 	size -= 3 * sizeof(unsigned long);
 	{
 		unsigned long *sptr = &caller;

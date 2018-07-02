@@ -217,7 +217,7 @@ static DEFINE_RAW_SPINLOCK(tlbivax_lock);
 static int mm_is_core_local(struct mm_struct *mm)
 {
 	return cpumask_subset(mm_cpumask(mm),
-			      topology_thread_cpumask(smp_processor_id()));
+			      topology_thread_cpumask(raw_smp_processor_id()));
 }
 
 struct tlb_flush_param {
@@ -268,7 +268,7 @@ void flush_tlb_mm(struct mm_struct *mm)
 		goto no_context;
 	if (!mm_is_core_local(mm)) {
 		struct tlb_flush_param p = { .pid = pid };
-		/* Ignores smp_processor_id() even if set. */
+		/* Ignores raw_smp_processor_id() even if set. */
 		smp_call_function_many(mm_cpumask(mm),
 				       do_flush_tlb_mm_ipi, &p, 1);
 	}
@@ -306,7 +306,7 @@ void __flush_tlb_page(struct mm_struct *mm, unsigned long vmaddr,
 				.tsize = tsize,
 				.ind = ind,
 			};
-			/* Ignores smp_processor_id() even if set in cpu_mask */
+			/* Ignores raw_smp_processor_id() even if set in cpu_mask */
 			smp_call_function_many(cpu_mask,
 					       do_flush_tlb_page_ipi, &p, 1);
 		}

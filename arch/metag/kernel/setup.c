@@ -223,7 +223,7 @@ void __init setup_arch(char **cmdline_p)
 {
 	unsigned long start_pfn;
 	unsigned long text_start = (unsigned long)(&_stext);
-	unsigned long cpu = smp_processor_id();
+	unsigned long cpu = raw_smp_processor_id();
 	unsigned long heap_start, heap_end;
 	unsigned long start_pte;
 	PTBI _pTBI;
@@ -396,8 +396,8 @@ void __init setup_arch(char **cmdline_p)
 	setup_priv();
 
 	/* Setup the boot cpu's mapping. The rest will be setup below. */
-	cpu_2_hwthread_id[smp_processor_id()] = hard_processor_id();
-	hwthread_id_2_cpu[hard_processor_id()] = smp_processor_id();
+	cpu_2_hwthread_id[raw_smp_processor_id()] = hard_processor_id();
+	hwthread_id_2_cpu[hard_processor_id()] = raw_smp_processor_id();
 
 	unflatten_and_copy_device_tree();
 

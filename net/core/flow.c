@@ -362,7 +362,7 @@ void flow_cache_flush(struct net *net)
 	init_completion(&info.completion);
 
 	local_bh_disable();
-	self = cpumask_test_and_clear_cpu(smp_processor_id(), mask);
+	self = cpumask_test_and_clear_cpu(raw_smp_processor_id(), mask);
 	on_each_cpu_mask(mask, flow_cache_flush_per_cpu, &info, 0);
 	if (self)
 		flow_cache_flush_tasklet((unsigned long)&info);

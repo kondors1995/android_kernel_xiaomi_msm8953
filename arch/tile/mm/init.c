@@ -108,7 +108,7 @@ static int initial_heap_home(void)
 {
 	if (hash_default)
 		return PAGE_HOME_HASH;
-	return smp_processor_id();
+	return raw_smp_processor_id();
 }
 
 /*
@@ -408,7 +408,7 @@ static void __init kernel_physical_mapping_init(pgd_t *pgd_base)
 	pmd_t *pmd;
 	pte_t *pte;
 	int pte_ofs;
-	const struct cpumask *my_cpu_mask = cpumask_of(smp_processor_id());
+	const struct cpumask *my_cpu_mask = cpumask_of(raw_smp_processor_id());
 	struct cpumask kstripe_mask;
 	int rc, i;
 
@@ -502,9 +502,9 @@ static void __init kernel_physical_mapping_init(pgd_t *pgd_base)
 		}
 		if (cpumask_empty(&ktext_mask)) {
 			pr_warning("ktext: no valid cpus; caching on %d.\n",
-				   smp_processor_id());
+				   raw_smp_processor_id());
 			cpumask_copy(&ktext_mask,
-				     cpumask_of(smp_processor_id()));
+				     cpumask_of(raw_smp_processor_id()));
 		}
 	}
 

@@ -460,7 +460,7 @@ static int i7300_idle_notifier(struct notifier_block *nb, unsigned long val,
 	raw_spin_lock_irqsave(&i7300_idle_lock, flags);
 	if (val == IDLE_START) {
 
-		cpumask_set_cpu(smp_processor_id(), idle_cpumask);
+		cpumask_set_cpu(raw_smp_processor_id(), idle_cpumask);
 
 		if (cpumask_weight(idle_cpumask) != num_online_cpus())
 			goto end;
@@ -479,7 +479,7 @@ static int i7300_idle_notifier(struct notifier_block *nb, unsigned long val,
 		i7300_idle_ioat_start();
 
 	} else if (val == IDLE_END) {
-		cpumask_clear_cpu(smp_processor_id(), idle_cpumask);
+		cpumask_clear_cpu(raw_smp_processor_id(), idle_cpumask);
 		if (cpumask_weight(idle_cpumask) == (num_online_cpus() - 1)) {
 			/* First CPU coming out of idle */
 			u64 idle_duration_us;

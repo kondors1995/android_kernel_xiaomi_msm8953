@@ -490,7 +490,7 @@ void kgdb_arch_exit(void)
 #ifdef CONFIG_SMP
 void debugger_nmi_interrupt(struct pt_regs *regs, enum exception_code code)
 {
-	kgdb_nmicallback(arch_smp_processor_id(), regs);
+	kgdb_nmicallback(arch_raw_smp_processor_id(), regs);
 	debugger_local_cache_flushinv();
 }
 

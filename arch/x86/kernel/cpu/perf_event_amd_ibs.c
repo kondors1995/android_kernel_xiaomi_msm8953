@@ -722,13 +722,13 @@ static inline int ibs_eilvt_valid(void)
 
 	if (!(val & IBSCTL_LVT_OFFSET_VALID)) {
 		pr_err(FW_BUG "cpu %d, invalid IBS interrupt offset %d (MSR%08X=0x%016llx)\n",
-		       smp_processor_id(), offset, MSR_AMD64_IBSCTL, val);
+		       raw_smp_processor_id(), offset, MSR_AMD64_IBSCTL, val);
 		goto out;
 	}
 
 	if (!get_eilvt(offset)) {
 		pr_err(FW_BUG "cpu %d, IBS interrupt offset %d not available (MSR%08X=0x%016llx)\n",
-		       smp_processor_id(), offset, MSR_AMD64_IBSCTL, val);
+		       raw_smp_processor_id(), offset, MSR_AMD64_IBSCTL, val);
 		goto out;
 	}
 
@@ -853,7 +853,7 @@ static void setup_APIC_ibs(void *dummy)
 		return;
 failed:
 	pr_warn("perf: IBS APIC setup failed on cpu #%d\n",
-		smp_processor_id());
+		raw_smp_processor_id());
 }
 
 static void clear_APIC_ibs(void *dummy)

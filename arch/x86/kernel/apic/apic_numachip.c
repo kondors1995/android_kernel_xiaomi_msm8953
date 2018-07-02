@@ -118,7 +118,7 @@ static void numachip_send_IPI_mask(const struct cpumask *mask, int vector)
 static void numachip_send_IPI_mask_allbutself(const struct cpumask *mask,
 						int vector)
 {
-	unsigned int this_cpu = smp_processor_id();
+	unsigned int this_cpu = raw_smp_processor_id();
 	unsigned int cpu;
 
 	for_each_cpu(cpu, mask) {
@@ -129,7 +129,7 @@ static void numachip_send_IPI_mask_allbutself(const struct cpumask *mask,
 
 static void numachip_send_IPI_allbutself(int vector)
 {
-	unsigned int this_cpu = smp_processor_id();
+	unsigned int this_cpu = raw_smp_processor_id();
 	unsigned int cpu;
 
 	for_each_online_cpu(cpu) {
@@ -169,7 +169,7 @@ static void fixup_cpu_id(struct cpuinfo_x86 *c, int node)
 
 	if (c->phys_proc_id != node) {
 		c->phys_proc_id = node;
-		per_cpu(cpu_llc_id, smp_processor_id()) = node;
+		per_cpu(cpu_llc_id, raw_smp_processor_id()) = node;
 	}
 }
 

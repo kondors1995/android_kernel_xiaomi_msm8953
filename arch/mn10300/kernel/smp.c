@@ -334,7 +334,7 @@ static void send_IPI_mask(const cpumask_t *cpumask, int irq)
  */
 void send_IPI_self(int irq)
 {
-	send_IPI_mask(cpumask_of(smp_processor_id()), irq);
+	send_IPI_mask(cpumask_of(raw_smp_processor_id()), irq);
 }
 
 /**
@@ -350,7 +350,7 @@ void send_IPI_allbutself(int irq)
 	cpumask_t cpumask;
 
 	cpumask_copy(&cpumask, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), &cpumask);
+	cpumask_clear_cpu(raw_smp_processor_id(), &cpumask);
 	send_IPI_mask(&cpumask, irq);
 }
 
@@ -401,7 +401,7 @@ int smp_nmi_call_function(smp_call_func_t func, void *info, int wait)
 	data.func = func;
 	data.info = info;
 	cpumask_copy(&data.started, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), &data.started);
+	cpumask_clear_cpu(raw_smp_processor_id(), &data.started);
 	data.wait = wait;
 	if (wait)
 		data.finished = data.started;
@@ -475,16 +475,16 @@ void stop_this_cpu(void *unused)
 	/* In case of single stepping smp_send_stop by other CPU,
 	 * clear procindebug to avoid deadlock.
 	 */
-	atomic_set(&procindebug[smp_processor_id()], 0);
+	atomic_set(&procindebug[raw_smp_processor_id()], 0);
 #endif	/* CONFIG_GDBSTUB */
 
 	flags = arch_local_cli_save();
-	set_cpu_online(smp_processor_id(), false);
+	set_cpu_online(raw_smp_processor_id(), false);
 
 	while (!stopflag)
 		cpu_relax();
 
-	set_cpu_online(smp_processor_id(), true);
+	set_cpu_online(raw_smp_processor_id(), true);
 	arch_local_irq_restore(flags);
 }
 
@@ -536,12 +536,12 @@ void smp_nmi_call_function_interrupt(void)
 	 * execute the function
 	 */
 	smp_mb();
-	cpumask_clear_cpu(smp_processor_id(), &nmi_call_data->started);
+	cpumask_clear_cpu(raw_smp_processor_id(), &nmi_call_data->started);
 	(*func)(info);
 
 	if (wait) {
 		smp_mb();
-		cpumask_clear_cpu(smp_processor_id(),
+		cpumask_clear_cpu(raw_smp_processor_id(),
 				  &nmi_call_data->finished);
 	}
 }
@@ -579,7 +579,7 @@ void __init smp_init_cpus(void)
 static void __init smp_cpu_init(void)
 {
 	unsigned long flags;
-	int cpu_id = smp_processor_id();
+	int cpu_id = raw_smp_processor_id();
 	u16 tmp16;
 
 	if (test_and_set_bit(cpu_id, &cpu_initialized)) {
@@ -665,7 +665,7 @@ int __init start_secondary(void *unused)
 {
 	smp_cpu_init();
 	smp_callin();
-	while (!cpumask_test_cpu(smp_processor_id(), &smp_commenced_mask))
+	while (!cpumask_test_cpu(raw_smp_processor_id(), &smp_commenced_mask))
 		cpu_relax();
 
 	local_flush_tlb();
@@ -839,7 +839,7 @@ static void __init smp_callin(void)
 	unsigned long timeout;
 	int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	timeout = jiffies + (2 * HZ);
 
 	if (cpumask_test_cpu(cpu, &cpu_callin_map)) {
@@ -880,7 +880,7 @@ static void __init smp_online(void)
 {
 	int cpu;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	notify_cpu_starting(cpu);
 
@@ -989,7 +989,7 @@ subsys_initcall(topology_init);
 
 int __cpu_disable(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	if (cpu == 0)
 		return -EBUSY;
 
@@ -1111,7 +1111,7 @@ static int hotplug_cpu_nmi_call_function(cpumask_t cpumask,
 
 static void restart_wakeup_cpu(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	cpumask_set_cpu(cpu, &cpu_callin_map);
 	local_flush_tlb();
@@ -1121,7 +1121,7 @@ static void restart_wakeup_cpu(void)
 
 static void prepare_sleep_cpu(void *unused)
 {
-	sleep_mode[smp_processor_id()] = 1;
+	sleep_mode[raw_smp_processor_id()] = 1;
 	smp_mb();
 	mn10300_local_dcache_flush_inv();
 	hotplug_cpu_disable_cache();
@@ -1131,7 +1131,7 @@ static void prepare_sleep_cpu(void *unused)
 /* when this function called, IE=0, NMID=0. */
 static void sleep_cpu(void *unused)
 {
-	unsigned int cpu_id = smp_processor_id();
+	unsigned int cpu_id = raw_smp_processor_id();
 	/*
 	 * CALL_FUNCTION_NMI_IPI for wakeup_cpu() shall not be requested,
 	 * before this cpu goes in SLEEP mode.
@@ -1161,7 +1161,7 @@ static void wakeup_cpu(void)
 	hotplug_cpu_invalidate_cache();
 	hotplug_cpu_enable_cache();
 	smp_mb();
-	sleep_mode[smp_processor_id()] = 0;
+	sleep_mode[raw_smp_processor_id()] = 0;
 }
 
 static void run_wakeup_cpu(unsigned int cpu)

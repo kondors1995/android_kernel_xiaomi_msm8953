@@ -64,7 +64,7 @@ struct intel_uncore_box *uncore_event_to_box(struct perf_event *event)
 	 * perf core schedules event on the basis of cpu, uncore events are
 	 * collected by one of the cpus inside a physical package.
 	 */
-	return uncore_pmu_to_box(uncore_event_to_pmu(event), smp_processor_id());
+	return uncore_pmu_to_box(uncore_event_to_pmu(event), raw_smp_processor_id());
 }
 
 u64 uncore_msr_read_counter(struct intel_uncore_box *box, struct perf_event *event)
@@ -206,7 +206,7 @@ static enum hrtimer_restart uncore_pmu_hrtimer(struct hrtimer *hrtimer)
 	int bit;
 
 	box = container_of(hrtimer, struct intel_uncore_box, hrtimer);
-	if (!box->n_active || box->cpu != smp_processor_id())
+	if (!box->n_active || box->cpu != raw_smp_processor_id())
 		return HRTIMER_NORESTART;
 	/*
 	 * disable local interrupt to prevent uncore_pmu_event_start/stop
@@ -1196,7 +1196,7 @@ static struct notifier_block uncore_cpu_nb = {
 
 static void __init uncore_cpu_setup(void *dummy)
 {
-	uncore_cpu_starting(smp_processor_id());
+	uncore_cpu_starting(raw_smp_processor_id());
 }
 
 static int __init uncore_cpu_init(void)

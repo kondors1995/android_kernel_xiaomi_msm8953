@@ -340,7 +340,7 @@ static void handle_break(struct pt_regs *regs)
 
 static void default_trap(int code, struct pt_regs *regs)
 {
-	printk(KERN_ERR "Trap %d on CPU %d\n", code, smp_processor_id());
+	printk(KERN_ERR "Trap %d on CPU %d\n", code, raw_smp_processor_id());
 	show_regs(regs);
 }
 

@@ -68,7 +68,7 @@ EXPORT_SYMBOL(touch_nmi_watchdog);
 
 static void die_nmi(const char *str, struct pt_regs *regs, int do_panic)
 {
-	int this_cpu = smp_processor_id();
+	int this_cpu = raw_smp_processor_id();
 
 	if (notify_die(DIE_NMIWATCHDOG, str, regs, 0,
 		       pt_regs_trap_type(regs), SIGINT) == NOTIFY_STOP)

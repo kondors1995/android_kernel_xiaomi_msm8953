@@ -190,7 +190,7 @@ static int power_saving_thread(void *data)
 				lapic_marked_unstable = 1;
 			}
 			local_irq_disable();
-			cpu = smp_processor_id();
+			cpu = raw_smp_processor_id();
 			if (lapic_marked_unstable)
 				clockevents_notify(
 					CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &cpu);

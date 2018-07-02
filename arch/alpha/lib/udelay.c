@@ -5,7 +5,7 @@
  */
 
 #include <linux/module.h>
-#include <linux/sched.h> /* for udelay's use of smp_processor_id */
+#include <linux/sched.h> /* for udelay's use of raw_smp_processor_id */
 #include <asm/param.h>
 #include <asm/smp.h>
 #include <linux/delay.h>
@@ -32,7 +32,7 @@ __delay(int loops)
 }
 
 #ifdef CONFIG_SMP
-#define LPJ	 cpu_data[smp_processor_id()].loops_per_jiffy
+#define LPJ	 cpu_data[raw_smp_processor_id()].loops_per_jiffy
 #else
 #define LPJ	 loops_per_jiffy
 #endif

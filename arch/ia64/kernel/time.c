@@ -38,7 +38,7 @@ struct fsyscall_gtod_data_t fsyscall_gtod_data;
 
 struct itc_jitter_data_t itc_jitter_data;
 
-volatile int time_keeper_id = 0; /* smp_processor_id() of time-keeper */
+volatile int time_keeper_id = 0; /* raw_smp_processor_id() of time-keeper */
 
 #ifdef CONFIG_IA64_DEBUG_IRQ
 
@@ -150,7 +150,7 @@ timer_interrupt (int irq, void *dev_id)
 {
 	unsigned long new_itm;
 
-	if (cpu_is_offline(smp_processor_id())) {
+	if (cpu_is_offline(raw_smp_processor_id())) {
 		return IRQ_HANDLED;
 	}
 
@@ -172,7 +172,7 @@ timer_interrupt (int irq, void *dev_id)
 
 		new_itm += local_cpu_data->itm_delta;
 
-		if (smp_processor_id() == time_keeper_id)
+		if (raw_smp_processor_id() == time_keeper_id)
 			xtime_update(1);
 
 		local_cpu_data->itm_next = new_itm;
@@ -213,7 +213,7 @@ skip_process_time_accounting:
 void
 ia64_cpu_local_tick (void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	unsigned long shift = 0, delta;
 
 	/* arrange for the cycle counter to generate a timer interrupt: */
@@ -288,7 +288,7 @@ void ia64_init_itm(void)
 
 	local_cpu_data->itm_delta = (itc_freq + HZ/2) / HZ;
 	printk(KERN_DEBUG "CPU %d: base freq=%lu.%03luMHz, ITC ratio=%u/%u, "
-	       "ITC freq=%lu.%03luMHz", smp_processor_id(),
+	       "ITC freq=%lu.%03luMHz", raw_smp_processor_id(),
 	       platform_base_freq / 1000000, (platform_base_freq / 1000) % 1000,
 	       itc_ratio.num, itc_ratio.den, itc_freq / 1000000, (itc_freq / 1000) % 1000);
 
@@ -337,7 +337,7 @@ void ia64_init_itm(void)
 		 */
 		clocksource_itc.rating = 50;
 
-	paravirt_init_missing_ticks_accounting(smp_processor_id());
+	paravirt_init_missing_ticks_accounting(raw_smp_processor_id());
 
 	/* avoid softlock up message when cpu is unplug and plugged again. */
 	touch_softlockup_watchdog();

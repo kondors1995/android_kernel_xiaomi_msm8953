@@ -610,7 +610,7 @@ void sb1_dma_init(void)
 void clear_page(void *page)
 {
 	u64 to_phys = CPHYSADDR((unsigned long)page);
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	/* if the page is not in KSEG0, use old way */
 	if ((long)KSEGX((unsigned long)page) != (long)CKSEG0)
@@ -635,7 +635,7 @@ void copy_page(void *to, void *from)
 {
 	u64 from_phys = CPHYSADDR((unsigned long)from);
 	u64 to_phys = CPHYSADDR((unsigned long)to);
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	/* if any page is not in KSEG0, use old way */
 	if ((long)KSEGX((unsigned long)to) != (long)CKSEG0

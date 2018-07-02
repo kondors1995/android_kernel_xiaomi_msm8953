@@ -242,7 +242,7 @@ static u64 new_context(struct mm_struct *mm, unsigned int cpu)
 void check_and_switch_context(struct mm_struct *mm, struct task_struct *tsk)
 {
 	unsigned long flags;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	u64 asid;
 
 	if (unlikely(mm->context.vmalloc_seq != init_mm.context.vmalloc_seq))

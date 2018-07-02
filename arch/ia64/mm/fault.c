@@ -24,7 +24,7 @@ static inline int notify_page_fault(struct pt_regs *regs, int trap)
 	int ret = 0;
 
 	if (!user_mode(regs)) {
-		/* kprobe_running() needs smp_processor_id() */
+		/* kprobe_running() needs raw_smp_processor_id() */
 		preempt_disable();
 		if (kprobe_running() && kprobe_fault_handler(regs, trap))
 			ret = 1;

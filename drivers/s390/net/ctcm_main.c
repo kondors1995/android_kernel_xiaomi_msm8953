@@ -674,7 +674,7 @@ static int ctcmpc_transmit_skb(struct channel *ch, struct sk_buff *skb)
 	unsigned long saveflags = 0;	/* avoids compiler warning */
 
 	CTCM_PR_DEBUG("Enter %s: %s, cp=%i ch=0x%p id=%s state=%s\n",
-			__func__, dev->name, smp_processor_id(), ch,
+			__func__, dev->name, raw_smp_processor_id(), ch,
 					ch->id, fsm_getstate_str(ch->fsm));
 
 	if ((fsm_getstate(ch->fsm) != CTC_STATE_TXIDLE) || grp->in_sweep) {

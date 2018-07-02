@@ -62,7 +62,7 @@ do_page_fault(unsigned long address, struct pt_regs *regs,
 
 	D(printk(KERN_DEBUG
 		 "Page fault for %lX on %X at %lX, prot %d write %d\n",
-		 address, smp_processor_id(), instruction_pointer(regs),
+		 address, raw_smp_processor_id(), instruction_pointer(regs),
 		 protection, writeaccess));
 
 	tsk = current;
@@ -324,7 +324,7 @@ vmalloc_fault:
 		pmd_t *pmd, *pmd_k;
 		pte_t *pte_k;
 
-		pgd = (pgd_t *)per_cpu(current_pgd, smp_processor_id()) + offset;
+		pgd = (pgd_t *)per_cpu(current_pgd, raw_smp_processor_id()) + offset;
 		pgd_k = init_mm.pgd + offset;
 
 		/* Since we're two-level, we don't need to do both

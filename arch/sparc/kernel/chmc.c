@@ -592,7 +592,7 @@ static u64 chmc_read_mcreg(struct chmc *p, unsigned long offset)
 
 	preempt_disable();
 
-	this_cpu = real_hard_smp_processor_id();
+	this_cpu = real_hard_raw_smp_processor_id();
 
 	if (p->portid == this_cpu) {
 		__asm__ __volatile__("ldxa	[%1] %2, %0"
@@ -613,7 +613,7 @@ static u64 chmc_read_mcreg(struct chmc *p, unsigned long offset)
 #if 0 /* currently unused */
 static void chmc_write_mcreg(struct chmc *p, unsigned long offset, u64 val)
 {
-	if (p->portid == smp_processor_id()) {
+	if (p->portid == raw_smp_processor_id()) {
 		__asm__ __volatile__("stxa	%0, [%1] %2"
 				     : : "r" (val),
 				         "r" (offset), "i" (ASI_MCU_CTRL_REG));

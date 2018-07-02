@@ -518,7 +518,7 @@ static void *fill_in_one_cpu(struct device_node *dp, int cpuid, int arg)
 	 * real physical cpu the kernel booted onto, however
 	 * cpu_data() only has one entry at index 0.
 	 */
-	if (cpuid != real_hard_smp_processor_id())
+	if (cpuid != real_hard_raw_smp_processor_id())
 		return NULL;
 	cpuid = 0;
 #endif

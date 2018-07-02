@@ -1220,7 +1220,7 @@ const char *__elf_platform;
 void cpu_probe(void)
 {
 	struct cpuinfo_mips *c = &current_cpu_data;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	c->processor_id = PRID_IMP_UNKNOWN;
 	c->fpu_id	= FPIR_IMP_NONE;
@@ -1320,7 +1320,7 @@ void cpu_report(void)
 	struct cpuinfo_mips *c = &current_cpu_data;
 
 	pr_info("CPU%d revision is: %08x (%s)\n",
-		smp_processor_id(), c->processor_id, cpu_name_string());
+		raw_smp_processor_id(), c->processor_id, cpu_name_string());
 	if (c->options & MIPS_CPU_FPU)
 		printk(KERN_INFO "FPU revision is: %08x\n", c->fpu_id);
 	if (cpu_has_msa)

@@ -152,7 +152,7 @@ static int dtl_start(struct dtl *dtl)
 	 * buffer size to be passed in the second word of the buffer */
 	((u32 *)dtl->buf)[1] = DISPATCH_LOG_BYTES;
 
-	hwcpu = get_hard_smp_processor_id(dtl->cpu);
+	hwcpu = get_hard_raw_smp_processor_id(dtl->cpu);
 	addr = __pa(dtl->buf);
 	ret = register_dtl(hwcpu, addr);
 	if (ret) {
@@ -176,7 +176,7 @@ static int dtl_start(struct dtl *dtl)
 
 static void dtl_stop(struct dtl *dtl)
 {
-	int hwcpu = get_hard_smp_processor_id(dtl->cpu);
+	int hwcpu = get_hard_raw_smp_processor_id(dtl->cpu);
 
 	lppaca_of(dtl->cpu).dtl_enable_mask = 0x0;
 

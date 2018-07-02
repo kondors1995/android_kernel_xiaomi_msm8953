@@ -117,7 +117,7 @@ static void coupled_barrier(atomic_t *a, unsigned online)
 
 int cps_pm_enter_state(enum cps_pm_state state)
 {
-	unsigned cpu = smp_processor_id();
+	unsigned cpu = raw_smp_processor_id();
 	unsigned core = current_cpu_data.core;
 	unsigned online, left;
 	cpumask_t *coupled_mask = this_cpu_ptr(&online_coupled);

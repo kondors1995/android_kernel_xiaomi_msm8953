@@ -534,7 +534,7 @@ void __init acpi_numa_arch_fixup(void)
 	/* If there's no SRAT, fix the phys_id and mark node 0 online */
 	if (srat_num_cpus == 0) {
 		node_set_online(0);
-		node_cpuid[0].phys_id = hard_smp_processor_id();
+		node_cpuid[0].phys_id = hard_raw_smp_processor_id();
 		return;
 	}
 
@@ -683,9 +683,9 @@ int __init early_acpi_boot_init(void)
 #ifdef CONFIG_SMP
 	if (available_cpus == 0) {
 		printk(KERN_INFO "ACPI: Found 0 CPUS; assuming 1\n");
-		printk(KERN_INFO "CPU 0 (0x%04x)", hard_smp_processor_id());
+		printk(KERN_INFO "CPU 0 (0x%04x)", hard_raw_smp_processor_id());
 		smp_boot_data.cpu_phys_id[available_cpus] =
-		    hard_smp_processor_id();
+		    hard_raw_smp_processor_id();
 		available_cpus = 1;	/* We've got at least one of these, no? */
 	}
 	smp_boot_data.cpu_count = available_cpus;
@@ -765,7 +765,7 @@ int __init acpi_boot_init(void)
 		int cpu, i = 1;
 		for (cpu = 0; cpu < smp_boot_data.cpu_count; cpu++)
 			if (smp_boot_data.cpu_phys_id[cpu] !=
-			    hard_smp_processor_id())
+			    hard_raw_smp_processor_id())
 				node_cpuid[i++].phys_id =
 				    smp_boot_data.cpu_phys_id[cpu];
 	}

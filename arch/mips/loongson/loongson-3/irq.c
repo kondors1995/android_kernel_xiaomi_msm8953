@@ -55,7 +55,7 @@ static inline void mask_loongson_irq(struct irq_data *d)
 
 	/* Workaround: UART IRQ may deliver to any core */
 	if (d->irq == LOONGSON_UART_IRQ) {
-		int cpu = smp_processor_id();
+		int cpu = raw_smp_processor_id();
 		int node_id = cpu / loongson_sysconf.cores_per_node;
 		int core_id = cpu % loongson_sysconf.cores_per_node;
 		u64 intenclr_addr = smp_group[node_id] |
@@ -72,7 +72,7 @@ static inline void unmask_loongson_irq(struct irq_data *d)
 {
 	/* Workaround: UART IRQ may deliver to any core */
 	if (d->irq == LOONGSON_UART_IRQ) {
-		int cpu = smp_processor_id();
+		int cpu = raw_smp_processor_id();
 		int node_id = cpu / loongson_sysconf.cores_per_node;
 		int core_id = cpu % loongson_sysconf.cores_per_node;
 		u64 intenset_addr = smp_group[node_id] |

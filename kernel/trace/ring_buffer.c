@@ -2958,7 +2958,7 @@ void ring_buffer_discard_commit(struct ring_buffer *buffer,
 	/* The event is discarded regardless */
 	rb_event_discard(event);
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	cpu_buffer = buffer->buffers[cpu];
 
 	/*
@@ -4858,7 +4858,7 @@ static __init int rb_test(void *arg)
 static __init void rb_ipi(void *ignore)
 {
 	struct rb_test_data *data;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	data = &rb_data[cpu];
 	rb_write_something(data, true);

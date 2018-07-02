@@ -938,7 +938,7 @@ int mlx4_en_poll_rx_cq(struct napi_struct *napi, int budget)
 
 		INC_PERF_COUNTER(priv->pstats.napi_quota);
 
-		cpu_curr = smp_processor_id();
+		cpu_curr = raw_smp_processor_id();
 		aff = irq_desc_get_irq_data(cq->irq_desc)->affinity;
 
 		if (unlikely(!cpumask_test_cpu(cpu_curr, aff))) {

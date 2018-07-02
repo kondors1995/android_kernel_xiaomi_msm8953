@@ -51,7 +51,7 @@ static struct icp_ipl __iomem *icp_native_regs[NR_CPUS];
 
 static inline unsigned int icp_native_get_xirr(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	unsigned int xirr;
 
 	/* Handled an interrupt latched by KVM */
@@ -64,14 +64,14 @@ static inline unsigned int icp_native_get_xirr(void)
 
 static inline void icp_native_set_xirr(unsigned int value)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	out_be32(&icp_native_regs[cpu]->xirr.word, value);
 }
 
 static inline void icp_native_set_cppr(u8 value)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	out_8(&icp_native_regs[cpu]->xirr.bytes[0], value);
 }
@@ -98,7 +98,7 @@ void icp_native_eoi(struct irq_data *d)
 
 static void icp_native_teardown_cpu(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	/* Clear any pending IPI */
 	icp_native_set_qirr(cpu, 0xff);
@@ -148,7 +148,7 @@ static void icp_native_cause_ipi(int cpu, unsigned long data)
 	kvmppc_set_host_ipi(cpu, 1);
 #ifdef CONFIG_PPC_DOORBELL
 	if (cpu_has_feature(CPU_FTR_DBELL) &&
-	    (cpumask_test_cpu(cpu, cpu_sibling_mask(smp_processor_id()))))
+	    (cpumask_test_cpu(cpu, cpu_sibling_mask(raw_smp_processor_id()))))
 		doorbell_cause_ipi(cpu, data);
 	else
 #endif
@@ -168,7 +168,7 @@ void icp_native_flush_interrupt(void)
 		return;
 	if (vec == XICS_IPI) {
 		/* Clear pending IPI */
-		int cpu = smp_processor_id();
+		int cpu = raw_smp_processor_id();
 		kvmppc_set_host_ipi(cpu, 0);
 		icp_native_set_qirr(cpu, 0xff);
 	} else {
@@ -188,7 +188,7 @@ EXPORT_SYMBOL_GPL(xics_wake_cpu);
 
 static irqreturn_t icp_native_ipi_action(int irq, void *dev_id)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	kvmppc_set_host_ipi(cpu, 0);
 	icp_native_set_qirr(cpu, 0xff);
@@ -210,7 +210,7 @@ static int __init icp_native_map_one_cpu(int hw_id, unsigned long addr,
 	for_each_possible_cpu(i) {
 		if (!cpu_present(i))
 			continue;
-		if (hw_id == get_hard_smp_processor_id(i)) {
+		if (hw_id == get_hard_raw_smp_processor_id(i)) {
 			cpu = i;
 			break;
 		}

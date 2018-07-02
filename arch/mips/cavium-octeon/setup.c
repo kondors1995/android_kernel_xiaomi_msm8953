@@ -64,7 +64,7 @@ static unsigned long long RESERVE_LOW_MEM = 0ull;
  */
 static void octeon_kexec_smp_down(void *ignored)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	local_irq_disable();
 	set_cpu_online(cpu, false);
@@ -585,7 +585,7 @@ void octeon_user_io_init(void)
 
 	write_c0_cvmmemctl(cvmmemctl.u64);
 
-	if (smp_processor_id() == 0)
+	if (raw_smp_processor_id() == 0)
 		pr_notice("CVMSEG size: %d cache lines (%d bytes)\n",
 			  CONFIG_CAVIUM_OCTEON_CVMSEG_SIZE,
 			  CONFIG_CAVIUM_OCTEON_CVMSEG_SIZE * 128);

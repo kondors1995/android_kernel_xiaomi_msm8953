@@ -334,7 +334,7 @@ void __init setup_processor(void)
 static int c_show(struct seq_file *m, void *v)
 {
 	unsigned int icache_size, dcache_size;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	unsigned int freq;
 	unsigned int i;
 

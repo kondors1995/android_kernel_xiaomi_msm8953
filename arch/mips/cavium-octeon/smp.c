@@ -230,7 +230,7 @@ DEFINE_PER_CPU(int, cpu_state);
 
 static int octeon_cpu_disable(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	if (cpu == 0)
 		return -EBUSY;

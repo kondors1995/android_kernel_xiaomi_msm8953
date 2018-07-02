@@ -556,7 +556,7 @@ retry:
 	if (read_seqcount_retry(&conf->gen_lock, seq))
 		goto retry;
 	insert_hash(conf, sh);
-	sh->cpu = smp_processor_id();
+	sh->cpu = raw_smp_processor_id();
 }
 
 static struct stripe_head *__find_stripe(struct r5conf *conf, sector_t sector,

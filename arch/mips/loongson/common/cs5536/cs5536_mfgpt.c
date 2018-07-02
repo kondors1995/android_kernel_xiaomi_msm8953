@@ -122,7 +122,7 @@ void __init setup_mfgpt0_timer(void)
 {
 	u32 basehi;
 	struct clock_event_device *cd = &mfgpt_clockevent;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	cd->cpumask = cpumask_of(cpu);
 	clockevent_set_clock(cd, MFGPT_TICK_RATE);

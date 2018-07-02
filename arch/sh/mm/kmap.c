@@ -40,7 +40,7 @@ void *kmap_coherent(struct page *page, unsigned long addr)
 
 	idx = FIX_CMAP_END -
 		(((addr >> PAGE_SHIFT) & (FIX_N_COLOURS - 1)) +
-		 (FIX_N_COLOURS * smp_processor_id()));
+		 (FIX_N_COLOURS * raw_smp_processor_id()));
 
 	vaddr = __fix_to_virt(idx);
 

@@ -200,7 +200,7 @@ static long __init
 tsunami_probe_read(volatile unsigned long *vaddr)
 {
 	long dont_care, probe_result;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int s = swpipl(IPL_MCHECK - 1);
 
 	mcheck_taken(cpu) = 0;
@@ -477,5 +477,5 @@ tsunami_machine_check(unsigned long vector, unsigned long la_ptr)
 	mb();
 
 	process_mcheck_info(vector, la_ptr, "TSUNAMI",
-			    mcheck_expected(smp_processor_id()));
+			    mcheck_expected(raw_smp_processor_id()));
 }

@@ -16,7 +16,7 @@ void show_regs(struct pt_regs *regs)
         printk("\n");
         printk("EIP: %04lx:[<%08lx>] CPU: %d %s", 
 	       0xffff & PT_REGS_CS(regs), PT_REGS_IP(regs),
-	       smp_processor_id(), print_tainted());
+	       raw_smp_processor_id(), print_tainted());
         if (PT_REGS_CS(regs) & 3)
                 printk(" ESP: %04lx:%08lx", 0xffff & PT_REGS_SS(regs),
 		       PT_REGS_SP(regs));

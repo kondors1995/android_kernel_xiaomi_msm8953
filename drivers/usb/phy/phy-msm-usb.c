@@ -157,7 +157,7 @@ msm_otg_dbg_log_event(struct usb_phy *phy, char *event, int d1, int d2)
 		return;
 
 	write_lock_irqsave(&motg->dbg_lock, flags);
-	t = cpu_clock(smp_processor_id());
+	t = cpu_clock(raw_smp_processor_id());
 	nanosec = do_div(t, 1000000000)/1000;
 	scnprintf(motg->buf[motg->dbg_idx], DEBUG_MSG_LEN,
 			"[%5lu.%06lu]: %s :%d:%d",

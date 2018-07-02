@@ -24,12 +24,12 @@ MODULE_LICENSE("GPL");
 #ifdef DEFAULT_DEBUG
 #define DPRINT(a) \
 	do { \
-		if (unlikely(pfm_sysctl.debug >0)) { printk("%s.%d: CPU%d ", __func__, __LINE__, smp_processor_id()); printk a; } \
+		if (unlikely(pfm_sysctl.debug >0)) { printk("%s.%d: CPU%d ", __func__, __LINE__, raw_smp_processor_id()); printk a; } \
 	} while (0)
 
 #define DPRINT_ovfl(a) \
 	do { \
-		if (unlikely(pfm_sysctl.debug > 0 && pfm_sysctl.debug_ovfl >0)) { printk("%s.%d: CPU%d ", __func__, __LINE__, smp_processor_id()); printk a; } \
+		if (unlikely(pfm_sysctl.debug > 0 && pfm_sysctl.debug_ovfl >0)) { printk("%s.%d: CPU%d ", __func__, __LINE__, raw_smp_processor_id()); printk a; } \
 	} while (0)
 
 #else
@@ -166,7 +166,7 @@ default_handler(struct task_struct *task, void *buf, pfm_ovfl_arg_t *arg, struct
 	ent->ip = regs->cr_iip | ((regs->cr_ipsr >> 41) & 0x3);
 
 	ent->tstamp    = stamp;
-	ent->cpu       = smp_processor_id();
+	ent->cpu       = raw_smp_processor_id();
 	ent->set       = arg->active_set;
 	ent->tgid      = current->tgid;
 

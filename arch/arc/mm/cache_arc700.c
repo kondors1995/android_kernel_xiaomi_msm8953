@@ -102,7 +102,7 @@ char *arc_cache_mumbojumbo(int c, char *buf, int len)
 void read_decode_cache_bcr(void)
 {
 	struct cpuinfo_arc_cache *p_ic, *p_dc;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct bcr_cache {
 #ifdef CONFIG_CPU_BIG_ENDIAN
 		unsigned int pad:12, line_len:4, sz:4, config:4, ver:8;
@@ -150,7 +150,7 @@ dc_chk:
  */
 void arc_cache_init(void)
 {
-	unsigned int __maybe_unused cpu = smp_processor_id();
+	unsigned int __maybe_unused cpu = raw_smp_processor_id();
 	char str[256];
 
 	printk(arc_cache_mumbojumbo(0, str, sizeof(str)));

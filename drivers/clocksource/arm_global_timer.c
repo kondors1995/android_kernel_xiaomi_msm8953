@@ -166,7 +166,7 @@ static irqreturn_t gt_clockevent_interrupt(int irq, void *dev_id)
 
 static int gt_clockevents_init(struct clock_event_device *clk)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	clk->name = "arm_global_timer";
 	clk->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT |

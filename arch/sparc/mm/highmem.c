@@ -59,7 +59,7 @@ void *kmap_atomic(struct page *page)
 		return page_address(page);
 
 	type = kmap_atomic_idx_push();
-	idx = type + KM_TYPE_NR*smp_processor_id();
+	idx = type + KM_TYPE_NR*raw_smp_processor_id();
 	vaddr = __fix_to_virt(FIX_KMAP_BEGIN + idx);
 
 /* XXX Fix - Anton */
@@ -100,7 +100,7 @@ void __kunmap_atomic(void *kvaddr)
 	{
 		unsigned long idx;
 
-		idx = type + KM_TYPE_NR * smp_processor_id();
+		idx = type + KM_TYPE_NR * raw_smp_processor_id();
 		BUG_ON(vaddr != __fix_to_virt(FIX_KMAP_BEGIN+idx));
 
 		/* XXX Fix - Anton */

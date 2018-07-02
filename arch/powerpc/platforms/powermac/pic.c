@@ -234,7 +234,7 @@ static unsigned int pmac_pic_get_irq(void)
 
 #ifdef CONFIG_PPC_PMAC32_PSURGE
 	/* IPI's are a hack on the powersurge -- Cort */
-	if (smp_processor_id() != 0) {
+	if (raw_smp_processor_id() != 0) {
 		return  psurge_secondary_virq;
         }
 #endif /* CONFIG_PPC_PMAC32_PSURGE */

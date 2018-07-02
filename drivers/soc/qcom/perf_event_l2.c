@@ -73,7 +73,7 @@ static struct hml2_pmu *get_hml2_pmu(struct l2cache_pmu *system, int cpu)
 	struct hml2_pmu *slice;
 
 	if (cpu < 0)
-		cpu = smp_processor_id();
+		cpu = raw_smp_processor_id();
 
 	cluster = cpu >> 1;
 	list_for_each_entry(slice, &system->pmus, entry) {
@@ -101,7 +101,7 @@ void hml2_pmu__reset(struct hml2_pmu *slice)
 	int cpu;
 	int i;
 
-	if ((smp_processor_id() >> 1) == slice->cluster) {
+	if ((raw_smp_processor_id() >> 1) == slice->cluster) {
 		hml2_pmu__reset_on_slice(NULL);
 		return;
 	}
@@ -270,7 +270,7 @@ hml2_pmu__set_evfilter_task_mode(int ctr)
 	u32 filter_reg = (ctr * 16) + IA_L2PMXEVFILTER_BASE;
 	u32 l2_orig_filter = L2PMXEVFILTER_SUFILTER_ALL |
 			     L2PMXEVFILTER_ORGFILTER_IDINDEP;
-	u32 filter_val = l2_orig_filter | 1 << (smp_processor_id() % 2);
+	u32 filter_val = l2_orig_filter | 1 << (raw_smp_processor_id() % 2);
 
 	set_l2_indirect_reg(filter_reg, filter_val);
 }

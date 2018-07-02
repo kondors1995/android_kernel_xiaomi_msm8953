@@ -246,7 +246,7 @@ static void __init exc_lvl_early_init(void)
 	 * as the memblock is limited to lowmem by MEMBLOCK_REAL_LIMIT */
 	for_each_possible_cpu(i) {
 #ifdef CONFIG_SMP
-		hw_cpu = get_hard_smp_processor_id(i);
+		hw_cpu = get_hard_raw_smp_processor_id(i);
 #else
 		hw_cpu = 0;
 #endif

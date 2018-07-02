@@ -250,13 +250,13 @@ salinfo_log_wakeup(int type, u8 *buffer, u64 size, int irqsafe)
 				data_saved = NULL;
 		}
 		if (data_saved) {
-			data_saved->cpu = smp_processor_id();
+			data_saved->cpu = raw_smp_processor_id();
 			data_saved->id = ((sal_log_record_header_t *)buffer)->id;
 			data_saved->size = size;
 			data_saved->buffer = buffer;
 		}
 	}
-	cpu_set(smp_processor_id(), data->cpu_event);
+	cpu_set(raw_smp_processor_id(), data->cpu_event);
 	if (irqsafe) {
 		salinfo_work_to_do(data);
 		spin_unlock_irqrestore(&data_saved_lock, flags);

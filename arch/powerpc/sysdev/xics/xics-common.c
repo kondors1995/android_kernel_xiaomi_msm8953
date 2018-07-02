@@ -56,7 +56,7 @@ void xics_update_irq_servers(void)
 	np = of_get_cpu_node(boot_cpuid, NULL);
 	BUG_ON(!np);
 
-	hcpuid = get_hard_smp_processor_id(boot_cpuid);
+	hcpuid = get_hard_raw_smp_processor_id(boot_cpuid);
 	xics_default_server = xics_default_distrib_server = hcpuid;
 
 	pr_devel("xics: xics_default_server = 0x%x\n", xics_default_server);
@@ -186,7 +186,7 @@ void xics_kexec_teardown_cpu(int secondary)
 /* Interrupts are disabled. */
 void xics_migrate_irqs_away(void)
 {
-	int cpu = smp_processor_id(), hw_cpu = hard_smp_processor_id();
+	int cpu = raw_smp_processor_id(), hw_cpu = hard_raw_smp_processor_id();
 	unsigned int irq, virq;
 	struct irq_desc *desc;
 
@@ -282,7 +282,7 @@ int xics_get_irq_server(unsigned int virq, const struct cpumask *cpumask,
 		int server = cpumask_first_and(cpu_online_mask, cpumask);
 
 		if (server < nr_cpu_ids)
-			return get_hard_smp_processor_id(server);
+			return get_hard_raw_smp_processor_id(server);
 
 		if (strict_check)
 			return -1;

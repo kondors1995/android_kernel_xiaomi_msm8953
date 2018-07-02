@@ -170,7 +170,7 @@ static int corenet_cpufreq_cpu_init(struct cpufreq_policy *policy)
 	}
 
 	if (fmask)
-		mask = fmask[get_hard_smp_processor_id(cpu)];
+		mask = fmask[get_hard_raw_smp_processor_id(cpu)];
 	else
 		mask = 0x0;
 

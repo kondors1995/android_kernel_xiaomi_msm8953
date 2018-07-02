@@ -241,7 +241,7 @@ static int
 remote_read_time(struct device *dev, struct rtc_time *tm)
 {
 	union remote_data x;
-	if (smp_processor_id() != boot_cpuid) {
+	if (raw_smp_processor_id() != boot_cpuid) {
 		x.tm = tm;
 		smp_call_function_single(boot_cpuid, do_remote_read, &x, 1);
 		return x.retval;
@@ -260,7 +260,7 @@ static int
 remote_set_time(struct device *dev, struct rtc_time *tm)
 {
 	union remote_data x;
-	if (smp_processor_id() != boot_cpuid) {
+	if (raw_smp_processor_id() != boot_cpuid) {
 		x.tm = tm;
 		smp_call_function_single(boot_cpuid, do_remote_set, &x, 1);
 		return x.retval;
@@ -279,7 +279,7 @@ static int
 remote_set_mmss(struct device *dev, unsigned long now)
 {
 	union remote_data x;
-	if (smp_processor_id() != boot_cpuid) {
+	if (raw_smp_processor_id() != boot_cpuid) {
 		x.now = now;
 		smp_call_function_single(boot_cpuid, do_remote_mmss, &x, 1);
 		return x.retval;

@@ -1308,7 +1308,7 @@ static __initdata struct cpumask disabled_map;
 
 static int __init disabled_cpus(char *str)
 {
-	int boot_cpu = smp_processor_id();
+	int boot_cpu = raw_smp_processor_id();
 
 	if (str == NULL || cpulist_parse_crop(str, &disabled_map) != 0)
 		return -EINVAL;
@@ -1333,7 +1333,7 @@ void __init print_disabled_cpus(void)
 static void __init setup_cpu_maps(void)
 {
 	struct cpumask hv_disabled_map, cpu_possible_init;
-	int boot_cpu = smp_processor_id();
+	int boot_cpu = raw_smp_processor_id();
 	int cpus, i, rc;
 
 	/* Learn which cpus are allowed by the hypervisor. */
@@ -1608,7 +1608,7 @@ void __init setup_per_cpu_areas(void)
 	}
 
 	/* Set our thread pointer appropriately. */
-	set_my_cpu_offset(__per_cpu_offset[smp_processor_id()]);
+	set_my_cpu_offset(__per_cpu_offset[raw_smp_processor_id()]);
 
 	/* Make sure the finv's have completed. */
 	mb_incoherent();

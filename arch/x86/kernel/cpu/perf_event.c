@@ -843,7 +843,7 @@ static inline void x86_assign_hw_event(struct perf_event *event,
 	struct hw_perf_event *hwc = &event->hw;
 
 	hwc->idx = cpuc->assign[i];
-	hwc->last_cpu = smp_processor_id();
+	hwc->last_cpu = raw_smp_processor_id();
 	hwc->last_tag = ++cpuc->tags[i];
 
 	if (hwc->idx == INTEL_PMC_IDX_FIXED_BTS) {
@@ -865,7 +865,7 @@ static inline int match_prev_assignment(struct hw_perf_event *hwc,
 					int i)
 {
 	return hwc->idx == cpuc->assign[i] &&
-		hwc->last_cpu == smp_processor_id() &&
+		hwc->last_cpu == raw_smp_processor_id() &&
 		hwc->last_tag == cpuc->tags[i];
 }
 
@@ -984,7 +984,7 @@ int x86_perf_event_set_period(struct perf_event *event)
 	if (left > x86_pmu.max_period)
 		left = x86_pmu.max_period;
 
-	per_cpu(pmc_prev_left[idx], smp_processor_id()) = left;
+	per_cpu(pmc_prev_left[idx], raw_smp_processor_id()) = left;
 
 	/*
 	 * The hw event starts counting from this event offset,
@@ -1111,7 +1111,7 @@ void perf_event_print_debug(void)
 
 	local_irq_save(flags);
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	cpuc = &per_cpu(cpu_hw_events, cpu);
 
 	if (x86_pmu.version >= 2) {

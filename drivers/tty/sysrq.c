@@ -223,11 +223,11 @@ static void showacpu(void *dummy)
 	unsigned long flags;
 
 	/* Idle CPUs have no interesting backtrace. */
-	if (idle_cpu(smp_processor_id()))
+	if (idle_cpu(raw_smp_processor_id()))
 		return;
 
 	spin_lock_irqsave(&show_lock, flags);
-	printk(KERN_INFO "CPU%d:\n", smp_processor_id());
+	printk(KERN_INFO "CPU%d:\n", raw_smp_processor_id());
 	show_stack(NULL, NULL);
 	spin_unlock_irqrestore(&show_lock, flags);
 }
@@ -252,7 +252,7 @@ static void sysrq_handle_showallcpus(int key)
 		if (in_irq())
 			regs = get_irq_regs();
 		if (regs) {
-			printk(KERN_INFO "CPU%d:\n", smp_processor_id());
+			printk(KERN_INFO "CPU%d:\n", raw_smp_processor_id());
 			show_regs(regs);
 		}
 		schedule_work(&sysrq_showallcpus);

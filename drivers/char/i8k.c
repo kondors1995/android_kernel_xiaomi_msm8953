@@ -147,7 +147,7 @@ static int i8k_smm(struct smm_regs *regs)
 	rc = set_cpus_allowed_ptr(current, cpumask_of(0));
 	if (rc)
 		goto out;
-	if (smp_processor_id() != 0) {
+	if (raw_smp_processor_id() != 0) {
 		rc = -EBUSY;
 		goto out;
 	}

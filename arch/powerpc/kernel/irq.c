@@ -137,7 +137,7 @@ notrace unsigned int __check_irq_replay(void)
 {
 	/*
 	 * We use local_paca rather than get_paca() to avoid all
-	 * the debug_smp_processor_id() business in this low level
+	 * the debug_raw_smp_processor_id() business in this low level
 	 * function
 	 */
 	unsigned char happened = local_paca->irq_happened;
@@ -570,7 +570,7 @@ void exc_lvl_ctx_init(void)
 		cpu_nr = i;
 #else
 #ifdef CONFIG_SMP
-		cpu_nr = get_hard_smp_processor_id(i);
+		cpu_nr = get_hard_raw_smp_processor_id(i);
 #else
 		cpu_nr = 0;
 #endif
@@ -620,7 +620,7 @@ void do_softirq_own_stack(void)
 	struct thread_info *curtp, *irqtp;
 
 	curtp = current_thread_info();
-	irqtp = softirq_ctx[smp_processor_id()];
+	irqtp = softirq_ctx[raw_smp_processor_id()];
 	irqtp->task = curtp->task;
 	irqtp->flags = 0;
 	call_do_softirq(irqtp);
@@ -667,12 +667,12 @@ do_round_robin:
 			goto do_round_robin;
 	}
 
-	return get_hard_smp_processor_id(cpuid);
+	return get_hard_raw_smp_processor_id(cpuid);
 }
 #else
 int irq_choose_cpu(const struct cpumask *mask)
 {
-	return hard_smp_processor_id();
+	return hard_raw_smp_processor_id();
 }
 #endif
 

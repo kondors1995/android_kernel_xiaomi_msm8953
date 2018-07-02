@@ -472,7 +472,7 @@ void __init smp_setup_cpu_maps(void)
 						"enable-method", "spin-table");
 
 			set_cpu_present(cpu, avail);
-			set_hard_smp_processor_id(cpu, be32_to_cpu(intserv[j]));
+			set_hard_raw_smp_processor_id(cpu, be32_to_cpu(intserv[j]));
 			set_cpu_possible(cpu, true);
 			cpu++;
 		}

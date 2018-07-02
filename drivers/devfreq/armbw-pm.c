@@ -181,7 +181,7 @@ static long mon_get_bw_count(u32 start_val)
 
 static void get_beat_count(void *arg)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct bwmon_data *data = &per_cpu(gov_data, cpu);
 
 	mon_disable(NULL);
@@ -218,7 +218,7 @@ static unsigned long measure_bw_and_set_irq(struct bw_hwmon *hw,
 
 static void save_hotplugstate(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct bwmon_data *data;
 
 	data = &per_cpu(gov_data, cpu);
@@ -230,7 +230,7 @@ static void save_hotplugstate(void)
 
 static void restore_hotplugstate(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	u32 count;
 	struct bwmon_data *data;
 
@@ -247,7 +247,7 @@ static void restore_hotplugstate(void)
 
 static void save_pmstate(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct bwmon_data *data;
 
 	data = &per_cpu(gov_data, cpu);
@@ -257,7 +257,7 @@ static void save_pmstate(void)
 
 static void restore_pmstate(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	u32 count;
 	struct bwmon_data *data;
 

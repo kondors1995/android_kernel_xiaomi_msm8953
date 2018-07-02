@@ -105,7 +105,7 @@ static void __init setup_processor(void)
  */
 void cpu_init(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct stack *stk = &stacks[cpu];
 
 	/*

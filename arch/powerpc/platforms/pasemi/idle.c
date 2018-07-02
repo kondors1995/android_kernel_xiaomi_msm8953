@@ -65,7 +65,7 @@ static int pasemi_system_reset_exception(struct pt_regs *regs)
 	}
 
 	/* Set higher astate since we come out of power savings at 0 */
-	restore_astate(hard_smp_processor_id());
+	restore_astate(hard_raw_smp_processor_id());
 
 	/* everything handled */
 	regs->msr |= MSR_RI;

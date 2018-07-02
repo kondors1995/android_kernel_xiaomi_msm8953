@@ -506,7 +506,7 @@ static struct notifier_block amd_uncore_cpu_notifier_block = {
 
 static void __init init_cpu_already_online(void *dummy)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	amd_uncore_cpu_starting(cpu);
 	amd_uncore_cpu_online(cpu);
@@ -514,7 +514,7 @@ static void __init init_cpu_already_online(void *dummy)
 
 static void cleanup_cpu_online(void *dummy)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	amd_uncore_cpu_dead(cpu);
 }

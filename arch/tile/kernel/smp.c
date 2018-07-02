@@ -72,7 +72,7 @@ void send_IPI_many(const struct cpumask *mask, int tag)
 	HV_Recipient recip[NR_CPUS];
 	int cpu;
 	int nrecip = 0;
-	int my_cpu = smp_processor_id();
+	int my_cpu = raw_smp_processor_id();
 	for_each_cpu(cpu, mask) {
 		HV_Recipient *r;
 		BUG_ON(cpu == my_cpu);
@@ -88,7 +88,7 @@ void send_IPI_allbutself(int tag)
 {
 	struct cpumask mask;
 	cpumask_copy(&mask, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), &mask);
+	cpumask_clear_cpu(raw_smp_processor_id(), &mask);
 	send_IPI_many(&mask, tag);
 }
 
@@ -106,7 +106,7 @@ static void smp_start_cpu_interrupt(void)
 static void smp_stop_cpu_interrupt(void)
 {
 	arch_local_irq_disable_all();
-	set_cpu_online(smp_processor_id(), 0);
+	set_cpu_online(raw_smp_processor_id(), 0);
 	for (;;)
 		asm("nap; nop");
 }

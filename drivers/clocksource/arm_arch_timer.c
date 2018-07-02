@@ -271,7 +271,7 @@ static void __arch_timer_setup(unsigned type,
 			clk->features |= CLOCK_EVT_FEAT_C3STOP;
 		clk->name = "arch_sys_timer";
 		clk->rating = 450;
-		clk->cpumask = cpumask_of(smp_processor_id());
+		clk->cpumask = cpumask_of(raw_smp_processor_id());
 		if (arch_timer_use_virtual) {
 			clk->irq = arch_timer_ppi[VIRT_PPI];
 			clk->set_mode = arch_timer_set_mode_virt;
@@ -529,7 +529,7 @@ static void __init arch_counter_register(unsigned type)
 static void arch_timer_stop(struct clock_event_device *clk)
 {
 	pr_debug("arch_timer_teardown disable IRQ%d cpu #%d\n",
-		 clk->irq, smp_processor_id());
+		 clk->irq, raw_smp_processor_id());
 
 	if (arch_timer_use_virtual)
 		disable_percpu_irq(arch_timer_ppi[VIRT_PPI]);

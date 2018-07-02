@@ -143,7 +143,7 @@ xpc_setup_rsvd_page(void)
 	/* get the local reserved page's address */
 
 	preempt_disable();
-	rp_pa = xpc_get_rsvd_page_pa(xp_cpu_to_nasid(smp_processor_id()));
+	rp_pa = xpc_get_rsvd_page_pa(xp_cpu_to_nasid(raw_smp_processor_id()));
 	preempt_enable();
 	if (rp_pa == 0) {
 		dev_err(xpc_part, "SAL failed to locate the reserved page\n");

@@ -339,7 +339,7 @@ static void __init qcom_smp_prepare_cpus(unsigned int max_cpus)
 
 	if (scm_set_boot_addr(virt_to_phys(secondary_startup), flags)) {
 		for_each_present_cpu(cpu) {
-			if (cpu == smp_processor_id())
+			if (cpu == raw_smp_processor_id())
 				continue;
 			set_cpu_present(cpu, false);
 		}

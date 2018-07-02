@@ -733,7 +733,7 @@ call_fn:	/* lg %r1,<d(function)>(%r13) */
 		/* srl %r5,5 */
 		EMIT4_DISP(0x88500000, 5);
 		break;
-	case BPF_ANC | SKF_AD_CPU: /* A = smp_processor_id() */
+	case BPF_ANC | SKF_AD_CPU: /* A = raw_smp_processor_id() */
 #ifdef CONFIG_SMP
 		/* l %r5,<d(cpu_nr)> */
 		EMIT4_DISP(0x58500000, offsetof(struct _lowcore, cpu_nr));

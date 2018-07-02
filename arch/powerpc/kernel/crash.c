@@ -57,7 +57,7 @@ static int crash_shutdown_cpu = -1;
 
 static int handle_fault(struct pt_regs *regs)
 {
-	if (crash_shutdown_cpu == smp_processor_id())
+	if (crash_shutdown_cpu == raw_smp_processor_id())
 		longjmp(crash_shutdown_buf, 1);
 	return 0;
 }
@@ -69,7 +69,7 @@ void crash_ipi_callback(struct pt_regs *regs)
 {
 	static cpumask_t cpus_state_saved = CPU_MASK_NONE;
 
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (!cpu_online(cpu))
 		return;
@@ -149,7 +149,7 @@ again:
 	 */
 	old_handler = __debugger;
 	__debugger = handle_fault;
-	crash_shutdown_cpu = smp_processor_id();
+	crash_shutdown_cpu = raw_smp_processor_id();
 
 	if (setjmp(crash_shutdown_buf) == 0) {
 		printk(KERN_EMERG "Activate system reset (dumprestart) "
@@ -320,7 +320,7 @@ void default_machine_crash_shutdown(struct pt_regs *regs)
 	 * Make a note of crashing cpu. Will be used in machine_kexec
 	 * such that another IPI will not be sent.
 	 */
-	crashing_cpu = smp_processor_id();
+	crashing_cpu = raw_smp_processor_id();
 
 	/*
 	 * If we came in via system reset, wait a while for the secondary
@@ -345,7 +345,7 @@ void default_machine_crash_shutdown(struct pt_regs *regs)
 	 */
 	old_handler = __debugger_fault_handler;
 	__debugger_fault_handler = handle_fault;
-	crash_shutdown_cpu = smp_processor_id();
+	crash_shutdown_cpu = raw_smp_processor_id();
 	for (i = 0; crash_shutdown_handles[i]; i++) {
 		if (setjmp(crash_shutdown_buf) == 0) {
 			/*

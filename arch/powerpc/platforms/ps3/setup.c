@@ -256,7 +256,7 @@ static int __init ps3_probe(void)
 #if defined(CONFIG_KEXEC)
 static void ps3_kexec_cpu_down(int crash_shutdown, int secondary)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	DBG(" -> %s:%d: (%d)\n", __func__, __LINE__, cpu);
 

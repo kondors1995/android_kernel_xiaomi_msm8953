@@ -82,7 +82,7 @@ void local_flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
 	unsigned long flags;
 	unsigned long long match, pteh=0, pteh_epn, pteh_low;
 	unsigned long tlb;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct mm_struct *mm;
 
 	mm = vma->vm_mm;
@@ -128,7 +128,7 @@ void local_flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
 void local_flush_tlb_mm(struct mm_struct *mm)
 {
 	unsigned long flags;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	if (cpu_context(cpu, mm) == NO_CONTEXT)
 		return;

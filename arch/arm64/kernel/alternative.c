@@ -78,7 +78,7 @@ static int __apply_alternatives_multi_stop(void *unused)
 	};
 
 	/* We always have a CPU 0 at this point (__init) */
-	if (smp_processor_id()) {
+	if (raw_smp_processor_id()) {
 		while (!READ_ONCE(patched))
 			cpu_relax();
 	} else {

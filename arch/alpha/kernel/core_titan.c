@@ -382,7 +382,7 @@ titan_init_arch(void)
 	printk("%s: CSR_DREV 0x%lx\n", __func__, TITAN_dchip->drev.csr);
 #endif
 
-	boot_cpuid = __hard_smp_processor_id();
+	boot_cpuid = __hard_raw_smp_processor_id();
 
 	/* With multiple PCI busses, we play with I/O as physical addrs.  */
 	ioport_resource.end = ~0UL;

@@ -394,7 +394,7 @@ static void update_last_in_stats(struct lpm_stats *stats)
 
 	centry = &stats->child;
 	list_for_each_entry(pos, centry, sibling) {
-		if (cpumask_test_cpu(smp_processor_id(), &pos->mask)) {
+		if (cpumask_test_cpu(raw_smp_processor_id(), &pos->mask)) {
 			pos->lifo.last_in++;
 			return;
 		}
@@ -412,7 +412,7 @@ static void update_first_out_stats(struct lpm_stats *stats)
 
 	centry = &stats->child;
 	list_for_each_entry(pos, centry, sibling) {
-		if (cpumask_test_cpu(smp_processor_id(), &pos->mask)) {
+		if (cpumask_test_cpu(raw_smp_processor_id(), &pos->mask)) {
 			pos->lifo.first_out++;
 			return;
 		}

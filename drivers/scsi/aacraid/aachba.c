@@ -430,7 +430,7 @@ static void get_container_name_callback(void *context, struct fib * fibptr)
 	if (!aac_valid_context(scsicmd, fibptr))
 		return;
 
-	dprintk((KERN_DEBUG "get_container_name_callback[cpu %d]: t = %ld.\n", smp_processor_id(), jiffies));
+	dprintk((KERN_DEBUG "get_container_name_callback[cpu %d]: t = %ld.\n", raw_smp_processor_id(), jiffies));
 	BUG_ON(fibptr == NULL);
 
 	get_name_reply = (struct aac_get_name_resp *) fib_data(fibptr);
@@ -1646,7 +1646,7 @@ static void io_callback(void *context, struct fib * fibptr)
 		}
 		printk(KERN_DEBUG
 		  "io_callback[cpu %d]: lba = %llu, t = %ld.\n",
-		  smp_processor_id(), (unsigned long long)lba, jiffies);
+		  raw_smp_processor_id(), (unsigned long long)lba, jiffies);
 	}
 
 	BUG_ON(fibptr == NULL);
@@ -1764,7 +1764,7 @@ static int aac_read(struct scsi_cmnd * scsicmd)
 	}
 
 	dprintk((KERN_DEBUG "aac_read[cpu %d]: lba = %llu, t = %ld.\n",
-	  smp_processor_id(), (unsigned long long)lba, jiffies));
+	  raw_smp_processor_id(), (unsigned long long)lba, jiffies));
 	if (aac_adapter_bounds(dev,scsicmd,lba))
 		return 0;
 	/*
@@ -1861,7 +1861,7 @@ static int aac_write(struct scsi_cmnd * scsicmd)
 	}
 
 	dprintk((KERN_DEBUG "aac_write[cpu %d]: lba = %llu, t = %ld.\n",
-	  smp_processor_id(), (unsigned long long)lba, jiffies));
+	  raw_smp_processor_id(), (unsigned long long)lba, jiffies));
 	if (aac_adapter_bounds(dev,scsicmd,lba))
 		return 0;
 	/*
@@ -1911,7 +1911,7 @@ static void synchronize_callback(void *context, struct fib *fibptr)
 		return;
 
 	dprintk((KERN_DEBUG "synchronize_callback[cpu %d]: t = %ld.\n",
-				smp_processor_id(), jiffies));
+				raw_smp_processor_id(), jiffies));
 	BUG_ON(fibptr == NULL);
 
 

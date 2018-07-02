@@ -121,7 +121,7 @@ void __init footbridge_timer_init(void)
 
 	setup_irq(ce->irq, &footbridge_timer_irq);
 
-	ce->cpumask = cpumask_of(smp_processor_id());
+	ce->cpumask = cpumask_of(raw_smp_processor_id());
 	clockevents_config_and_register(ce, rate, 0x4, 0xffffff);
 }
 

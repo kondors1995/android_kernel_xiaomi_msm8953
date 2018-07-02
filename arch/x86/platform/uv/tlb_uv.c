@@ -358,7 +358,7 @@ static int pnode_to_first_cpu(int pnode, struct bau_control *smaster)
 static void do_reset(void *ptr)
 {
 	int i;
-	struct bau_control *bcp = &per_cpu(bau_control, smp_processor_id());
+	struct bau_control *bcp = &per_cpu(bau_control, raw_smp_processor_id());
 	struct reset_args *rap = (struct reset_args *)ptr;
 	struct bau_pq_entry *msg;
 	struct ptc_stats *stat = bcp->statp;
@@ -1251,7 +1251,7 @@ void uv_bau_message_interrupt(struct pt_regs *regs)
 	ack_APIC_irq();
 	time_start = get_cycles();
 
-	bcp = &per_cpu(bau_control, smp_processor_id());
+	bcp = &per_cpu(bau_control, raw_smp_processor_id());
 	stat = bcp->statp;
 
 	msgdesc.queue_first = bcp->queue_first;

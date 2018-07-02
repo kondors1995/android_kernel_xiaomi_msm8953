@@ -143,7 +143,7 @@ static inline int nmi_wdt_set_timeout(unsigned long t)
 
 int check_nmi_wdt_touched(void)
 {
-	unsigned int this_cpu = smp_processor_id();
+	unsigned int this_cpu = raw_smp_processor_id();
 	unsigned int cpu;
 	cpumask_t mask;
 
@@ -191,7 +191,7 @@ device_initcall(init_nmi_wdt);
 
 void touch_nmi_watchdog(void)
 {
-	atomic_set(&nmi_touched[smp_processor_id()], 1);
+	atomic_set(&nmi_touched[raw_smp_processor_id()], 1);
 }
 
 /* Suspend/resume support */
@@ -227,7 +227,7 @@ late_initcall(init_nmi_wdt_syscore);
 
 asmlinkage notrace void do_nmi(struct pt_regs *fp)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	nmi_enter();
 
 	cpu_pda[cpu].__nmi_count += 1;

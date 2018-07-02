@@ -36,7 +36,7 @@ static void op_overflow_handler(struct perf_event *event,
 			struct perf_sample_data *data, struct pt_regs *regs)
 {
 	int id;
-	u32 cpu = smp_processor_id();
+	u32 cpu = raw_smp_processor_id();
 
 	for (id = 0; id < num_counters; ++id)
 		if (per_cpu(perf_events, cpu)[id] == event)

@@ -858,7 +858,7 @@ static void worker(struct work_struct *work)
 	struct hws_cpu_buffer *cb;
 
 	cb = container_of(work, struct hws_cpu_buffer, worker);
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	ext_params = atomic_xchg(&cb->ext_params, 0);
 
 	if (!cb->worker_entry)

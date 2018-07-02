@@ -393,7 +393,7 @@ static inline void invoke_softirq(void)
 static inline void tick_irq_exit(void)
 {
 #ifdef CONFIG_NO_HZ_COMMON
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	/* Make sure that timer wheel updates are propagated */
 	if ((idle_cpu(cpu) && !need_resched()) || tick_nohz_full_cpu(cpu)) {

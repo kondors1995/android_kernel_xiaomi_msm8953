@@ -229,12 +229,12 @@
 #ifdef PFM_DEBUGGING
 #define DPRINT(a) \
 	do { \
-		if (unlikely(pfm_sysctl.debug >0)) { printk("%s.%d: CPU%d [%d] ", __func__, __LINE__, smp_processor_id(), task_pid_nr(current)); printk a; } \
+		if (unlikely(pfm_sysctl.debug >0)) { printk("%s.%d: CPU%d [%d] ", __func__, __LINE__, raw_smp_processor_id(), task_pid_nr(current)); printk a; } \
 	} while (0)
 
 #define DPRINT_ovfl(a) \
 	do { \
-		if (unlikely(pfm_sysctl.debug > 0 && pfm_sysctl.debug_ovfl >0)) { printk("%s.%d: CPU%d [%d] ", __func__, __LINE__, smp_processor_id(), task_pid_nr(current)); printk a; } \
+		if (unlikely(pfm_sysctl.debug > 0 && pfm_sysctl.debug_ovfl >0)) { printk("%s.%d: CPU%d [%d] ", __func__, __LINE__, raw_smp_processor_id(), task_pid_nr(current)); printk a; } \
 	} while (0)
 #endif
 
@@ -823,7 +823,7 @@ pfm_rvmalloc(unsigned long size)
 	size = PAGE_ALIGN(size);
 	mem  = vzalloc(size);
 	if (mem) {
-		//printk("perfmon: CPU%d pfm_rvmalloc(%ld)=%p\n", smp_processor_id(), size, mem);
+		//printk("perfmon: CPU%d pfm_rvmalloc(%ld)=%p\n", raw_smp_processor_id(), size, mem);
 		addr = (unsigned long)mem;
 		while (size > 0) {
 			pfm_reserve_page(addr);
@@ -1351,7 +1351,7 @@ pfm_reserve_session(struct task_struct *task, int is_syswide, unsigned int cpu)
 
 		if (pfm_sessions.pfs_sys_session[cpu]) goto error_conflict;
 
-		DPRINT(("reserving system wide session on CPU%u currently on CPU%u\n", cpu, smp_processor_id()));
+		DPRINT(("reserving system wide session on CPU%u currently on CPU%u\n", cpu, raw_smp_processor_id()));
 
 		pfm_sessions.pfs_sys_session[cpu] = task;
 
@@ -1752,27 +1752,27 @@ pfm_syswide_force_stop(void *info)
 	unsigned long flags;
 	int ret;
 
-	if (ctx->ctx_cpu != smp_processor_id()) {
+	if (ctx->ctx_cpu != raw_smp_processor_id()) {
 		printk(KERN_ERR "perfmon: pfm_syswide_force_stop for CPU%d  but on CPU%d\n",
 			ctx->ctx_cpu,
-			smp_processor_id());
+			raw_smp_processor_id());
 		return;
 	}
 	owner = GET_PMU_OWNER();
 	if (owner != ctx->ctx_task) {
 		printk(KERN_ERR "perfmon: pfm_syswide_force_stop CPU%d unexpected owner [%d] instead of [%d]\n",
-			smp_processor_id(),
+			raw_smp_processor_id(),
 			task_pid_nr(owner), task_pid_nr(ctx->ctx_task));
 		return;
 	}
 	if (GET_PMU_CTX() != ctx) {
 		printk(KERN_ERR "perfmon: pfm_syswide_force_stop CPU%d unexpected ctx %p instead of %p\n",
-			smp_processor_id(),
+			raw_smp_processor_id(),
 			GET_PMU_CTX(), ctx);
 		return;
 	}
 
-	DPRINT(("on CPU%d forcing system wide stop for [%d]\n", smp_processor_id(), task_pid_nr(ctx->ctx_task)));
+	DPRINT(("on CPU%d forcing system wide stop for [%d]\n", raw_smp_processor_id(), task_pid_nr(ctx->ctx_task)));
 	/*
 	 * the context is already protected in pfm_close(), we simply
 	 * need to mask interrupts to avoid a PMU interrupt race on
@@ -1869,7 +1869,7 @@ pfm_flush(struct file *filp, fl_owner_t id)
 		 *
 		 * We need to release the resource on the ORIGINAL cpu.
 		 */
-		if (is_system && ctx->ctx_cpu != smp_processor_id()) {
+		if (is_system && ctx->ctx_cpu != raw_smp_processor_id()) {
 
 			DPRINT(("should be running on CPU%d\n", ctx->ctx_cpu));
 			/*
@@ -2226,7 +2226,7 @@ pfm_alloc_file(pfm_context_t *ctx)
 static int
 pfm_remap_buffer(struct vm_area_struct *vma, unsigned long buf, unsigned long addr, unsigned long size)
 {
-	DPRINT(("CPU%d buf=0x%lx addr=0x%lx size=%ld\n", smp_processor_id(), buf, addr, size));
+	DPRINT(("CPU%d buf=0x%lx addr=0x%lx size=%ld\n", raw_smp_processor_id(), buf, addr, size));
 
 	while (size > 0) {
 		unsigned long pfn = ia64_tpa(buf) >> PAGE_SHIFT;
@@ -2855,7 +2855,7 @@ pfm_write_pmcs(pfm_context_t *ctx, void *arg, int count, struct pt_regs *regs)
 		 * when the caller is running on the CPU being monitored by the session.
 		 * It does not have to be the owner (ctx_task) of the context per se.
 		 */
-		if (is_system && ctx->ctx_cpu != smp_processor_id()) {
+		if (is_system && ctx->ctx_cpu != raw_smp_processor_id()) {
 			DPRINT(("should be running on CPU%d\n", ctx->ctx_cpu));
 			return -EBUSY;
 		}
@@ -3098,7 +3098,7 @@ pfm_write_pmds(pfm_context_t *ctx, void *arg, int count, struct pt_regs *regs)
 		 * when the caller is running on the CPU being monitored by the session.
 		 * It does not have to be the owner (ctx_task) of the context per se.
 		 */
-		if (unlikely(is_system && ctx->ctx_cpu != smp_processor_id())) {
+		if (unlikely(is_system && ctx->ctx_cpu != raw_smp_processor_id())) {
 			DPRINT(("should be running on CPU%d\n", ctx->ctx_cpu));
 			return -EBUSY;
 		}
@@ -3294,7 +3294,7 @@ pfm_read_pmds(pfm_context_t *ctx, void *arg, int count, struct pt_regs *regs)
 		 * when the caller is running on the CPU being monitored by the session.
 		 * It does not have to be the owner (ctx_task) of the context per se.
 		 */
-		if (unlikely(is_system && ctx->ctx_cpu != smp_processor_id())) {
+		if (unlikely(is_system && ctx->ctx_cpu != raw_smp_processor_id())) {
 			DPRINT(("should be running on CPU%d\n", ctx->ctx_cpu));
 			return -EBUSY;
 		}
@@ -3550,7 +3550,7 @@ pfm_restart(pfm_context_t *ctx, void *arg, int count, struct pt_regs *regs)
  	 * when the caller is running on the CPU being monitored by the session.
  	 * It does not have to be the owner (ctx_task) of the context per se.
  	 */
-	if (is_system && ctx->ctx_cpu != smp_processor_id()) {
+	if (is_system && ctx->ctx_cpu != raw_smp_processor_id()) {
 		DPRINT(("should be running on CPU%d\n", ctx->ctx_cpu));
 		return -EBUSY;
 	}
@@ -3722,7 +3722,7 @@ pfm_write_ibr_dbr(int mode, pfm_context_t *ctx, void *arg, int count, struct pt_
 		 * when the caller is running on the CPU being monitored by the session.
 		 * It does not have to be the owner (ctx_task) of the context per se.
 		 */
-		if (unlikely(is_system && ctx->ctx_cpu != smp_processor_id())) {
+		if (unlikely(is_system && ctx->ctx_cpu != raw_smp_processor_id())) {
 			DPRINT(("should be running on CPU%d\n", ctx->ctx_cpu));
 			return -EBUSY;
 		}
@@ -3967,7 +3967,7 @@ pfm_stop(pfm_context_t *ctx, void *arg, int count, struct pt_regs *regs)
  	 * when the caller is running on the CPU being monitored by the session.
  	 * It does not have to be the owner (ctx_task) of the context per se.
  	 */
-	if (is_system && ctx->ctx_cpu != smp_processor_id()) {
+	if (is_system && ctx->ctx_cpu != raw_smp_processor_id()) {
 		DPRINT(("should be running on CPU%d\n", ctx->ctx_cpu));
 		return -EBUSY;
 	}
@@ -4052,7 +4052,7 @@ pfm_start(pfm_context_t *ctx, void *arg, int count, struct pt_regs *regs)
  	 * when the caller is running on the CPU being monitored by the session.
  	 * It does not have to be the owner (ctx_task) of the context per se.
  	 */
-	if (is_system && ctx->ctx_cpu != smp_processor_id()) {
+	if (is_system && ctx->ctx_cpu != raw_smp_processor_id()) {
 		DPRINT(("should be running on CPU%d\n", ctx->ctx_cpu));
 		return -EBUSY;
 	}
@@ -4265,7 +4265,7 @@ pfm_context_load(pfm_context_t *ctx, void *arg, int count, struct pt_regs *regs)
 	 *
 	 * systemwide: keep track of CPU this session is supposed to run on
 	 */
-	the_cpu = ctx->ctx_cpu = smp_processor_id();
+	the_cpu = ctx->ctx_cpu = raw_smp_processor_id();
 
 	ret = -EBUSY;
 	/*
@@ -4334,7 +4334,7 @@ pfm_context_load(pfm_context_t *ctx, void *arg, int count, struct pt_regs *regs)
 			ia64_psr(regs)->sp = 0;
 			DPRINT(("clearing psr.sp for [%d]\n", task_pid_nr(task)));
 
-			SET_LAST_CPU(ctx, smp_processor_id());
+			SET_LAST_CPU(ctx, raw_smp_processor_id());
 			INC_ACTIVATION();
 			SET_ACTIVATION(ctx);
 #ifndef CONFIG_SMP
@@ -5270,7 +5270,7 @@ static void pfm_overflow_handler(struct task_struct *task, pfm_context_t *ctx,
 		unsigned long start_cycles, end_cycles;
 		unsigned long pmd_mask;
 		int j, k, ret = 0;
-		int this_cpu = smp_processor_id();
+		int this_cpu = raw_smp_processor_id();
 
 		pmd_mask = ovfl_pmds >> PMU_FIRST_COUNTER;
 		ovfl_arg = &ctx->ctx_ovfl_arg;
@@ -5422,7 +5422,7 @@ static void pfm_overflow_handler(struct task_struct *task, pfm_context_t *ctx,
 
 sanity_check:
 	printk(KERN_ERR "perfmon: CPU%d overflow handler [%d] pmc0=0x%lx\n",
-			smp_processor_id(),
+			raw_smp_processor_id(),
 			task ? task_pid_nr(task) : -1,
 			pmc0);
 	return;
@@ -5470,7 +5470,7 @@ pfm_do_interrupt_handler(void *arg, struct pt_regs *regs)
 	pfm_context_t *ctx;
 	unsigned long flags;
 	u64 pmc0;
-	int this_cpu = smp_processor_id();
+	int this_cpu = raw_smp_processor_id();
 	int retval = 0;
 
 	pfm_stats[this_cpu].pfm_ovfl_intr_count++;
@@ -6062,7 +6062,7 @@ pfm_load_regs (struct task_struct *task)
 	 * if we were the last user of the PMU on that CPU,
 	 * then nothing to do except restore psr
 	 */
-	if (GET_LAST_CPU(ctx) == smp_processor_id() && ctx->ctx_last_activation == GET_ACTIVATION()) {
+	if (GET_LAST_CPU(ctx) == raw_smp_processor_id() && ctx->ctx_last_activation == GET_ACTIVATION()) {
 
 		/*
 		 * retrieve partial reload masks (due to user modifications)
@@ -6116,7 +6116,7 @@ pfm_load_regs (struct task_struct *task)
 		 */
 		if (need_irq_resend) ia64_resend_irq(IA64_PERFMON_VECTOR);
 
-		pfm_stats[smp_processor_id()].pfm_replay_ovfl_intr_count++;
+		pfm_stats[raw_smp_processor_id()].pfm_replay_ovfl_intr_count++;
 	}
 
 	/*
@@ -6125,7 +6125,7 @@ pfm_load_regs (struct task_struct *task)
 	ctx->ctx_reload_pmcs[0] = 0UL;
 	ctx->ctx_reload_pmds[0] = 0UL;
 
-	SET_LAST_CPU(ctx, smp_processor_id());
+	SET_LAST_CPU(ctx, raw_smp_processor_id());
 
 	/*
 	 * dump activation value for this PMU
@@ -6254,7 +6254,7 @@ pfm_load_regs (struct task_struct *task)
 		 */
 		if (need_irq_resend) ia64_resend_irq(IA64_PERFMON_VECTOR);
 
-		pfm_stats[smp_processor_id()].pfm_replay_ovfl_intr_count++;
+		pfm_stats[raw_smp_processor_id()].pfm_replay_ovfl_intr_count++;
 	}
 
 	/*
@@ -6296,7 +6296,7 @@ pfm_flush_pmds(struct task_struct *task, pfm_context_t *ctx)
 	 * In system-wide we always have can_access_pmu true because a task running on an
 	 * invalid processor is flagged earlier in the call stack (see pfm_stop).
 	 */
-	can_access_pmu = (GET_PMU_OWNER() == task) || (ctx->ctx_fl_system && ctx->ctx_cpu == smp_processor_id());
+	can_access_pmu = (GET_PMU_OWNER() == task) || (ctx->ctx_fl_system && ctx->ctx_cpu == raw_smp_processor_id());
 	if (can_access_pmu) {
 		/*
 		 * Mark the PMU as not owned
@@ -6700,7 +6700,7 @@ dump_pmu_state(const char *from)
 
 	local_irq_save(flags);
 
-	this_cpu = smp_processor_id();
+	this_cpu = raw_smp_processor_id();
 	regs     = task_pt_regs(current);
 	info     = PFM_CPUINFO_GET();
 	dcr      = ia64_getreg(_IA64_REG_CR_DCR);

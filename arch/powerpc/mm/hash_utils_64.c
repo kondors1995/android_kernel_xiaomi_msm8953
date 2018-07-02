@@ -1047,7 +1047,7 @@ int hash_page_mm(struct mm_struct *mm, unsigned long ea, unsigned long access, u
 	}
 
 	/* Check CPU locality */
-	tmp = cpumask_of(smp_processor_id());
+	tmp = cpumask_of(raw_smp_processor_id());
 	if (user_region && cpumask_equal(mm_cpumask(mm), tmp))
 		local = 1;
 
@@ -1250,7 +1250,7 @@ void hash_preload(struct mm_struct *mm, unsigned long ea,
 #endif /* CONFIG_PPC_64K_PAGES */
 
 	/* Is that local to this CPU ? */
-	if (cpumask_equal(mm_cpumask(mm), cpumask_of(smp_processor_id())))
+	if (cpumask_equal(mm_cpumask(mm), cpumask_of(raw_smp_processor_id())))
 		local = 1;
 
 	/* Hash it in */

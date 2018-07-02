@@ -178,7 +178,7 @@ void __init clockevent_i8253_init(bool oneshot)
 	 * Start pit with the boot cpu mask. x86 might make it global
 	 * when it is used as broadcast device later.
 	 */
-	i8253_clockevent.cpumask = cpumask_of(smp_processor_id());
+	i8253_clockevent.cpumask = cpumask_of(raw_smp_processor_id());
 
 	clockevents_config_and_register(&i8253_clockevent, PIT_TICK_RATE,
 					0xF, 0x7FFF);

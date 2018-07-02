@@ -17,7 +17,7 @@ void show_regs(struct pt_regs_subarch *regs)
 #if 0
         printk("\n");
         printk("EIP: %04x:[<%08lx>] CPU: %d",0xffff & regs->xcs, regs->eip,
-	       smp_processor_id());
+	       raw_smp_processor_id());
         if (regs->xcs & 3)
                 printk(" ESP: %04x:%08lx",0xffff & regs->xss, regs->esp);
         printk(" EFLAGS: %08lx\n", regs->eflags);

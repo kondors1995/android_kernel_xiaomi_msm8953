@@ -771,7 +771,7 @@ static void set_ioaccel1_performant_mode(struct ctlr_info *h,
 	/* Tell the controller to post the reply to the queue for this
 	 * processor.  This seems to give the best I/O throughput.
 	 */
-	cp->ReplyQueue = smp_processor_id() % h->nreply_queues;
+	cp->ReplyQueue = raw_smp_processor_id() % h->nreply_queues;
 	/* Set the bits in the address sent down to include:
 	 *  - performant mode bit (bit 0)
 	 *  - pull count (bits 1-3)
@@ -789,7 +789,7 @@ static void set_ioaccel2_performant_mode(struct ctlr_info *h,
 	/* Tell the controller to post the reply to the queue for this
 	 * processor.  This seems to give the best I/O throughput.
 	 */
-	cp->reply_queue = smp_processor_id() % h->nreply_queues;
+	cp->reply_queue = raw_smp_processor_id() % h->nreply_queues;
 	/* Set the bits in the address sent down to include:
 	 *  - performant mode bit not used in ioaccel mode 2
 	 *  - pull count (bits 0-3)

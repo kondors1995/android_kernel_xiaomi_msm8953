@@ -789,7 +789,7 @@ void perf_event_print_debug(void)
 
 	local_irq_save(flags);
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	pcr = wrperfmon(PERFMON_CMD_READ, 0);
 	pcr0 = (pcr >> alpha_pmu->pmc_count_shift[0]) & alpha_pmu->pmc_count_mask[0];

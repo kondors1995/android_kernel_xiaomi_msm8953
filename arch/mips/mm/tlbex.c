@@ -349,7 +349,7 @@ static struct work_registers build_get_work_registers(u32 **p)
 	}
 
 	if (num_possible_cpus() > 1) {
-		/* Get smp_processor_id */
+		/* Get raw_smp_processor_id */
 		UASM_i_CPUID_MFC0(p, K0, SMP_CPUID_REG);
 		UASM_i_SRL_SAFE(p, K0, K0, SMP_CPUID_REGSHIFT);
 
@@ -933,7 +933,7 @@ build_get_pgde32(u32 **p, unsigned int tmp, unsigned int ptr)
 	} else {
 		long pgdc = (long)pgd_current;
 
-		/* 32 bit SMP has smp_processor_id() stored in CONTEXT. */
+		/* 32 bit SMP has raw_smp_processor_id() stored in CONTEXT. */
 #ifdef CONFIG_SMP
 		uasm_i_mfc0(p, ptr, SMP_CPUID_REG);
 		UASM_i_LA_mostly(p, tmp, pgdc);
@@ -1477,7 +1477,7 @@ static void build_setup_pgd(void)
 	}
 #else
 #ifdef CONFIG_SMP
-	/* Save PGD to pgd_current[smp_processor_id()] */
+	/* Save PGD to pgd_current[raw_smp_processor_id()] */
 	UASM_i_CPUID_MFC0(&p, a1, SMP_CPUID_REG);
 	UASM_i_SRL_SAFE(&p, a1, a1, SMP_CPUID_PTRSHIFT);
 	UASM_i_LA_mostly(&p, a2, pgdc);

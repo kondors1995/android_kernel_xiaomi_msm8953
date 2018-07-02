@@ -37,9 +37,9 @@ static atomic_t irq_poll_active;
  */
 bool irq_wait_for_poll(struct irq_desc *desc)
 {
-	if (WARN_ONCE(irq_poll_cpu == smp_processor_id(),
+	if (WARN_ONCE(irq_poll_cpu == raw_smp_processor_id(),
 		      "irq poll in progress on cpu %d for irq %d\n",
-		      smp_processor_id(), desc->irq_data.irq))
+		      raw_smp_processor_id(), desc->irq_data.irq))
 		return false;
 
 #ifdef CONFIG_SMP
@@ -124,7 +124,7 @@ static int misrouted_irq(int irq)
 	if (atomic_inc_return(&irq_poll_active) != 1)
 		goto out;
 
-	irq_poll_cpu = smp_processor_id();
+	irq_poll_cpu = raw_smp_processor_id();
 
 	for_each_irq_desc(i, desc) {
 		if (!i)
@@ -149,7 +149,7 @@ static void poll_spurious_irqs(unsigned long dummy)
 
 	if (atomic_inc_return(&irq_poll_active) != 1)
 		goto out;
-	irq_poll_cpu = smp_processor_id();
+	irq_poll_cpu = raw_smp_processor_id();
 
 	for_each_irq_desc(i, desc) {
 		unsigned int state;

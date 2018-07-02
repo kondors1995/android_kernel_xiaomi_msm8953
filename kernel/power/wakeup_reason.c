@@ -365,7 +365,7 @@ log_possible_wakeup_reason_start(int irq, struct irq_desc *desc, unsigned depth)
 
 	/* We assume wakeup interrupts are handlerd only by the first core. */
 	/* TODO: relax this by having percpu versions of the irq tree */
-	if (smp_processor_id() != 0) {
+	if (raw_smp_processor_id() != 0) {
 		return NULL;
 	}
 

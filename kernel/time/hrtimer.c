@@ -199,7 +199,7 @@ switch_hrtimer_base(struct hrtimer *timer, struct hrtimer_clock_base *base,
 {
 	struct hrtimer_clock_base *new_base;
 	struct hrtimer_cpu_base *new_cpu_base;
-	int this_cpu = smp_processor_id();
+	int this_cpu = raw_smp_processor_id();
 	int cpu = get_nohz_timer_target(pinned);
 	int basenum = base->index;
 
@@ -664,7 +664,7 @@ static void retrigger_next_event(void *arg)
  */
 static int hrtimer_switch_to_hres(void)
 {
-	int i, cpu = smp_processor_id();
+	int i, cpu = raw_smp_processor_id();
 	struct hrtimer_cpu_base *base = &per_cpu(hrtimer_bases, cpu);
 	unsigned long flags;
 
@@ -1706,7 +1706,7 @@ static struct notifier_block hrtimers_nb = {
 void __init hrtimers_init(void)
 {
 	hrtimer_cpu_notify(&hrtimers_nb, (unsigned long)CPU_UP_PREPARE,
-			  (void *)(long)smp_processor_id());
+			  (void *)(long)raw_smp_processor_id());
 	register_cpu_notifier(&hrtimers_nb);
 #ifdef CONFIG_HIGH_RES_TIMERS
 	open_softirq(HRTIMER_SOFTIRQ, run_hrtimer_softirq);

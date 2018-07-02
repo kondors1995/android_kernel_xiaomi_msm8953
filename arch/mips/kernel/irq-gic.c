@@ -196,9 +196,9 @@ void gic_get_int_mask(unsigned long *dst, const unsigned long *src)
 	unsigned long *pending_abs, *intrmask_abs;
 
 	/* Get per-cpu bitmaps */
-	pending = pending_regs[smp_processor_id()].pending;
-	intrmask = intrmask_regs[smp_processor_id()].intrmask;
-	pcpu_mask = pcpu_masks[smp_processor_id()].pcpu_mask;
+	pending = pending_regs[raw_smp_processor_id()].pending;
+	intrmask = intrmask_regs[raw_smp_processor_id()].intrmask;
+	pcpu_mask = pcpu_masks[raw_smp_processor_id()].pcpu_mask;
 
 	pending_abs = (unsigned long *) GIC_REG_ABS_ADDR(SHARED,
 							 GIC_SH_PEND_31_0_OFS);

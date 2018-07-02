@@ -80,11 +80,11 @@ void machine_crash_nonpanic_core(void *unused)
 
 	crash_setup_regs(&regs, NULL);
 	printk(KERN_DEBUG "CPU %u will stop doing anything useful since another CPU has crashed\n",
-	       smp_processor_id());
-	crash_save_cpu(&regs, smp_processor_id());
+	       raw_smp_processor_id());
+	crash_save_cpu(&regs, raw_smp_processor_id());
 	flush_cache_all();
 
-	set_cpu_online(smp_processor_id(), false);
+	set_cpu_online(raw_smp_processor_id(), false);
 	atomic_dec(&waiting_for_crash_ipi);
 	while (1)
 		cpu_relax();
@@ -129,7 +129,7 @@ void machine_crash_shutdown(struct pt_regs *regs)
 	if (atomic_read(&waiting_for_crash_ipi) > 0)
 		printk(KERN_WARNING "Non-crashing CPUs did not react to IPI\n");
 
-	crash_save_cpu(regs, smp_processor_id());
+	crash_save_cpu(regs, raw_smp_processor_id());
 	machine_kexec_mask_interrupts();
 
 	printk(KERN_INFO "Loading crashdump kernel...\n");

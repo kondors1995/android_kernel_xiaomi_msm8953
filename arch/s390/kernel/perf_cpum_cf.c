@@ -243,7 +243,7 @@ static void cpumf_measurement_alert(struct ext_code ext_code,
 
 	/* loss of counter data alert */
 	if (alert & CPU_MF_INT_CF_LCDA)
-		pr_err("CPU[%i] Counter data was lost\n", smp_processor_id());
+		pr_err("CPU[%i] Counter data was lost\n", raw_smp_processor_id());
 }
 
 #define PMC_INIT      0

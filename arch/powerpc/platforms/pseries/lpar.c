@@ -62,7 +62,7 @@ EXPORT_SYMBOL(plpar_hcall_norets);
 
 void vpa_init(int cpu)
 {
-	int hwcpu = get_hard_smp_processor_id(cpu);
+	int hwcpu = get_hard_raw_smp_processor_id(cpu);
 	unsigned long addr;
 	long ret;
 	struct paca_struct *pp;
@@ -72,7 +72,7 @@ void vpa_init(int cpu)
 	 * The spec says it "may be problematic" if CPU x registers the VPA of
 	 * CPU y. We should never do that, but wail if we ever do.
 	 */
-	WARN_ON(cpu != smp_processor_id());
+	WARN_ON(cpu != raw_smp_processor_id());
 
 	if (cpu_has_feature(CPU_FTR_ALTIVEC))
 		lppaca_of(cpu).vmxregs_in_use = 1;
@@ -116,7 +116,7 @@ void vpa_init(int cpu)
 		ret = register_dtl(hwcpu, __pa(dtl));
 		if (ret)
 			pr_err("WARNING: DTL registration of cpu %d (hw %d) "
-			       "failed with %ld\n", smp_processor_id(),
+			       "failed with %ld\n", raw_smp_processor_id(),
 			       hwcpu, ret);
 		lppaca_of(cpu).dtl_enable_mask = 2;
 	}

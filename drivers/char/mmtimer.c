@@ -526,7 +526,7 @@ mmtimer_interrupt(int irq, void *dev_id)
 {
 	unsigned long expires = 0;
 	int result = IRQ_NONE;
-	unsigned indx = cpu_to_node(smp_processor_id());
+	unsigned indx = cpu_to_node(raw_smp_processor_id());
 	struct mmtimer *base;
 
 	spin_lock(&timers[indx].lock);
@@ -536,7 +536,7 @@ mmtimer_interrupt(int irq, void *dev_id)
 		return result;
 	}
 
-	if (base->cpu == smp_processor_id()) {
+	if (base->cpu == raw_smp_processor_id()) {
 		if (base->timer)
 			expires = base->timer->it.mmtimer.expires;
 		/* expires test won't work with shared irqs */
@@ -726,13 +726,13 @@ static int sgi_timer_set(struct k_itimer *timr, int flags,
 	 */
 	preempt_disable();
 
-	nodeid =  cpu_to_node(smp_processor_id());
+	nodeid =  cpu_to_node(raw_smp_processor_id());
 
 	/* Lock the node timer structure */
 	spin_lock_irqsave(&timers[nodeid].lock, irqflags);
 
 	base->timer = timr;
-	base->cpu = smp_processor_id();
+	base->cpu = raw_smp_processor_id();
 
 	timr->it.mmtimer.clock = TIMER_SET;
 	timr->it.mmtimer.node = nodeid;

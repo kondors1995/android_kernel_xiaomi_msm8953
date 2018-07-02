@@ -126,7 +126,7 @@ static unsigned __kprobes long oops_begin(struct pt_regs *regs)
 
 	/* racy, but better than risking deadlock. */
 	raw_local_irq_save(flags);
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	if (!arch_spin_trylock(&die_lock)) {
 		if (cpu == die_owner)
 			/* nested oops. should stop eventually */;

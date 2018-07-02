@@ -89,7 +89,7 @@ static DEFINE_PER_CPU(struct clock_event_device, cpu_ce);
 irqreturn_t
 rtc_timer_interrupt(int irq, void *dev)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct clock_event_device *ce = &per_cpu(cpu_ce, cpu);
 
 	/* Don't run the hook for UNUSED or SHUTDOWN.  */
@@ -121,7 +121,7 @@ rtc_ce_set_next_event(unsigned long evt, struct clock_event_device *ce)
 static void __init
 init_rtc_clockevent(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct clock_event_device *ce = &per_cpu(cpu_ce, cpu);
 
 	*ce = (struct clock_event_device){
@@ -179,7 +179,7 @@ qemu_ce_set_next_event(unsigned long evt, struct clock_event_device *ce)
 static irqreturn_t
 qemu_timer_interrupt(int irq, void *dev)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct clock_event_device *ce = &per_cpu(cpu_ce, cpu);
 
 	ce->event_handler(ce);
@@ -189,7 +189,7 @@ qemu_timer_interrupt(int irq, void *dev)
 static void __init
 init_qemu_clockevent(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct clock_event_device *ce = &per_cpu(cpu_ce, cpu);
 
 	*ce = (struct clock_event_device){

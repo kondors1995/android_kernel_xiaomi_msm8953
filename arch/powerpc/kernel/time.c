@@ -540,7 +540,7 @@ void timer_interrupt(struct pt_regs * regs)
 	 * don't replay timer interrupt when return, otherwise we'll trap
 	 * here infinitely :(
 	 */
-	if (!cpu_online(smp_processor_id())) {
+	if (!cpu_online(raw_smp_processor_id())) {
 		*next_tb = ~(u64)0;
 		return;
 	}
@@ -862,7 +862,7 @@ static void register_decrementer_clockevent(int cpu)
 
 static void __init init_decrementer_clockevent(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	clockevents_calc_mult_shift(&decrementer_clockevent, ppc_tb_freq, 4);
 
@@ -883,7 +883,7 @@ void secondary_cpu_time_init(void)
 
 	/* FIME: Should make unrelatred change to move snapshot_timebase
 	 * call here ! */
-	register_decrementer_clockevent(smp_processor_id());
+	register_decrementer_clockevent(raw_smp_processor_id());
 }
 
 /* This function is only called on the boot processor */

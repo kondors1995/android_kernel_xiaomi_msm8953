@@ -220,7 +220,7 @@ static irqreturn_t timer_irq_handler(int irq, void *dev_id)
 void arc_local_timer_setup()
 {
 	struct clock_event_device *evt = this_cpu_ptr(&arc_clockevent_device);
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	evt->cpumask = cpumask_of(cpu);
 	clockevents_config_and_register(evt, arc_get_core_freq(),

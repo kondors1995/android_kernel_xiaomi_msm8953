@@ -333,7 +333,7 @@ static void amd_init_l3_cache(struct _cpuid4_info_regs *this_leaf, int index)
 	if (index < 3)
 		return;
 
-	node = amd_get_nb_id(smp_processor_id());
+	node = amd_get_nb_id(raw_smp_processor_id());
 	this_leaf->nb = node_to_amd_nb(node);
 	if (this_leaf->nb && !this_leaf->nb->l3_cache.indices)
 		amd_calc_l3_indices(this_leaf->nb);
@@ -874,7 +874,7 @@ static void free_cache_attributes(unsigned int cpu)
 
 static void get_cpu_leaves(void *_retval)
 {
-	int j, *retval = _retval, cpu = smp_processor_id();
+	int j, *retval = _retval, cpu = raw_smp_processor_id();
 
 	/* Do cpuid and store the results */
 	for (j = 0; j < num_cache_leaves; j++) {

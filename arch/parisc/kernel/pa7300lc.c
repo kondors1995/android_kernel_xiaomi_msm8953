@@ -29,7 +29,7 @@ static u32 cpu_hpa(void)
 static void pa7300lc_lpmc(int code, struct pt_regs *regs)
 {
 	u32 hpa;
-	printk(KERN_WARNING "LPMC on CPU %d\n", smp_processor_id());
+	printk(KERN_WARNING "LPMC on CPU %d\n", raw_smp_processor_id());
 
 	show_regs(regs);
 

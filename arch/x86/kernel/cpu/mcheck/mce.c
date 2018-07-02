@@ -125,7 +125,7 @@ ATOMIC_NOTIFIER_HEAD(x86_mce_decoder_chain);
 void mce_setup(struct mce *m)
 {
 	memset(m, 0, sizeof(struct mce));
-	m->cpu = m->extcpu = smp_processor_id();
+	m->cpu = m->extcpu = raw_smp_processor_id();
 	rdtscll(m->tsc);
 	/* We hope get_seconds stays lockless */
 	m->time = get_seconds();
@@ -1298,7 +1298,7 @@ static void mce_timer_fn(unsigned long data)
 	unsigned long iv;
 	int notify;
 
-	WARN_ON(smp_processor_id() != data);
+	WARN_ON(raw_smp_processor_id() != data);
 
 	if (mce_available(this_cpu_ptr(&cpu_info))) {
 		machine_check_poll(MCP_TIMESTAMP,
@@ -1323,7 +1323,7 @@ static void mce_timer_fn(unsigned long data)
 	/* Might have become 0 after CMCI storm subsided */
 	if (iv) {
 		t->expires = jiffies + iv;
-		add_timer_on(t, smp_processor_id());
+		add_timer_on(t, raw_smp_processor_id());
 	}
 }
 
@@ -1341,7 +1341,7 @@ void mce_timer_kick(unsigned long interval)
 			mod_timer_pinned(t, when);
 	} else {
 		t->expires = round_jiffies(when);
-		add_timer_on(t, smp_processor_id());
+		add_timer_on(t, raw_smp_processor_id());
 	}
 	if (interval < iv)
 		__this_cpu_write(mce_next_interval, interval);
@@ -1669,7 +1669,7 @@ static void mce_start_timer(unsigned int cpu, struct timer_list *t)
 static void __mcheck_cpu_init_timer(void)
 {
 	struct timer_list *t = this_cpu_ptr(&mce_timer);
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 
 	setup_timer(t, mce_timer_fn, cpu);
 	mce_start_timer(cpu, t);
@@ -1679,7 +1679,7 @@ static void __mcheck_cpu_init_timer(void)
 static void unexpected_machine_check(struct pt_regs *regs, long error_code)
 {
 	pr_err("CPU#%d: Unexpected int18 (Machine Check)\n",
-	       smp_processor_id());
+	       raw_smp_processor_id());
 }
 
 /* Call the installed machine check handler for this CPU setup. */
@@ -1759,7 +1759,7 @@ static void collect_tscs(void *data)
 {
 	unsigned long *cpu_tsc = (unsigned long *)data;
 
-	rdtscll(cpu_tsc[smp_processor_id()]);
+	rdtscll(cpu_tsc[raw_smp_processor_id()]);
 }
 
 static int mce_apei_read_done;

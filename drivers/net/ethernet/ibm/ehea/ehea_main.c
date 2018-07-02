@@ -872,7 +872,7 @@ static struct ehea_cqe *ehea_proc_cqes(struct ehea_port_res *pr, int my_quota)
 
 	if (unlikely(netif_tx_queue_stopped(txq) &&
 		     (atomic_read(&pr->swqe_avail) >= pr->swqe_refill_th))) {
-		__netif_tx_lock(txq, smp_processor_id());
+		__netif_tx_lock(txq, raw_smp_processor_id());
 		if (netif_tx_queue_stopped(txq) &&
 		    (atomic_read(&pr->swqe_avail) >= pr->swqe_refill_th))
 			netif_tx_wake_queue(txq);

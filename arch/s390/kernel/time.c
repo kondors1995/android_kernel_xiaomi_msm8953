@@ -133,7 +133,7 @@ void init_cpu_timer(void)
 	S390_lowcore.clock_comparator = -1ULL;
 	set_clock_comparator(S390_lowcore.clock_comparator);
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	cd = &per_cpu(comparators, cpu);
 	cd->name		= "comparator";
 	cd->features		= CLOCK_EVT_FEAT_ONESHOT;

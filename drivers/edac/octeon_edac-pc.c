@@ -43,7 +43,7 @@ static int  co_cache_error_event(struct notifier_block *this,
 						notifier);
 
 	unsigned int core = cvmx_get_core_num();
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	u64 icache_err = read_octeon_c0_icacheerr();
 	u64 dcache_err;
 

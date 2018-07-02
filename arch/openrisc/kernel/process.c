@@ -231,7 +231,7 @@ struct task_struct *__switch_to(struct task_struct *old,
 	new_ti = new->stack;
 	old_ti = old->stack;
 
-	current_thread_info_set[smp_processor_id()] = new_ti;
+	current_thread_info_set[raw_smp_processor_id()] = new_ti;
 	last = (_switch(old_ti, new_ti))->task;
 
 	local_irq_restore(flags);

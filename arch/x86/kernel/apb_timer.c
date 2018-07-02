@@ -155,8 +155,8 @@ static int __init apbt_clockevent_register(void)
 		return -ENODEV;
 	}
 
-	adev->num = smp_processor_id();
-	adev->timer = dw_apb_clockevent_init(smp_processor_id(), "apbt0",
+	adev->num = raw_smp_processor_id();
+	adev->timer = dw_apb_clockevent_init(raw_smp_processor_id(), "apbt0",
 		intel_mid_timer_options == INTEL_MID_TIMER_LAPIC_APBT ?
 		APBT_CLOCKEVENT_RATING - 100 : APBT_CLOCKEVENT_RATING,
 		adev_virt_addr(adev), 0, apbt_freq);
@@ -194,7 +194,7 @@ void apbt_setup_secondary_clock(void)
 	int cpu;
 
 	/* Don't register boot CPU clockevent */
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 	if (!cpu)
 		return;
 

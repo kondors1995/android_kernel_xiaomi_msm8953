@@ -171,7 +171,7 @@ static int mtrr_rendezvous_handler(void *info)
 	if (data->smp_reg != ~0U) {
 		mtrr_if->set(data->smp_reg, data->smp_base,
 			     data->smp_size, data->smp_type);
-	} else if (mtrr_aps_delayed_init || !cpu_online(smp_processor_id())) {
+	} else if (mtrr_aps_delayed_init || !cpu_online(raw_smp_processor_id())) {
 		mtrr_if->set_all();
 	}
 	return 0;

@@ -77,7 +77,7 @@ int bridge_probe(nasid_t nasid, int widget_id, int masterwid)
 	bc->io.end		= ~0UL;
 	bc->io.flags		= IORESOURCE_IO;
 
-	bc->irq_cpu = smp_processor_id();
+	bc->irq_cpu = raw_smp_processor_id();
 	bc->widget_id = widget_id;
 	bc->nasid = nasid;
 

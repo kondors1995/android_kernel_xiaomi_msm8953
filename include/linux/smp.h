@@ -169,8 +169,8 @@ static inline void wake_up_all_idle_cpus(void) {  }
  * the warning message, as your code might not work under PREEMPT.
  */
 #ifdef CONFIG_DEBUG_PREEMPT
-  extern unsigned int debug_smp_processor_id(void);
-# define smp_processor_id() debug_smp_processor_id()
+  extern unsigned int debug_raw_smp_processor_id(void);
+# define smp_processor_id() debug_raw_smp_processor_id()
 #else
 # define smp_processor_id() raw_smp_processor_id()
 #endif

@@ -773,7 +773,7 @@ static irqreturn_t fiq_debugger_uart_irq(int irq, void *dev)
 	fiq_debugger_handle_wakeup(state);
 
 	/* handle the debugger irq in regular context */
-	not_done = fiq_debugger_handle_uart_interrupt(state, smp_processor_id(),
+	not_done = fiq_debugger_handle_uart_interrupt(state, raw_smp_processor_id(),
 					      get_irq_regs(),
 					      current_thread_info());
 	if (not_done)

@@ -426,7 +426,7 @@ static void __ref show_saved_mc(void)
 	pf = uci.cpu_sig.pf;
 	rev = uci.cpu_sig.rev;
 	pr_debug("CPU%d: sig=0x%x, pf=0x%x, rev=0x%x\n",
-		 smp_processor_id(), sig, pf, rev);
+		 raw_smp_processor_id(), sig, pf, rev);
 
 	for (i = 0; i < mc_saved_data.mc_saved_count; i++) {
 		struct microcode_header_intel *mc_saved_header;
@@ -577,7 +577,7 @@ scan_microcode(unsigned long start, unsigned long end,
 static void
 print_ucode_info(struct ucode_cpu_info *uci, unsigned int date)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	pr_info("CPU%d microcode updated early to revision 0x%x, date = %04x-%02x-%02x\n",
 		cpu,

@@ -837,7 +837,7 @@ EXPORT_SYMBOL_GPL(ps3_set_signal);
 
 u32 ps3_get_hw_thread_id(int cpu)
 {
-	return get_hard_smp_processor_id(cpu);
+	return get_hard_raw_smp_processor_id(cpu);
 }
 EXPORT_SYMBOL_GPL(ps3_get_hw_thread_id);
 

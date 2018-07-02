@@ -216,7 +216,7 @@ static void rackmeter_do_timer(struct work_struct *work)
 	struct rackmeter_cpu *rcpu =
 		container_of(work, struct rackmeter_cpu, sniffer.work);
 	struct rackmeter *rm = rcpu->rm;
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	cputime64_t cur_jiffies, total_idle_ticks;
 	unsigned int total_ticks, idle_ticks;
 	int i, offset, load, cumm, pause;

@@ -256,7 +256,7 @@ static int packet_direct_xmit(struct sk_buff *skb)
 
 	local_bh_disable();
 
-	HARD_TX_LOCK(dev, txq, smp_processor_id());
+	HARD_TX_LOCK(dev, txq, raw_smp_processor_id());
 	if (!netif_xmit_frozen_or_drv_stopped(txq))
 		ret = netdev_start_xmit(skb, dev, txq, false);
 	HARD_TX_UNLOCK(dev, txq);
@@ -1289,7 +1289,7 @@ static unsigned int fanout_demux_cpu(struct packet_fanout *f,
 				     struct sk_buff *skb,
 				     unsigned int num)
 {
-	return smp_processor_id() % num;
+	return raw_smp_processor_id() % num;
 }
 
 static unsigned int fanout_demux_rnd(struct packet_fanout *f,

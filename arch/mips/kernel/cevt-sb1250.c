@@ -41,7 +41,7 @@
 static void sibyte_set_mode(enum clock_event_mode mode,
 			   struct clock_event_device *evt)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	void __iomem *cfg, *init;
 
 	cfg = IOADDR(A_SCD_TIMER_REGISTER(cpu, R_SCD_TIMER_CFG));
@@ -69,7 +69,7 @@ static void sibyte_set_mode(enum clock_event_mode mode,
 
 static int sibyte_next_event(unsigned long delta, struct clock_event_device *cd)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	void __iomem *cfg, *init;
 
 	cfg = IOADDR(A_SCD_TIMER_REGISTER(cpu, R_SCD_TIMER_CFG));
@@ -84,7 +84,7 @@ static int sibyte_next_event(unsigned long delta, struct clock_event_device *cd)
 
 static irqreturn_t sibyte_counter_handler(int irq, void *dev_id)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	struct clock_event_device *cd = dev_id;
 	void __iomem *cfg;
 	unsigned long tmode;
@@ -109,7 +109,7 @@ static DEFINE_PER_CPU(char [18], sibyte_hpt_name);
 
 void sb1250_clockevent_init(void)
 {
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	unsigned int irq = K_INT_TIMER_0 + cpu;
 	struct irqaction *action = &per_cpu(sibyte_hpt_irqaction, cpu);
 	struct clock_event_device *cd = &per_cpu(sibyte_hpt_clockevent, cpu);

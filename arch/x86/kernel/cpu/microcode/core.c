@@ -130,7 +130,7 @@ static void collect_cpu_info_local(void *arg)
 {
 	struct cpu_info_ctx *ctx = arg;
 
-	ctx->err = microcode_ops->collect_cpu_info(smp_processor_id(),
+	ctx->err = microcode_ops->collect_cpu_info(raw_smp_processor_id(),
 						   ctx->cpu_sig);
 }
 
@@ -168,7 +168,7 @@ static void apply_microcode_local(void *arg)
 {
 	struct apply_microcode_ctx *ctx = arg;
 
-	ctx->err = microcode_ops->apply_microcode(smp_processor_id());
+	ctx->err = microcode_ops->apply_microcode(raw_smp_processor_id());
 }
 
 static int apply_microcode_on_target(int cpu)
@@ -460,7 +460,7 @@ static struct subsys_interface mc_cpu_interface = {
  */
 static void mc_bp_resume(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
 
 	if (uci->valid && uci->mc)

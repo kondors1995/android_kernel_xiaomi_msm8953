@@ -162,7 +162,7 @@ void __init init_IRQ(void)
  */
 void migrate_irqs(void)
 {
-	unsigned int i, cpu = smp_processor_id();
+	unsigned int i, cpu = raw_smp_processor_id();
 
 	for_each_active_irq(i) {
 		struct irq_data *data = irq_get_irq_data(i);

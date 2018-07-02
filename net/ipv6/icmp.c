@@ -80,7 +80,7 @@
  */
 static inline struct sock *icmpv6_sk(struct net *net)
 {
-	return net->ipv6.icmp_sk[smp_processor_id()];
+	return net->ipv6.icmp_sk[raw_smp_processor_id()];
 }
 
 static void icmpv6_err(struct sk_buff *skb, struct inet6_skb_parm *opt,

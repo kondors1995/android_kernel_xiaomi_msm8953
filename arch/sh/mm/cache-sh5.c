@@ -88,7 +88,7 @@ static void sh64_icache_inv_user_page(struct vm_area_struct *vma, unsigned long 
 {
 	/* If we get called, we know that vma->vm_flags contains VM_EXEC.
 	   Also, eaddr is page-aligned. */
-	unsigned int cpu = smp_processor_id();
+	unsigned int cpu = raw_smp_processor_id();
 	unsigned long long addr, end_addr;
 	unsigned long flags = 0;
 	unsigned long running_asid, vma_asid;
@@ -161,7 +161,7 @@ static void sh64_icache_inv_user_page_range(struct mm_struct *mm,
 		unsigned long mm_asid, current_asid;
 		unsigned long flags = 0;
 
-		mm_asid = cpu_asid(smp_processor_id(), mm);
+		mm_asid = cpu_asid(raw_smp_processor_id(), mm);
 		current_asid = get_asid();
 
 		if (mm_asid != current_asid) {

@@ -762,7 +762,7 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
 	local_irq_disable();
 
 	/* Make a note of crashing cpu. Will be used in NMI callback. */
-	crashing_cpu = safe_smp_processor_id();
+	crashing_cpu = safe_raw_smp_processor_id();
 
 	shootdown_callback = callback;
 

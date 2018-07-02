@@ -144,7 +144,7 @@ void __flush_tlb_pending(struct ppc64_tlb_batch *batch)
 	int i, local = 0;
 
 	i = batch->index;
-	tmp = cpumask_of(smp_processor_id());
+	tmp = cpumask_of(raw_smp_processor_id());
 	if (cpumask_equal(mm_cpumask(batch->mm), tmp))
 		local = 1;
 	if (i == 1)

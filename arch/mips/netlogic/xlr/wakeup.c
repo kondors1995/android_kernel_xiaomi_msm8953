@@ -59,7 +59,7 @@ int xlr_wakeup_secondary_cpus(void)
 	 *  from bootloader to linux code.
 	 */
 	nodep = nlm_get_node(0);
-	boot_cpu = hard_smp_processor_id();
+	boot_cpu = hard_raw_smp_processor_id();
 	nlm_set_nmi_handler(nlm_rmiboot_preboot);
 	for (i = 0; i < NR_CPUS; i++) {
 		if (i == boot_cpu || !cpumask_test_cpu(i, &nlm_cpumask))

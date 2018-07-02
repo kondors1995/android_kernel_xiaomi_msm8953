@@ -211,7 +211,7 @@ static int uv_set_in_nmi(int cpu, struct uv_hub_nmi_s *hub_nmi)
 /* Check if this is a system NMI event */
 static int uv_check_nmi(struct uv_hub_nmi_s *hub_nmi)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int nmi = 0;
 
 	local64_inc(&uv_nmi_count);
@@ -608,7 +608,7 @@ static inline void uv_call_kgdb_kdb(int cpu, struct pt_regs *regs, int master)
 int uv_handle_nmi(unsigned int reason, struct pt_regs *regs)
 {
 	struct uv_hub_nmi_s *hub_nmi = uv_hub_nmi;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	int master = 0;
 	unsigned long flags;
 

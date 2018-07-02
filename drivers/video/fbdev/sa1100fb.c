@@ -418,7 +418,7 @@ sa1100fb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
 #ifdef CONFIG_CPU_FREQ
 	dev_dbg(fbi->dev, "dma period = %d ps, clock = %d kHz\n",
 		sa1100fb_display_dma_period(var),
-		cpufreq_get(smp_processor_id()));
+		cpufreq_get(raw_smp_processor_id()));
 #endif
 
 	return 0;

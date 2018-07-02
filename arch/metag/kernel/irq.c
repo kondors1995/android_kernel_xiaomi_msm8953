@@ -67,7 +67,7 @@ void do_IRQ(int irq, struct pt_regs *regs)
 
 #ifdef CONFIG_4KSTACKS
 	curctx = (union irq_ctx *) current_thread_info();
-	irqctx = hardirq_ctx[smp_processor_id()];
+	irqctx = hardirq_ctx[raw_smp_processor_id()];
 
 	/*
 	 * this is where we switch to the IRQ stack. However, if we are
@@ -154,7 +154,7 @@ void irq_ctx_init(int cpu)
 
 void irq_ctx_exit(int cpu)
 {
-	hardirq_ctx[smp_processor_id()] = NULL;
+	hardirq_ctx[raw_smp_processor_id()] = NULL;
 }
 
 extern asmlinkage void __do_softirq(void);
@@ -166,7 +166,7 @@ void do_softirq_own_stack(void)
 	u32 *isp;
 
 	curctx = current_thread_info();
-	irqctx = softirq_ctx[smp_processor_id()];
+	irqctx = softirq_ctx[raw_smp_processor_id()];
 	irqctx->tinfo.task = curctx->task;
 
 	/* build the stack frame on the softirq stack */
@@ -244,7 +244,7 @@ void __init init_IRQ(void)
 	if (unlikely(!root_domain))
 		panic("init_IRQ: cannot add root IRQ domain");
 
-	irq_ctx_init(smp_processor_id());
+	irq_ctx_init(raw_smp_processor_id());
 
 	init_internal_IRQ();
 	init_external_IRQ();
@@ -268,7 +268,7 @@ int __init arch_probe_nr_irqs(void)
  */
 void migrate_irqs(void)
 {
-	unsigned int i, cpu = smp_processor_id();
+	unsigned int i, cpu = raw_smp_processor_id();
 
 	for_each_active_irq(i) {
 		struct irq_data *data = irq_get_irq_data(i);

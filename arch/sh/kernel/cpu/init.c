@@ -297,7 +297,7 @@ static inline void dsp_init(void) { }
  */
 asmlinkage void cpu_init(void)
 {
-	current_thread_info()->cpu = hard_smp_processor_id();
+	current_thread_info()->cpu = hard_raw_smp_processor_id();
 
 	/* First, probe the CPU */
 	cpu_probe();

@@ -443,7 +443,7 @@ titan_machine_check(unsigned long vector, unsigned long la_ptr)
 		       "*System %s Error (Vector 0x%x) reported on CPU %d:\n", 
 		       err_print_prefix,
 		       (vector == SCB_Q_SYSERR)?"Correctable":"Uncorrectable",
-		       (unsigned int)vector, (int)smp_processor_id());
+		       (unsigned int)vector, (int)raw_smp_processor_id());
 		
 #ifdef CONFIG_VERBOSE_MCHECK
 		titan_process_logout_frame(mchk_header, alpha_verbose_mcheck);
@@ -737,7 +737,7 @@ privateer_machine_check(unsigned long vector, unsigned long la_ptr)
 	err_print_prefix = KERN_CRIT;
 	printk("%s*System Event (Vector 0x%x) reported on CPU %d:\n", 
 	       err_print_prefix,
-	       (unsigned int)vector, (int)smp_processor_id());
+	       (unsigned int)vector, (int)raw_smp_processor_id());
 	privateer_process_680_frame(mchk_header, 1);
 	err_print_prefix = saved_err_prefix;
 	

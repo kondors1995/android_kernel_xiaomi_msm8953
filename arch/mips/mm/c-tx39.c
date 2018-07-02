@@ -151,7 +151,7 @@ static void tx39_flush_cache_mm(struct mm_struct *mm)
 	if (!cpu_has_dc_aliases)
 		return;
 
-	if (cpu_context(smp_processor_id(), mm) != 0)
+	if (cpu_context(raw_smp_processor_id(), mm) != 0)
 		tx39_blast_dcache();
 }
 
@@ -160,7 +160,7 @@ static void tx39_flush_cache_range(struct vm_area_struct *vma,
 {
 	if (!cpu_has_dc_aliases)
 		return;
-	if (!(cpu_context(smp_processor_id(), vma->vm_mm)))
+	if (!(cpu_context(raw_smp_processor_id(), vma->vm_mm)))
 		return;
 
 	tx39_blast_dcache();
@@ -179,7 +179,7 @@ static void tx39_flush_cache_page(struct vm_area_struct *vma, unsigned long page
 	 * If ownes no valid ASID yet, cannot possibly have gotten
 	 * this page into the cache.
 	 */
-	if (cpu_context(smp_processor_id(), mm) == 0)
+	if (cpu_context(raw_smp_processor_id(), mm) == 0)
 		return;
 
 	page &= PAGE_MASK;

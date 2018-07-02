@@ -261,7 +261,7 @@ static int irq_cpu(int irq)
 	if (cpu == CPU_FIXED)
         {
 		spin_unlock_irqrestore(&irq_lock, flags);
-		return smp_processor_id();
+		return raw_smp_processor_id();
         }
 
 
@@ -341,7 +341,7 @@ crisv32_do_IRQ(int irq, int block, struct pt_regs* regs)
 		return;
 	}
 
-	block_irq(irq, smp_processor_id());
+	block_irq(irq, raw_smp_processor_id());
 	do_IRQ(irq, regs);
 
 	unblock_irq(irq, irq_cpu(irq));
@@ -366,7 +366,7 @@ crisv32_do_multiple(struct pt_regs* regs)
 	int bit;
 	int i;
 
-	cpu = smp_processor_id();
+	cpu = raw_smp_processor_id();
 
 	/* An extra irq_enter here to prevent softIRQs to run after
          * each do_IRQ. This will decrease the interrupt latency.

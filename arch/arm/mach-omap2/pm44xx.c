@@ -46,7 +46,7 @@ static int omap4_pm_suspend(void)
 {
 	struct power_state *pwrst;
 	int state, ret = 0;
-	u32 cpu_id = smp_processor_id();
+	u32 cpu_id = raw_smp_processor_id();
 
 	/* Save current powerdomain state */
 	list_for_each_entry(pwrst, &pwrst_list, node) {

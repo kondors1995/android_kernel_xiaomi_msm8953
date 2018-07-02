@@ -337,7 +337,7 @@ void hv_synic_init(void *arg)
 	union hv_synic_scontrol sctrl;
 	u64 vp_index;
 
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (!hv_context.hypercall_page)
 		return;
@@ -399,7 +399,7 @@ void hv_synic_cleanup(void *arg)
 	union hv_synic_sint shared_sint;
 	union hv_synic_simp simp;
 	union hv_synic_siefp siefp;
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (!hv_context.synic_initialized)
 		return;

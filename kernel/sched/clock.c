@@ -305,7 +305,7 @@ u64 sched_clock_cpu(int cpu)
 	preempt_disable_notrace();
 	scd = cpu_sdc(cpu);
 
-	if (cpu != smp_processor_id())
+	if (cpu != raw_smp_processor_id())
 		clock = sched_clock_remote(scd);
 	else
 		clock = sched_clock_local(scd);
@@ -341,7 +341,7 @@ void sched_clock_tick(void)
  */
 void sched_clock_idle_sleep_event(void)
 {
-	sched_clock_cpu(smp_processor_id());
+	sched_clock_cpu(raw_smp_processor_id());
 }
 EXPORT_SYMBOL_GPL(sched_clock_idle_sleep_event);
 

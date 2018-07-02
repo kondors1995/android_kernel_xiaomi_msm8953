@@ -136,7 +136,7 @@ static DEFINE_PER_CPU(struct clock_event_device, clock_events);
 
 void setup_percpu_clockdev(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct clock_event_device *ce_dev = &hexagon_clockevent_dev;
 	struct clock_event_device *dummy_clock_dev =
 		&per_cpu(clock_events, cpu);
@@ -154,7 +154,7 @@ void setup_percpu_clockdev(void)
 /*  Called from smp.c for each CPU's timer ipi call  */
 void ipi_timer(void)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 	struct clock_event_device *ce_dev = &per_cpu(clock_events, cpu);
 
 	ce_dev->event_handler(ce_dev);

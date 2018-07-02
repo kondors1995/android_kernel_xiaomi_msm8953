@@ -239,7 +239,7 @@ titan_dispatch_irqs(u64 mask)
 	/*
 	 * Mask down to those interrupts which are enable on this processor
 	 */
-	mask &= titan_cpu_irq_affinity[smp_processor_id()];
+	mask &= titan_cpu_irq_affinity[raw_smp_processor_id()];
 
 	/*
 	 * Dispatch all requested interrupts 

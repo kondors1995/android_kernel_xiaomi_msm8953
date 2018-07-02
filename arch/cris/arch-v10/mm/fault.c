@@ -45,7 +45,7 @@ handle_mmu_bus_fault(struct pt_regs *regs)
 	int page_id;
 	int acc, inv;
 #endif
-	pgd_t* pgd = (pgd_t*)per_cpu(current_pgd, smp_processor_id());
+	pgd_t* pgd = (pgd_t*)per_cpu(current_pgd, raw_smp_processor_id());
 	pmd_t *pmd;
 	pte_t pte;
 	int miss, we, writeac;

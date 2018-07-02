@@ -302,7 +302,7 @@ invalid_img:
 /* Return CPUs to OPAL before starting FW update */
 static void flash_return_cpu(void *info)
 {
-	int cpu = smp_processor_id();
+	int cpu = raw_smp_processor_id();
 
 	if (!cpu_online(cpu))
 		return;
@@ -332,7 +332,7 @@ void opal_flash_term_callback(void)
 
 	/* Return secondary CPUs to firmware */
 	cpumask_copy(&mask, cpu_online_mask);
-	cpumask_clear_cpu(smp_processor_id(), &mask);
+	cpumask_clear_cpu(raw_smp_processor_id(), &mask);
 	if (!cpumask_empty(&mask))
 		smp_call_function_many(&mask,
 				       flash_return_cpu, NULL, false);

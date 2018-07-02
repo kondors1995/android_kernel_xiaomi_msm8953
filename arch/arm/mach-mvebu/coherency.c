@@ -105,7 +105,7 @@ static bool coherency_wa_enabled;
 
 static inline void mvebu_hwcc_armada375_sync_io_barrier_wa(void)
 {
-	int idx = smp_processor_id();
+	int idx = raw_smp_processor_id();
 
 	/* Write '1' to the first word of the buffer */
 	writel(0x1, coherency_wa_buf[idx]);

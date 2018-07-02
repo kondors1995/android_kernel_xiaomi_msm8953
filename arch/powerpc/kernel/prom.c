@@ -360,7 +360,7 @@ static int __init early_init_dt_scan_cpus(unsigned long node,
 	DBG("boot cpu: logical %d physical %d\n", found,
 	    be32_to_cpu(intserv[found_thread]));
 	boot_cpuid = found;
-	set_hard_smp_processor_id(found, be32_to_cpu(intserv[found_thread]));
+	set_hard_raw_smp_processor_id(found, be32_to_cpu(intserv[found_thread]));
 
 	/*
 	 * PAPR defines "logical" PVR values for cpus that
@@ -832,5 +832,5 @@ EXPORT_SYMBOL(cpu_to_chip_id);
 
 bool arch_match_cpu_phys_id(int cpu, u64 phys_id)
 {
-	return (int)phys_id == get_hard_smp_processor_id(cpu);
+	return (int)phys_id == get_hard_raw_smp_processor_id(cpu);
 }

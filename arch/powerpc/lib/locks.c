@@ -39,7 +39,7 @@ void __spin_yield(arch_spinlock_t *lock)
 	if (lock->slock != lock_value)
 		return;		/* something has changed */
 	plpar_hcall_norets(H_CONFER,
-		get_hard_smp_processor_id(holder_cpu), yield_count);
+		get_hard_raw_smp_processor_id(holder_cpu), yield_count);
 }
 
 /*
@@ -64,7 +64,7 @@ void __rw_yield(arch_rwlock_t *rw)
 	if (rw->lock != lock_value)
 		return;		/* something has changed */
 	plpar_hcall_norets(H_CONFER,
-		get_hard_smp_processor_id(holder_cpu), yield_count);
+		get_hard_raw_smp_processor_id(holder_cpu), yield_count);
 }
 #endif
 

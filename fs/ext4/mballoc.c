@@ -95,7 +95,7 @@ MODULE_PARM_DESC(mballoc_debug, "Debugging level for ext4's mballoc");
  * have the group allocation flag set then we look at the locality group
  * prealloc space. These are per CPU prealloc list represented as
  *
- * ext4_sb_info.s_locality_groups[smp_processor_id()]
+ * ext4_sb_info.s_locality_groups[raw_smp_processor_id()]
  *
  * The reason for having a per cpu locality group is to reduce the contention
  * between CPUs. It is possible to get scheduled at this point.
