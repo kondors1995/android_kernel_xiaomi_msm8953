@@ -227,7 +227,7 @@ static unsigned long oops_begin(void)
 
 	/* racy, but better than risking deadlock. */
 	raw_local_irq_save(flags);
-	cpu = raw_smp_processor_id();
+	cpu = smp_processor_id();
 	if (!arch_spin_trylock(&die_lock)) {
 		if (cpu == die_owner)
 			/* nested oops. should stop eventually */;

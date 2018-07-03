@@ -1369,7 +1369,7 @@ static void vmstat_update(struct work_struct *w)
 		 * to occur in the future. Keep on running the
 		 * update worker thread.
 		 */
-		schedule_delayed_work_on(raw_smp_processor_id(),
+		schedule_delayed_work_on(smp_processor_id(),
 				this_cpu_ptr(&vmstat_work),
 			round_jiffies_relative(sysctl_stat_interval));
 	} else {
@@ -1380,7 +1380,7 @@ static void vmstat_update(struct work_struct *w)
 		 * Defer the checking for differentials to the
 		 * shepherd thread on a different processor.
 		 */
-		cpumask_set_cpu(raw_smp_processor_id(), cpu_stat_off);
+		cpumask_set_cpu(smp_processor_id(), cpu_stat_off);
 	}
 }
 
@@ -1395,7 +1395,7 @@ void quiet_vmstat(void)
 		return;
 
 	do {
-		if (!cpumask_test_and_set_cpu(raw_smp_processor_id(), cpu_stat_off))
+		if (!cpumask_test_and_set_cpu(smp_processor_id(), cpu_stat_off))
 			cancel_delayed_work(this_cpu_ptr(&vmstat_work));
 
 	} while (refresh_cpu_vm_stats(false));

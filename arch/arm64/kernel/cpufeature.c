@@ -875,7 +875,7 @@ static u64 __raw_read_system_reg(u32 sys_id)
 static void fail_incapable_cpu(char *cap_type,
 				 const struct arm64_cpu_capabilities *cap)
 {
-	int cpu = raw_smp_processor_id();
+	int cpu = smp_processor_id();
 
 	pr_crit("CPU%d: missing %s : %s\n", cpu, cap_type, cap->desc);
 	/* Mark this CPU absent */

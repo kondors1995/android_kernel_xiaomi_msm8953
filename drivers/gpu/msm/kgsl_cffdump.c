@@ -171,7 +171,7 @@ static void klog_printk(const char *fmt, ...)
 	unsigned long flags;
 
 	local_irq_save(flags);
-	cbuf = klog_buf[raw_smp_processor_id()];
+	cbuf = klog_buf[smp_processor_id()];
 	va_start(args, fmt);
 	len = vsnprintf(cbuf, KLOG_TMPBUF_SIZE, fmt, args);
 	total_bytes += len;
@@ -517,14 +517,14 @@ static int subbuf_start_handler(struct rchan_buf *buf,
 		if (!suspended) {
 			suspended = 1;
 			pr_warn("kgsl: cffdump: relay: cpu %d buffer full!!!\n",
-				raw_smp_processor_id());
+				smp_processor_id());
 		}
 		dropped++;
 		return 0;
 	} else if (suspended) {
 		suspended = 0;
 		pr_warn("kgsl: cffdump: relay: cpu %d buffer no longer full.\n",
-			raw_smp_processor_id());
+			smp_processor_id());
 	}
 
 	subbuf_start_reserve(buf, 0);
