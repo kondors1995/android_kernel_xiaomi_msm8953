@@ -29,7 +29,7 @@ CC=~/Android/kernel/tc/clang/flash-clang-7.x/bin/clang
 export KBUILD_COMPILER_STRING="$(${CC} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 
 # Kernel Details
-VER=".EAS-R10"
+VER=".EAS-R11"
 
 # Paths
 KERNEL_DIR=`pwd`
