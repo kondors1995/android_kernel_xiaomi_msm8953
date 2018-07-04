@@ -3021,11 +3021,7 @@ static void __call_rcu_core(struct rcu_state *rsp, struct rcu_data *rdp,
 	 * If called from an extended quiescent state, invoke the RCU
 	 * core in order to force a re-evaluation of RCU's idleness.
 	 */
-<<<<<<< HEAD
 	if (!rcu_is_watching())
-=======
-	if (!rcu_is_watching() && cpu_online(raw_smp_processor_id()))
->>>>>>> 8d102845b470... replace old "smp_processor" to a new one, "raw_smp" this can handle with higher facility realtime tasks
 		invoke_rcu_core();
 
 	/* If interrupts were disabled or CPU offline, don't invoke RCU core. */
