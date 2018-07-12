@@ -117,7 +117,7 @@ int create_local_ev_ctxt(struct mhi_device_ctxt *mhi_dev_ctxt)
 	if (!mhi_dev_ctxt->mhi_local_event_ctxt)
 		return -ENOMEM;
 
-	mhi_dev_ctxt->counters.msi_counter = kzalloc(mhi_dev_ctxt->mmio_info.nr_event_rings,
+	mhi_dev_ctxt->counters.msi_counter = kcalloc(mhi_dev_ctxt->mmio_info.nr_event_rings,
 				    sizeof(u32),
 				    GFP_KERNEL);
 	if (!mhi_dev_ctxt->counters.msi_counter) {
