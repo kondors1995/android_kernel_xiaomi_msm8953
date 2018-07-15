@@ -3462,7 +3462,6 @@ static unsigned long rcu_exp_gp_seq_snap(struct rcu_state *rsp)
 
 	smp_mb(); /* Caller's modifications seen first by other CPUs. */
 	s = rcu_seq_snap(&rsp->expedited_sequence);
-	trace_rcu_exp_grace_period(rsp->name, s, TPS("snap"));
 	return s;
 }
 static bool rcu_exp_gp_seq_done(struct rcu_state *rsp, unsigned long s)
@@ -3659,7 +3658,6 @@ static bool sync_exp_work_done(struct rcu_state *rsp, atomic_long_t *stat,
 			       unsigned long s)
 {
 	if (rcu_exp_gp_seq_done(rsp, s)) {
-		trace_rcu_exp_grace_period(rsp->name, s, TPS("done"));
 		/* Ensure test happens before caller kfree(). */
 		smp_mb__before_atomic(); /* ^^^ */
 		atomic_long_inc(stat);
@@ -3705,9 +3703,6 @@ static bool exp_funnel_lock(struct rcu_state *rsp, unsigned long s)
 
 			/* Someone else doing GP, so wait for them. */
 			spin_unlock(&rnp->exp_lock);
-			trace_rcu_exp_funnel_lock(rsp->name, rnp->level,
-						  rnp->grplo, rnp->grphi,
-						  TPS("wait"));
 			wait_event(rnp->exp_wq[(s >> 1) & 0x3],
 				   sync_exp_work_done(rsp,
 						      &rdp->exp_workdone2, s));
@@ -3715,8 +3710,6 @@ static bool exp_funnel_lock(struct rcu_state *rsp, unsigned long s)
 		}
 		rnp->exp_seq_rq = s; /* Followers can wait on us. */
 		spin_unlock(&rnp->exp_lock);
-		trace_rcu_exp_funnel_lock(rsp->name, rnp->level, rnp->grplo,
-					  rnp->grphi, TPS("nxtlvl"));
 	}
 	mutex_lock(&rsp->exp_mutex);
 fastpath:
@@ -3725,7 +3718,6 @@ fastpath:
 		return true;
 	}
 	rcu_exp_gp_seq_start(rsp);
-	trace_rcu_exp_grace_period(rsp->name, s, TPS("start"));
 	return false;
 }
 
@@ -3980,7 +3972,6 @@ static void rcu_exp_wait_wake(struct rcu_state *rsp, unsigned long s)
 
 	synchronize_sched_expedited_wait(rsp);
 	rcu_exp_gp_seq_end(rsp);
-	trace_rcu_exp_grace_period(rsp->name, s, TPS("end"));
 
 	/*
 	 * Switch over to wakeup mode, allowing the next GP, but -only- the
@@ -3999,7 +3990,6 @@ static void rcu_exp_wait_wake(struct rcu_state *rsp, unsigned long s)
 		}
 		wake_up_all(&rnp->exp_wq[(rsp->expedited_sequence >> 1) & 0x3]);
 	}
-	trace_rcu_exp_grace_period(rsp->name, s, TPS("endwake"));
 	mutex_unlock(&rsp->exp_wake_mutex);
 }
 
