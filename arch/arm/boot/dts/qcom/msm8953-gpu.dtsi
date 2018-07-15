@@ -56,16 +56,16 @@
 			< 7104 >; /*10. DDR:931.20 MHz BIMC: 465.60 MHz */
 	};
 
-	msm_gpu: qcom,kgsl-3d0@1c00000 {
+  msm_gpu: qcom,kgsl-3d0@1c00000 {
 		label = "kgsl-3d0";
 		compatible = "qcom,kgsl-3d0", "qcom,kgsl-3d";
 		status = "ok";
-		reg = <1c00000 40000>;
+		reg = <0x1c00000 0x40000>;
 		reg-names = "kgsl_3d0_reg_memory";
 		interrupts = <0 33 0>;
 		interrupt-names = "kgsl_3d0_irq";
 		qcom,id = <0>;
-		qcom,chipid = <0x05000600>;
+    qcom,chipid = <0x05000600>;
 
 		qcom,initial-pwrlevel = <7>;
 
@@ -236,9 +236,9 @@
 	kgsl_msm_iommu: qcom,kgsl-iommu@1c40000 {
 		compatible = "qcom,kgsl-smmu-v2";
 
-		reg = <1c40000 10000>;
-		qcom,protect = <40000 10000>;
-		qcom,micro-mmu-control = <6000>;
+    reg = <0x1c40000 0x10000>;
+		qcom,protect = <0x40000 0x10000>;
+    qcom,micro-mmu-control = <0x6000>;
 
 		clocks = <&clock_gcc_gfx clk_gcc_oxili_ahb_clk>,
 			 <&clock_gcc_gfx clk_gcc_bimc_gfx_clk>;
