@@ -377,14 +377,14 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma, int is_pid)
 			goto done;
 		}
 
-		if (is_stack(priv, vma)) {
-			name = "[stack]";
-			goto done;
-		}
-
 		if (vma->vm_start <= mm->brk &&
 		    vma->vm_end >= mm->start_brk) {
 			name = "[heap]";
+			goto done;
+		}
+
+		if (is_stack(priv, vma)) {
+			name = "[stack]";
 			goto done;
 		}
 
