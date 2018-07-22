@@ -8333,7 +8333,7 @@ int __hdd_stop (struct net_device *dev)
     */
    if (!hdd_is_cli_iface_up(pHddCtx))
        sme_ScanFlushResult(pHddCtx->hHal, 0);
-
+   
    EXIT();
    return 0;
 }
