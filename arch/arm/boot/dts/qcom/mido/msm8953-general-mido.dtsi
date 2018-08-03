@@ -139,7 +139,7 @@
 		qcom,id = <1>;
 		qcom,current = <625>;
 	};
-	
+
 	pmi8950_torch1: qcom,torch_1 {
 		label = "torch";
 		qcom,led-name = "led:torch_1";
@@ -242,7 +242,7 @@
                          <&clock_gcc clk_gcc_crypto_axi_clk>;
                 clock-names = "core_clk_src", "core_clk",
                                 "iface_clk", "bus_clk";
-                qcom,ce-opp-freq = <100000000>;
+                qcom,ce-opp-freq = <160000000>;
         };
 
         /delete-node/ qseecom@85b00000;

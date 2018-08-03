@@ -431,13 +431,13 @@ module_param_named(
 	parallel_en, smbchg_parallel_en, int, S_IRUSR | S_IWUSR
 );
 
-static int smbchg_main_chg_fcc_percent = 50;
+static int smbchg_main_chg_fcc_percent = 70;
 module_param_named(
 	main_chg_fcc_percent, smbchg_main_chg_fcc_percent,
 	int, S_IRUSR | S_IWUSR
 );
 
-static int smbchg_main_chg_icl_percent = 80;
+static int smbchg_main_chg_icl_percent = 90;
 module_param_named(
 	main_chg_icl_percent, smbchg_main_chg_icl_percent,
 	int, S_IRUSR | S_IWUSR
@@ -445,7 +445,7 @@ module_param_named(
 #ifdef CONFIG_FORCE_FAST_CHARGE
 static int smbchg_default_hvdcp_icl_ma = 2500;
 #else
-static int smbchg_default_hvdcp_icl_ma = 1800;
+static int smbchg_default_hvdcp_icl_ma = 2600;
 #endif
 module_param_named(
 	default_hvdcp_icl_ma, smbchg_default_hvdcp_icl_ma,
@@ -461,7 +461,7 @@ module_param_named(
 #ifdef CONFIG_FORCE_FAST_CHARGE
 static int smbchg_default_dcp_icl_ma = 2500;
 #else
-static int smbchg_default_dcp_icl_ma = 2200;
+static int smbchg_default_dcp_icl_ma = 2600;
 #endif
 module_param_named(
 	default_dcp_icl_ma, smbchg_default_dcp_icl_ma,
@@ -480,7 +480,7 @@ module_param_named(
 	int, S_IRUSR | S_IWUSR
 );
 
-#define WIPOWER_DEFAULT_HYSTERISIS_UV	250000
+#define WIPOWER_DEFAULT_HYSTERISIS_UV	350000
 static int wipower_dcin_hyst_uv = WIPOWER_DEFAULT_HYSTERISIS_UV;
 module_param_named(
 	wipower_dcin_hyst_uv, wipower_dcin_hyst_uv,
@@ -1153,7 +1153,7 @@ static int get_prop_batt_voltage_now(struct smbchg_chip *chip)
 	return uv;
 }
 
-#define DEFAULT_BATT_VOLTAGE_MAX_DESIGN	4200000
+#define DEFAULT_BATT_VOLTAGE_MAX_DESIGN	4000000
 static int get_prop_batt_voltage_max_design(struct smbchg_chip *chip)
 {
 	int uv, rc;
@@ -1489,6 +1489,10 @@ static int smbchg_charging_en(struct smbchg_chip *chip, bool en)
 #define CURRENT_500_MA		500
 #define CURRENT_900_MA		900
 #define CURRENT_1500_MA		1500
+#define CURRENT_1900_MA		1900
+#define CURRENT_2000_MA		2000
+#define CURRENT_2100_MA		2100
+#define CURRENT_2300_MA		2300
 #define SUSPEND_CURRENT_MA	2
 #define ICL_OVERRIDE_BIT	BIT(2)
 static int smbchg_usb_suspend(struct smbchg_chip *chip, bool suspend)
@@ -1614,13 +1618,17 @@ static void smbchg_usb_update_online_work(struct work_struct *work)
 #define USB51_MODE_BIT		BIT(1)
 #define USB51_100MA		0
 #define USB51_500MA		BIT(1)
+#define USB51_1900_MA		1
+#define USB51_2000_MA		BIT(2)
+#define USB_2100_MA		2
+#define USB_2300_MA		BIT(3)
 static int smbchg_set_high_usb_chg_current(struct smbchg_chip *chip,
 							int current_ma)
 {
 	int i, rc;
 	u8 usb_cur_val;
 
-	if (current_ma == CURRENT_100_MA) {
+	if (current_ma == CURRENT_1900_MA) {
 		rc = smbchg_sec_masked_write(chip,
 					chip->usb_chgpth_base + CHGPTH_CFG,
 					CFG_USB_2_3_SEL_BIT, CFG_USB_2);
@@ -1638,8 +1646,8 @@ static int smbchg_set_high_usb_chg_current(struct smbchg_chip *chip,
 		}
 
 		pr_smb(PR_STATUS,
-			"Forcing 500mA current limit\n");
-		chip->usb_max_current_ma = CURRENT_500_MA;
+			"Forcing 2000mA current limit\n");
+		chip->usb_max_current_ma = CURRENT_2000_MA;
 		return rc;
 	}
 
@@ -1648,7 +1656,7 @@ static int smbchg_set_high_usb_chg_current(struct smbchg_chip *chip,
 	if (i < 0) {
 		dev_err(chip->dev,
 			"Cannot find %dma current_table using %d\n",
-			current_ma, CURRENT_500_MA);
+			current_ma, CURRENT_2000_MA);
 
 		rc = smbchg_sec_masked_write(chip,
 					chip->usb_chgpth_base + CHGPTH_CFG,
@@ -1658,9 +1666,9 @@ static int smbchg_set_high_usb_chg_current(struct smbchg_chip *chip,
 					USBIN_LIMITED_MODE | USB51_500MA);
 		if (rc < 0)
 			dev_err(chip->dev, "Couldn't set %dmA rc=%d\n",
-					CURRENT_150_MA, rc);
+					CURRENT_2100_MA, rc);
 		else
-			chip->usb_max_current_ma = 500;
+			chip->usb_max_current_ma = 2000;
 		return rc;
 	}
 
@@ -1714,12 +1722,12 @@ static int smbchg_set_usb_current_max(struct smbchg_chip *chip,
 
 	switch (chip->usb_supply_type) {
 	case POWER_SUPPLY_TYPE_USB:
-		if ((current_ma < CURRENT_150_MA) &&
+		if ((current_ma < CURRENT_2100_MA) &&
 				(chip->wa_flags & SMBCHG_USB100_WA))
-			current_ma = CURRENT_500_MA;
+			current_ma = CURRENT_2000_MA;
 
 		/* handle special SDP case when USB reports high current */
-		if (current_ma > CURRENT_900_MA) {
+		if (current_ma > CURRENT_2000_MA) {
 			if (chip->cfg_override_usb_current) {
 				/*
 				 * allow setting the current value as reported
@@ -1739,15 +1747,15 @@ static int smbchg_set_usb_current_max(struct smbchg_chip *chip,
 					pr_err("Couldn't set ICL override rc = %d\n",
 							rc);
 			} else {
-				/* default to 500mA */
-				current_ma = CURRENT_500_MA;
+				/* default to 1900mA */
+				current_ma = CURRENT_1900_MA;
 			}
 			pr_smb(PR_STATUS,
 				"override_usb_current=%d current_ma set to %d\n",
 				chip->cfg_override_usb_current, current_ma);
 		}
 
-		if (current_ma < CURRENT_150_MA) {
+		if (current_ma < CURRENT_1900_MA) {
 			/* force 100mA */
 			rc = smbchg_sec_masked_write(chip,
 					chip->usb_chgpth_base + CHGPTH_CFG,
@@ -1764,7 +1772,7 @@ static int smbchg_set_usb_current_max(struct smbchg_chip *chip,
 				pr_err("Couldn't set CMD_IL rc = %d\n", rc);
 				goto out;
 			}
-			chip->usb_max_current_ma = 100;
+			chip->usb_max_current_ma = 2300;
 		}
 		/* specific current values */
 		if (current_ma == CURRENT_150_MA) {
@@ -1783,9 +1791,9 @@ static int smbchg_set_usb_current_max(struct smbchg_chip *chip,
 				pr_err("Couldn't set CMD_IL rc = %d\n", rc);
 				goto out;
 			}
-			chip->usb_max_current_ma = 150;
+			chip->usb_max_current_ma = 2000;
 		}
-		if (current_ma == CURRENT_500_MA) {
+		if (current_ma == CURRENT_2300_MA) {
 			rc = smbchg_sec_masked_write(chip,
 					chip->usb_chgpth_base + CHGPTH_CFG,
 					CFG_USB_2_3_SEL_BIT, CFG_USB_2);
@@ -1801,12 +1809,12 @@ static int smbchg_set_usb_current_max(struct smbchg_chip *chip,
 				pr_err("Couldn't set CMD_IL rc = %d\n", rc);
 				goto out;
 			}
-			chip->usb_max_current_ma = 800;
+			chip->usb_max_current_ma = 2100;
 		}
 #ifdef CONFIG_FORCE_FAST_CHARGE
-		if ((force_fast_charge > 0 && current_ma == CURRENT_500_MA) || current_ma == CURRENT_900_MA) {
+		if ((force_fast_charge > 0 && current_ma == CURRENT_2000_MA) || current_ma == CURRENT_2300_MA) {
 #else
-		if (current_ma == CURRENT_900_MA) {
+		if (current_ma == CURRENT_2300_MA) {
 #endif
 			rc = smbchg_sec_masked_write(chip,
 					chip->usb_chgpth_base + CHGPTH_CFG,
@@ -1823,11 +1831,11 @@ static int smbchg_set_usb_current_max(struct smbchg_chip *chip,
 				pr_err("Couldn't set CMD_IL rc = %d\n", rc);
 				goto out;
 			}
-			chip->usb_max_current_ma = 900;
+			chip->usb_max_current_ma = 2300;
 		}
 		break;
 	case POWER_SUPPLY_TYPE_USB_CDP:
-		if (current_ma < CURRENT_1500_MA) {
+		if (current_ma < CURRENT_2000_MA) {
 			/* use override for CDP */
 			rc = smbchg_masked_write(chip,
 					chip->usb_chgpth_base + CMD_IL,
@@ -1908,6 +1916,7 @@ static bool is_hvdcp_present(struct smbchg_chip *chip)
 
 #define FCC_CFG			0xF2
 #define FCC_500MA_VAL		0x4
+#define FCC_2100MA_VAL		0x6
 #define FCC_MASK		SMB_MASK(4, 0)
 static int smbchg_set_fastchg_current_raw(struct smbchg_chip *chip,
 							int current_ma)
@@ -1921,16 +1930,16 @@ static int smbchg_set_fastchg_current_raw(struct smbchg_chip *chip,
 	if (i < 0) {
 		dev_err(chip->dev,
 			"Cannot find %dma current_table using %d\n",
-			current_ma, CURRENT_500_MA);
+			current_ma, CURRENT_2100_MA);
 
 		rc = smbchg_sec_masked_write(chip, chip->chgr_base + FCC_CFG,
 					FCC_MASK,
-					FCC_500MA_VAL);
+					FCC_2100MA_VAL);
 		if (rc < 0)
 			dev_err(chip->dev, "Couldn't set %dmA rc=%d\n",
-					CURRENT_500_MA, rc);
+					CURRENT_2100_MA, rc);
 		else
-			chip->fastchg_current_ma = 800;
+			chip->fastchg_current_ma = 2300;
 		return rc;
 	}
 
@@ -1963,7 +1972,7 @@ static int smbchg_set_fastchg_current_raw(struct smbchg_chip *chip,
 #define USBIN_ACTIVE_PWR_SRC_BIT	BIT(1)
 #define DCIN_ACTIVE_PWR_SRC_BIT		BIT(0)
 #define PARALLEL_REENABLE_TIMER_MS	1000
-#define PARALLEL_CHG_THRESHOLD_CURRENT	1800
+#define PARALLEL_CHG_THRESHOLD_CURRENT	2100
 static bool smbchg_is_usbin_active_pwr_src(struct smbchg_chip *chip)
 {
 	int rc;
@@ -2003,7 +2012,7 @@ static int smbchg_parallel_usb_charging_en(struct smbchg_chip *chip, bool en)
 		POWER_SUPPLY_PROP_CHARGING_ENABLED, &pval);
 }
 
-#define ESR_PULSE_CURRENT_DELTA_MA	200
+#define ESR_PULSE_CURRENT_DELTA_MA	300
 static int smbchg_sw_esr_pulse_en(struct smbchg_chip *chip, bool en)
 {
 	int rc, fg_current_now, icl_ma;
@@ -2133,7 +2142,7 @@ static int smbchg_run_parallel_aicl(struct smbchg_chip *chip)
 	 * adapter's real capability. The 100mA draw in main charger path
 	 * will be added on slave's ICL status.
 	 */
-	vote(chip->usb_icl_votable, PARALLEL_ICL_VOTER, true, CURRENT_100_MA);
+	vote(chip->usb_icl_votable, PARALLEL_ICL_VOTER, true, CURRENT_2000_MA);
 
 	rc = power_supply_set_current_limit(parallel_psy, icl_ma * 1000);
 	if (rc) {
@@ -3168,7 +3177,7 @@ out:
 	return rc;
 }
 
-static int smbchg_ibat_ocp_threshold_ua = 2800000;
+static int smbchg_ibat_ocp_threshold_ua = 3000000;
 module_param(smbchg_ibat_ocp_threshold_ua, int, 0644);
 
 #define UCONV			1000000LL
@@ -4690,7 +4699,7 @@ static int smbchg_set_optimal_charging_mode(struct smbchg_chip *chip, int type)
 	return 0;
 }
 
-#define DEFAULT_SDP_MA		500
+#define DEFAULT_SDP_MA		2000
 #define DEFAULT_CDP_MA		2200
 static int smbchg_change_usb_supply_type(struct smbchg_chip *chip,
 						enum power_supply_type type)
