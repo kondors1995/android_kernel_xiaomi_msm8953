@@ -67,11 +67,10 @@
 		qcom,id = <0>;
 		qcom,chipid = <0x05000600>;
 
-		qcom,initial-pwrlevel = <7>;
+		qcom,initial-pwrlevel = <6>;
 		
-		qcom,idle-timeout = <34>; //msecs
-		qcom,deep-nap-timeout = <100>; //msecs
-		qcom,strtstp-sleepwake;
+		qcom,idle-timeout = <64>; //msecs
+		qcom,no-nap;
 
 		qcom,highest-bank-bit = <14>;
 
