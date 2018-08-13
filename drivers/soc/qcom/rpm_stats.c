@@ -282,14 +282,13 @@ static ssize_t msm_rpmstats_file_read(struct file *file, char __user *bufu,
 			prvdata->num_records = readl_relaxed(prvdata->reg_base);
 	}
 
-	if ((*ppos >= prvdata->len)
-		&& (prvdata->read_idx < prvdata->num_records)) {
-			if (prvdata->platform_data->version == 1)
-				prvdata->len = msm_rpmstats_copy_stats(prvdata);
-			else if (prvdata->platform_data->version == 2)
-				prvdata->len = msm_rpmstats_copy_stats_v2(
-						prvdata);
-			*ppos = 0;
+	if ((*ppos >= prvdata->len) &&
+		(prvdata->read_idx < prvdata->num_records)) {
+		if (prvdata->platform_data->version == 1)
+			prvdata->len = msm_rpmstats_copy_stats(prvdata);
+		else if (prvdata->platform_data->version == 2)
+			prvdata->len = msm_rpmstats_copy_stats_v2(prvdata);
+		*ppos = 0;
 	}
 
 	ret = simple_read_from_buffer(bufu, count, ppos,
