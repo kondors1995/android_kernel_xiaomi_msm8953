@@ -23,7 +23,7 @@
 	interrupt-parent = <&intc>;
 
 	chosen {
-		bootargs = "";
+		bootargs = "threadirqs";
 	};
 
 	firmware: firmware {
