@@ -1538,34 +1538,6 @@ static int update_time(struct inode *inode, struct timespec *time, int flags)
 	return update_time(inode, time, flags);
 }
 
-static bool partial_relatime_needs_update(const struct path *path,
-	struct inode *inode)
-{
-	struct timespec now;
-
-	if (!(inode->i_flags & S_RELATIME))
-		return false;
-
-	now = current_fs_time(inode->i_sb);
-
-	if (timespec_compare(&inode->i_mtime, &inode->i_atime) >= 0) {
-		pr_debug("%s: %lu - younger mtime\n", __func__, inode->i_ino);
-		return true;
-	}
-
-	if (timespec_compare(&inode->i_ctime, &inode->i_atime) >= 0) {
-		pr_debug("%s: %lu - younger ctime\n", __func__, inode->i_ino);
-		return true;
-	}
-
-	if ((long)(now.tv_sec - inode->i_atime.tv_sec) >= 24*60*60) {
-		pr_debug("%s: %lu - atime older than a day\n", __func__,
-			inode->i_ino);
-		return true;
-	}
-
-	return false;
-}
 /**
  *	touch_atime	-	update the access time
  *	@path: the &struct path to update
@@ -1574,56 +1546,60 @@ static bool partial_relatime_needs_update(const struct path *path,
  *	This function automatically handles read only file systems and media,
  *	as well as the "noatime" flag and inode specific "noatime" markers.
  */
-void touch_atime(const struct path *path)
-{
-	struct vfsmount *mnt = path->mnt;
-	struct inode *inode = path->dentry->d_inode;
-	struct timespec now;
+ /**
+  *	touch_atime	-	update the access time
+  *	@path: the &struct path to update
+  *
+  *	Update the accessed time on an inode and mark it for writeback.
+  *	This function automatically handles read only file systems and media,
+  *	as well as the "noatime" flag and inode specific "noatime" markers.
+  */
+ void touch_atime(const struct path *path)
+ {
+ 	struct vfsmount *mnt = path->mnt;
+ 	struct inode *inode = path->dentry->d_inode;
+ 	struct timespec now;
 
-	if (partial_relatime_needs_update(path, inode))
-		goto update_time;
+ 	if (inode->i_flags & S_NOATIME)
+ 		return;
+ 	if (IS_NOATIME(inode))
+ 		return;
+ 	if ((inode->i_sb->s_flags & MS_NODIRATIME) && S_ISDIR(inode->i_mode))
+ 		return;
 
-	if (inode->i_flags & S_NOATIME)
-		return;
-	if (IS_NOATIME(inode))
-		return;
-	if ((inode->i_sb->s_flags & MS_NODIRATIME) && S_ISDIR(inode->i_mode))
-		return;
+ 	if (mnt->mnt_flags & MNT_NOATIME)
+ 		return;
+ 	if ((mnt->mnt_flags & MNT_NODIRATIME) && S_ISDIR(inode->i_mode))
+ 		return;
 
-	if (mnt->mnt_flags & MNT_NOATIME)
-		return;
-	if ((mnt->mnt_flags & MNT_NODIRATIME) && S_ISDIR(inode->i_mode))
-		return;
+ 	now = current_fs_time(inode->i_sb);
 
-	now = current_fs_time(inode->i_sb);
+ 	if (!relatime_need_update(mnt, inode, now))
+ 		return;
 
-	if (!relatime_need_update(mnt, inode, now))
-		return;
+ 	if (timespec_equal(&inode->i_atime, &now))
+ 		return;
 
-	if (timespec_equal(&inode->i_atime, &now))
-		return;
+ 	if (!sb_start_write_trylock(inode->i_sb))
+ 		return;
 
-update_time:
-	if (!sb_start_write_trylock(inode->i_sb))
-		return;
-
-	if (__mnt_want_write(mnt))
-		goto skip_update;
-	/*
-	 * File systems can error out when updating inodes if they need to
-	 * allocate new space to modify an inode (such is the case for
-	 * Btrfs), but since we touch atime while walking down the path we
-	 * really don't care if we failed to update the atime of the file,
-	 * so just ignore the return value.
-	 * We may also fail on filesystems that have the ability to make parts
-	 * of the fs read only, e.g. subvolumes in Btrfs.
-	 */
-	update_time(inode, &now, S_ATIME);
-	__mnt_drop_write(mnt);
-skip_update:
-	sb_end_write(inode->i_sb);
-}
-EXPORT_SYMBOL(touch_atime);
+ 	if (__mnt_want_write(mnt))
+ 		goto skip_update;
+ 	/*
+ 	 * File systems can error out when updating inodes if they need to
+ 	 * allocate new space to modify an inode (such is the case for
+ 	 * Btrfs), but since we touch atime while walking down the path we
+ 	 * really don't care if we failed to update the atime of the file,
+ 	 * so just ignore the return value.
+ 	 * We may also fail on filesystems that have the ability to make parts
+ 	 * of the fs read only, e.g. subvolumes in Btrfs.
+ 	 */
+ 	update_time(inode, &now, S_ATIME);
+ 	__mnt_drop_write(mnt);
+ skip_update:
+ 	sb_end_write(inode->i_sb);
+ }
+ EXPORT_SYMBOL(touch_atime);
 
 /*
  * The logic we want is
