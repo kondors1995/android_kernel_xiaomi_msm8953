@@ -85,6 +85,7 @@ obj-$(CONFIG_CRC16)	+= crc16.o
 obj-$(CONFIG_CRC_T10DIF)+= crc-t10dif.o
 obj-$(CONFIG_CRC_ITU_T)	+= crc-itu-t.o
 obj-$(CONFIG_CRC32)	+= crc32.o
+obj-$(CONFIG_CRC64)     += crc64.o
 obj-$(CONFIG_CRC7)	+= crc7.o
 obj-$(CONFIG_LIBCRC32C)	+= libcrc32c.o
 obj-$(CONFIG_CRC8)	+= crc8.o
@@ -185,7 +186,9 @@ obj-$(CONFIG_ASN1) += asn1_decoder.o
 obj-$(CONFIG_FONT_SUPPORT) += fonts/
 
 hostprogs-y	:= gen_crc32table
+hostprogs-y	+= gen_crc64table
 clean-files	:= crc32table.h
+clean-files	+= crc64table.h
 
 $(obj)/crc32.o: $(obj)/crc32table.h
 
@@ -194,6 +197,14 @@ quiet_cmd_crc32 = GEN     $@
 
 $(obj)/crc32table.h: $(obj)/gen_crc32table
 	$(call cmd,crc32)
+
+$(obj)/crc64.o: $(obj)/crc64table.h
+
+quiet_cmd_crc64 = GEN     $@
+      cmd_crc64 = $< > $@
+
+$(obj)/crc64table.h: $(obj)/gen_crc64table
+	$(call cmd,crc64)
 
 #
 # Build a fast OID lookip registry from include/linux/oid_registry.h
