@@ -698,6 +698,9 @@ config ARCH_NR_GPIO
           If unsure, leave the default value.
 
 
+config HOLES_IN_ZONE
+	def_bool y
+
 source kernel/Kconfig.preempt
 source kernel/Kconfig.hz
 
