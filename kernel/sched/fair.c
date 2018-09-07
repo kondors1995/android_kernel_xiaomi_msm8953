@@ -50,8 +50,13 @@
  * (to see the precise effective timeslice length of your workload,
  *  run vmstat and monitor the context-switches (cs) field)
  */
-unsigned int sysctl_sched_latency = 6000000ULL;
-unsigned int normalized_sysctl_sched_latency = 6000000ULL;
+
+/*
+ * ANDROID CHANGES
+ * 10ms * 1, units: nanoseconds
+ */
+unsigned int sysctl_sched_latency = 10000000ULL;
+unsigned int normalized_sysctl_sched_latency = 10000000ULL;
 
 unsigned int sysctl_sched_sync_hint_enable = 1;
 unsigned int sysctl_sched_cstate_aware = 1;
@@ -71,8 +76,16 @@ __read_mostly unsigned int sysctl_sched_walt_cpu_high_irqload =
  * SCHED_TUNABLESCALING_LOG - scaled logarithmical, *1+ilog(ncpus)
  * SCHED_TUNABLESCALING_LINEAR - scaled linear, *ncpus
  */
+
+/*
+ * ANDROID CHANGES
+ * 
+ * Disable auto-scaling of scheduler with hotplug. The tunables
+ * will vary across devices in unpredictable ways if allowed to scale with
+ * CPU cores
+ */
 enum sched_tunable_scaling sysctl_sched_tunable_scaling
-	= SCHED_TUNABLESCALING_LOG;
+	= SCHED_TUNABLESCALING_NONE;
 
 /*
  * Minimal preemption granularity for CPU-bound tasks:
@@ -100,8 +113,13 @@ unsigned int sysctl_sched_child_runs_first __read_mostly;
  * and reduces their over-scheduling. Synchronous workloads will still
  * have immediate wakeup/sleep latencies.
  */
-unsigned int sysctl_sched_wakeup_granularity = 1000000UL;
-unsigned int normalized_sysctl_sched_wakeup_granularity = 1000000UL;
+
+/*
+ * ANDROID CHANGES
+ * 2 msec * 1, units: nanoseconds
+ */
+unsigned int sysctl_sched_wakeup_granularity = 2000000UL;
+unsigned int normalized_sysctl_sched_wakeup_granularity = 2000000UL;
 
 const_debug unsigned int sysctl_sched_migration_cost = 500000UL;
 
