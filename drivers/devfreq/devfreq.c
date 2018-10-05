@@ -25,7 +25,7 @@
 #include <linux/list.h>
 #include <linux/printk.h>
 #include <linux/hrtimer.h>
-#include <linux/state_notifier.h>
+#include <linux/fb.h>
 #include "governor.h"
 
 static struct class *devfreq_class;
@@ -51,8 +51,6 @@ static const char *boost_devices[] = {
 #define WAKE_BOOST_DURATION_MS (5000)
 static struct delayed_work wake_unboost_work;
 static struct work_struct wake_boost_work;
-
-static struct notifier_block notif;
 
 /**
  * find_device_devfreq() - find devfreq struct using device pointer
@@ -1135,11 +1133,6 @@ static void set_wake_boost(bool enable)
 		if (!df->needs_wake_boost)
 			continue;
 
-/*
-		pr_info("Device: %s Boost: %d\n", dev_name(&df->dev),
-				enable);
-*/
-
 		mutex_lock(&df->lock);
 		df->do_wake_boost = enable;
 		update_devfreq(df);
@@ -1160,29 +1153,36 @@ static void wake_unboost_fn(struct work_struct *work)
 	set_wake_boost(false);
 }
 
-static int state_notifier_callback(struct notifier_block *this,
-				unsigned long event, void *data)
+static int fb_notifier_callback(struct notifier_block *nb,
+		unsigned long action, void *data)
 {
-	switch (event) {
-		case STATE_NOTIFIER_ACTIVE:
-			schedule_work(&wake_boost_work);
-			break;
-		case STATE_NOTIFIER_SUSPEND:
-			cancel_work_sync(&wake_boost_work);
-			if (cancel_delayed_work_sync(&wake_unboost_work))
-				set_wake_boost(false);
-			break;
-		default:
-			break;
+	struct fb_event *evdata = data;
+	int *blank = evdata->data;
+
+	/* Parse framebuffer events as soon as they occur */
+	if (action != FB_EARLY_EVENT_BLANK)
+		return NOTIFY_OK;
+
+	switch (*blank) {
+	case FB_BLANK_UNBLANK:
+		schedule_work(&wake_boost_work);
+		break;
+	default:
+		cancel_work_sync(&wake_boost_work);
+		if (cancel_delayed_work_sync(&wake_unboost_work))
+			set_wake_boost(false);
 	}
 
 	return NOTIFY_OK;
 }
 
+static struct notifier_block fb_notifier_callback_nb = {
+	.notifier_call = fb_notifier_callback,
+	.priority = INT_MAX,
+};
+
 static int __init devfreq_init(void)
 {
-	int ret = 0;
-
 	devfreq_class = class_create(THIS_MODULE, "devfreq");
 	if (IS_ERR(devfreq_class)) {
 		pr_err("%s: couldn't create class\n", __FILE__);
@@ -1202,10 +1202,9 @@ static int __init devfreq_init(void)
 
 	INIT_WORK(&wake_boost_work, wake_boost_fn);
 	INIT_DELAYED_WORK(&wake_unboost_work, wake_unboost_fn);
-	notif.notifier_call = state_notifier_callback;
-	ret = state_register_client(&notif);
+	fb_register_client(&fb_notifier_callback_nb);
 
-	return ret;
+	return 0;
 }
 subsys_initcall(devfreq_init);
 
