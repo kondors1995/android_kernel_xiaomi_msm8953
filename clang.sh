@@ -28,7 +28,7 @@ export CROSS_COMPILE=${HOME}/Android/kernel/tc/gcc/aosp/aarch64-linux-android-4.
 export CROSS_COMPILE_ARM32=${HOME}/Android/kernel/tc/gcc/aosp/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-
 
 # Kernel Details
-VER=".R3.02"
+VER=".R3.04"
 
 # Paths
 KERNEL_DIR=`pwd`
