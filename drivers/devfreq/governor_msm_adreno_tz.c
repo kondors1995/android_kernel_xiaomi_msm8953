@@ -110,12 +110,13 @@ static ssize_t adrenoboost_show(struct device *dev,
 static ssize_t adrenoboost_save(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
-	unsigned int input;
+	int input;
 	sscanf(buf, "%d ", &input);
-	if (input > 3)
+	if (input < 0 || input > 3) {
 		adrenoboost = 0;
-	else
+	} else {
 		adrenoboost = input;
+	}
 
 	return count;
 }
