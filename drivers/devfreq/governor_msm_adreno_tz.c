@@ -473,28 +473,26 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq,
 	if ((unsigned int)(priv->bin.busy_time + stats.busy_time)
 	>= MIN_BUSY && adrenoboost) {
 	*/
-	switch (adrenoboost) {
-		case 1:
+	if (adrenoboost) {
+		if (adrenoboost == 1) {
 			priv->bin.busy_time += (unsigned int)
-				((stats.busy_time * (1 + adrenoboost) *
-				lvl_multiplicator_map_1[last_level]) /
-				lvl_divider_map_1[last_level]);
-		break;
-		case 2:
+				((stats.busy_time * ( 1 + adrenoboost ) *
+				  lvl_multiplicator_map_1[ last_level ]) /
+				 lvl_divider_map_1[ last_level ]);
+		} else
+		if (adrenoboost == 2) {
 			priv->bin.busy_time += (unsigned int)
-				((stats.busy_time * (1 + adrenoboost) *
-				lvl_multiplicator_map_2[last_level]  * 7 ) /
-				(lvl_divider_map_2[last_level] * 10));
-		break;
-		case 3:
+				((stats.busy_time * ( 1 + adrenoboost ) *
+				  lvl_multiplicator_map_2[ last_level ]  * 7 ) /
+				 (lvl_divider_map_2[ last_level ] * 10));
+		} else {
 			priv->bin.busy_time += (unsigned int)
-				((stats.busy_time * (1 + adrenoboost) *
-				lvl_multiplicator_map_3[last_level] * 8 ) /
-				(lvl_divider_map_3[last_level] * 10));
-		break;
-		default:
+				((stats.busy_time * ( 1 + adrenoboost ) *
+				  lvl_multiplicator_map_3[ last_level ]  * 8 ) /
+				 (lvl_divider_map_3[ last_level ] * 10));
+		}
+	} else {
 		priv->bin.busy_time += stats.busy_time;
-		break;
 	}
 #else
 	priv->bin.busy_time += stats.busy_time;
