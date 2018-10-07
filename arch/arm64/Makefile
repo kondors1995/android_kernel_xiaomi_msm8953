@@ -84,6 +84,7 @@ TEXT_OFFSET := 0x00080000
 endif
 
 ifeq ($(cc-name),clang)
+KBUILD_CFLAGS	+= -DCONFIG_ARCH_SUPPORTS_INT128
 KBUILD_CFLAGS += $(call cc-disable-warning, asm-operand-widths)
 endif
 
