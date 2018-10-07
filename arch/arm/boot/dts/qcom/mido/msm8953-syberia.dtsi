@@ -1,5 +1,6 @@
-/*
- * Copyright (c) 2017, The Linux Foundation. All rights reserved.
+
+/* Copyright (c) 2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2018, NATO66613 LLC.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -10,11 +11,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+ &soc {
+    msm_gpu: qcom,kgsl-3d0@1c00000 {
+        /*
+         * Time in microseconds for
+         * idle timeout.
+         */
+        qcom,idle-timeout = <64>;
+    };
+ };
 
-#include "msm-audio-mido.dtsi"
-#include "msm8953-general-mido.dtsi"
-#include "msm8953-display-mido.dtsi"
-#include "msm8953-camera-sensor-qrd-mido.dtsi"
-#include "msm8953-pinctrl-mido.dtsi"
-#include "msm8953-memory-mido.dtsi"
-#include "msm8953-syberia.dtsi"
+ &soc {
+    qcom,bcl {
+               /delete-property/ qcom,bcl-hotplug-list;
+               /delete-property/ qcom,bcl-soc-hotplug-list;
+       };
+};
