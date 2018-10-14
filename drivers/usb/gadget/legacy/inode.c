@@ -655,7 +655,6 @@ fail:
 				   GFP_KERNEL);
 		if (!priv->iv) {
 			kfree(priv);
-			value = -ENOMEM;
 			goto fail;
 		}
 	}
