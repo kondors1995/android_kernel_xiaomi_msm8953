@@ -100,6 +100,14 @@ static u32 mdss_fb_pseudo_palette[16] = {
 
 static struct msm_mdp_interface *mdp_instance;
 
+enum fb_unblank_bl_delay {
+	FB_UNBLANK_NO_BL_DELAY,
+	FB_UNBLANK_READY_TO_UPDATE_BL,
+	FB_UNBLANK_DELAY_BL_TWO_FRAMES,
+};
+ static enum fb_unblank_bl_delay fb_unblank;
+static void mdss_fb_unblank_bl_fallback(struct work_struct *work);
+
 static int mdss_fb_register(struct msm_fb_data_type *mfd);
 static int mdss_fb_open(struct fb_info *info, int user);
 static int mdss_fb_release(struct fb_info *info, int user);
@@ -1404,7 +1412,7 @@ static int mdss_fb_probe(struct platform_device *pdev)
 			pr_err("failed to register input handler\n");
 
 	INIT_DELAYED_WORK(&mfd->idle_notify_work, __mdss_fb_idle_notify_work);
-
+	INIT_DELAYED_WORK(&mfd->unblank_bl_work, mdss_fb_unblank_bl_fallback);
 	return rc;
 }
 
@@ -1760,6 +1768,9 @@ void mdss_fb_set_backlight(struct msm_fb_data_type *mfd, u32 bkl_lvl)
 		mfd->unset_bl_level = U32_MAX;
 	}
 
+	if (fb_unblank != FB_UNBLANK_NO_BL_DELAY)
+	return;
+
 	pdata = dev_get_platdata(&mfd->pdev->dev);
 
 	if ((pdata) && (pdata->set_backlight)) {
@@ -2092,6 +2103,7 @@ static int mdss_fb_blank_sub(int blank_mode, struct fb_info *info,
 	switch (blank_mode) {
 	case FB_BLANK_UNBLANK:
 		pr_debug("unblank called. cur pwr state=%d\n", cur_power_state);
+		fb_unblank = FB_UNBLANK_DELAY_BL_TWO_FRAMES;
 		ret = mdss_fb_blank_unblank(mfd);
 		break;
 	case BLANK_FLAG_ULP:
@@ -3716,6 +3728,17 @@ void mdss_panelinfo_to_fb_var(struct mdss_panel_info *pinfo,
 		var->lower_margin);
 }
 
+static void mdss_fb_unblank_bl_fallback(struct work_struct *work)
+{
+	struct msm_fb_data_type *mfd = container_of(work,
+						struct msm_fb_data_type,
+						unblank_bl_work.work);
+ 	if (fb_unblank == FB_UNBLANK_READY_TO_UPDATE_BL) {
+		fb_unblank = FB_UNBLANK_NO_BL_DELAY;
+		mdss_fb_update_backlight(mfd);
+	}
+}
+
 /**
  * __mdss_fb_perform_commit() - process a frame to display
  * @mfd:	Framebuffer data structure for display
@@ -3779,8 +3802,22 @@ static int __mdss_fb_perform_commit(struct msm_fb_data_type *mfd)
 	}
 
 skip_commit:
-	if (!ret)
+	/*
+	 * Don't enable backlight after unblank until after 2nd frame
+	 * is committed in order to ensure that display contents are
+	 * defined and the display is fully powered on and ready to
+	 * render the frame contents.
+	 */
+	if (fb_unblank == FB_UNBLANK_DELAY_BL_TWO_FRAMES) {
+		cancel_delayed_work_sync(&mfd->unblank_bl_work);
+		fb_unblank = FB_UNBLANK_READY_TO_UPDATE_BL;
+		/* Enable backlight if next commit doesn't come within 15ms */
+		schedule_delayed_work(&mfd->unblank_bl_work,
+					msecs_to_jiffies(15));
+	} else if (!ret) {
+		fb_unblank = FB_UNBLANK_NO_BL_DELAY;
 		mdss_fb_update_backlight(mfd);
+	}
 
 	if (IS_ERR_VALUE(ret) || !sync_pt_data->flushed) {
 		mdss_fb_release_kickoff(mfd);
