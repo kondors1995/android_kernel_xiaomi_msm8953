@@ -217,7 +217,7 @@ static int edp_aux_write_cmds(struct mdss_edp_drv_pdata *ep,
 
 	len = edp_cmd_fifo_tx(&ep->txp, ep->base);
 
-	wait_for_completion(&ep->aux_comp);
+	wait_for_completion_interruptible(&ep->aux_comp);
 
 	if (ep->aux_error_num == EDP_AUX_ERR_NONE)
 		ret = len;
@@ -269,7 +269,7 @@ static int edp_aux_read_cmds(struct mdss_edp_drv_pdata *ep,
 
 	edp_cmd_fifo_tx(tp, ep->base);
 
-	wait_for_completion(&ep->aux_comp);
+	wait_for_completion_interruptible(&ep->aux_comp);
 
 	if (ep->aux_error_num == EDP_AUX_ERR_NONE)
 		ret = edp_cmd_fifo_rx(rp, len, ep->base);
