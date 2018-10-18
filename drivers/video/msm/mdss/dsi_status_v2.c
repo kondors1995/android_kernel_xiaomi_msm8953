@@ -99,7 +99,8 @@ void mdp3_check_dsi_ctrl_status(struct work_struct *work,
 	if (!pdata->panel_info.esd_rdy) {
 		pr_err("%s: unblank not complete, reschedule check status\n",
 			__func__);
-		schedule_delayed_work(&pdsi_status->check_status,
+		queue_delayed_work(system_power_efficient_wq,
+				&pdsi_status->check_status,
 				msecs_to_jiffies(interval));
 		return;
 	}
@@ -111,7 +112,8 @@ void mdp3_check_dsi_ctrl_status(struct work_struct *work,
 	}
 
 	if (mdp3_session->in_splash_screen) {
-		schedule_delayed_work(&pdsi_status->check_status,
+		queue_delayed_work(system_power_efficient_wq,
+			&pdsi_status->check_status,
 			msecs_to_jiffies(interval));
 		pr_debug("%s: cont splash is on\n", __func__);
 		return;
@@ -148,7 +150,8 @@ void mdp3_check_dsi_ctrl_status(struct work_struct *work,
 
 	if (mdss_fb_is_power_on_interactive(pdsi_status->mfd)) {
 		if (ret > 0)
-			schedule_delayed_work(&pdsi_status->check_status,
+			queue_delayed_work(system_power_efficient_wq,
+						&pdsi_status->check_status,
 						msecs_to_jiffies(interval));
 		else
 			goto status_dead;
@@ -203,7 +206,8 @@ void mdp3_check_spi_panel_status(struct work_struct *work, uint32_t interval)
 	}
 
 	if (mdp3_session->in_splash_screen) {
-		schedule_delayed_work(&pdsi_status->check_status,
+		queue_delayed_work(system_power_efficient_wq,
+			&pdsi_status->check_status,
 			msecs_to_jiffies(interval));
 		pr_debug("%s: cont splash is on\n", __func__);
 		return;
@@ -224,7 +228,8 @@ void mdp3_check_spi_panel_status(struct work_struct *work, uint32_t interval)
 
 	if (mdss_fb_is_power_on_interactive(pdsi_status->mfd)) {
 		if (ret > 0) {
-			schedule_delayed_work(&pdsi_status->check_status,
+			queue_delayed_work(system_power_efficient_wq,
+				&pdsi_status->check_status,
 				msecs_to_jiffies(interval));
 		} else {
 			char *envp[2] = {"PANEL_ALIVE=0", NULL};
