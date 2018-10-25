@@ -166,7 +166,7 @@ static int select_pin_ctl(struct fpc1020_data *fpc1020, const char *name)
 	struct device *dev = fpc1020->dev;
 	for (i = 0; i < ARRAY_SIZE(fpc1020->pinctrl_state); i++) {
 		const char *n = pctl_names[i];
-		if (!strncmp(n, name, strlen(n))) {
+		if (!memcmp(n, name, strlen(name))) {
 			rc = pinctrl_select_state(fpc1020->fingerprint_pinctrl,
 					fpc1020->pinctrl_state[i]);
 			if (rc)
@@ -223,7 +223,7 @@ static ssize_t hw_reset_set(struct device *dev,
 	int rc;
 	struct  fpc1020_data *fpc1020 = dev_get_drvdata(dev);
 
-	if (!strncmp(buf, "reset", strlen("reset")))
+	if (!memcmp(buf, "reset", sizeof("reset")))
 		rc = hw_reset(fpc1020);
 	else
 		return -EINVAL;
@@ -276,9 +276,9 @@ static ssize_t spi_prepare_set(struct device *dev,
 	int rc;
 	struct  fpc1020_data *fpc1020 = dev_get_drvdata(dev);
 
-	if (!strncmp(buf, "enable", strlen("enable")))
+	if (!memcmp(buf, "enable", sizeof("enable")))
 		rc = device_prepare(fpc1020, true);
-	else if (!strncmp(buf, "disable", strlen("disable")))
+	else if (!memcmp(buf, "disable", sizeof("disable")))
 		rc = device_prepare(fpc1020, false);
 	else
 		return -EINVAL;
@@ -295,10 +295,10 @@ static ssize_t wakeup_enable_set(struct device *dev,
 {
 	struct  fpc1020_data *fpc1020 = dev_get_drvdata(dev);
 
-	if (!strncmp(buf, "enable", strlen("enable"))) {
+	if (!memcmp(buf, "enable", sizeof("enable"))) {
 		fpc1020->wakeup_enabled = true;
 		smp_wmb();
-	} else if (!strncmp(buf, "disable", strlen("disable"))) {
+	} else if (!memcmp(buf, "disable", sizeof("disable"))) {
 		fpc1020->wakeup_enabled = false;
 		smp_wmb();
 	} else
@@ -346,7 +346,7 @@ static ssize_t compatible_all_set(struct device *dev,
 	int irqf;
 	struct  fpc1020_data *fpc1020 = dev_get_drvdata(dev);
 	dev_err(dev, "compatible all enter %d\n", fpc1020->compatible_enabled);
-	if (!strncmp(buf, "enable", strlen("enable")) && fpc1020->compatible_enabled != 1) {
+	if (!memcmp(buf, "enable", sizeof("enable")) && fpc1020->compatible_enabled != 1) {
 		rc = fpc1020_request_named_gpio(fpc1020, "fpc,gpio_irq",
 			&fpc1020->irq_gpio);
 		if (rc)
@@ -412,7 +412,7 @@ static ssize_t compatible_all_set(struct device *dev,
 		(void)set_clks(fpc1020, false);
 #endif
 	}
-	} else if (!strncmp(buf, "disable", strlen("disable")) && fpc1020->compatible_enabled != 0) {
+	} else if (!memcmp(buf, "disable", sizeof("disable")) && fpc1020->compatible_enabled != 0) {
 		if (gpio_is_valid(fpc1020->irq_gpio)) {
 			devm_gpio_free(dev, fpc1020->irq_gpio);
 			pr_info("remove irq_gpio success\n");
