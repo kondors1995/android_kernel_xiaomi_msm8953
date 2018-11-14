@@ -36,6 +36,7 @@
 modules.builtin
 Module.symvers
 *.dwo
+out
 
 #
 # Top-level generic files
@@ -97,3 +98,7 @@ x509.genkey
 
 # Kconfig presets
 all.config
+
+*.log
+*dtb
+*.zip
