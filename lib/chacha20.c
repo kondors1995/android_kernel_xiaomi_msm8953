@@ -11,68 +11,20 @@
 
 #include <linux/kernel.h>
 #include <linux/export.h>
-#include <linux/bitops.h>
-#include <linux/cryptohash.h>
-#include <asm/unaligned.h>
-#include <crypto/chacha20.h>
 
-static inline u32 rotl32(u32 v, u8 n)
-{
-	return (v << n) | (v >> (sizeof(v) * 8 - n));
-}
+#include <asm/neon.h>
+
+asmlinkage void chacha_block_xor_neon(u32 *state, u8 *dst, const u8 *src, int nrounds);
 
 extern void chacha20_block(u32 *state, void *stream)
 {
-	u32 x[16], *out = stream;
-	int i;
+	u32 x[16];
 
-	for (i = 0; i < ARRAY_SIZE(x); i++)
-		x[i] = state[i];
+	memcpy(x, state, 64);
 
-	for (i = 0; i < 20; i += 2) {
-		x[0]  += x[4];    x[12] = rotl32(x[12] ^ x[0],  16);
-		x[1]  += x[5];    x[13] = rotl32(x[13] ^ x[1],  16);
-		x[2]  += x[6];    x[14] = rotl32(x[14] ^ x[2],  16);
-		x[3]  += x[7];    x[15] = rotl32(x[15] ^ x[3],  16);
-
-		x[8]  += x[12];   x[4]  = rotl32(x[4]  ^ x[8],  12);
-		x[9]  += x[13];   x[5]  = rotl32(x[5]  ^ x[9],  12);
-		x[10] += x[14];   x[6]  = rotl32(x[6]  ^ x[10], 12);
-		x[11] += x[15];   x[7]  = rotl32(x[7]  ^ x[11], 12);
-
-		x[0]  += x[4];    x[12] = rotl32(x[12] ^ x[0],   8);
-		x[1]  += x[5];    x[13] = rotl32(x[13] ^ x[1],   8);
-		x[2]  += x[6];    x[14] = rotl32(x[14] ^ x[2],   8);
-		x[3]  += x[7];    x[15] = rotl32(x[15] ^ x[3],   8);
-
-		x[8]  += x[12];   x[4]  = rotl32(x[4]  ^ x[8],   7);
-		x[9]  += x[13];   x[5]  = rotl32(x[5]  ^ x[9],   7);
-		x[10] += x[14];   x[6]  = rotl32(x[6]  ^ x[10],  7);
-		x[11] += x[15];   x[7]  = rotl32(x[7]  ^ x[11],  7);
-
-		x[0]  += x[5];    x[15] = rotl32(x[15] ^ x[0],  16);
-		x[1]  += x[6];    x[12] = rotl32(x[12] ^ x[1],  16);
-		x[2]  += x[7];    x[13] = rotl32(x[13] ^ x[2],  16);
-		x[3]  += x[4];    x[14] = rotl32(x[14] ^ x[3],  16);
-
-		x[10] += x[15];   x[5]  = rotl32(x[5]  ^ x[10], 12);
-		x[11] += x[12];   x[6]  = rotl32(x[6]  ^ x[11], 12);
-		x[8]  += x[13];   x[7]  = rotl32(x[7]  ^ x[8],  12);
-		x[9]  += x[14];   x[4]  = rotl32(x[4]  ^ x[9],  12);
-
-		x[0]  += x[5];    x[15] = rotl32(x[15] ^ x[0],   8);
-		x[1]  += x[6];    x[12] = rotl32(x[12] ^ x[1],   8);
-		x[2]  += x[7];    x[13] = rotl32(x[13] ^ x[2],   8);
-		x[3]  += x[4];    x[14] = rotl32(x[14] ^ x[3],   8);
-
-		x[10] += x[15];   x[5]  = rotl32(x[5]  ^ x[10],  7);
-		x[11] += x[12];   x[6]  = rotl32(x[6]  ^ x[11],  7);
-		x[8]  += x[13];   x[7]  = rotl32(x[7]  ^ x[8],   7);
-		x[9]  += x[14];   x[4]  = rotl32(x[4]  ^ x[9],   7);
-	}
-
-	for (i = 0; i < ARRAY_SIZE(x); i++)
-		out[i] = cpu_to_le32(x[i] + state[i]);
+	kernel_neon_begin();
+	chacha_block_xor_neon(x, stream, stream, 20);
+	kernel_neon_end();
 
 	state[12]++;
 }
