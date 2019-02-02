@@ -550,6 +550,7 @@ config QPNP_FG_GEN3
 	tristate "QPNP GEN3 fuel gauge driver"
 	depends on SPMI || MSM_SPMI
 	depends on OF_SPMI
+	depends on IIO
 	help
 	  Say Y here to enable the GEN3 Fuel Gauge driver. This adds support
 	  for battery fuel gauging and state of charge of battery connected to
