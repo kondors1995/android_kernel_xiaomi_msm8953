@@ -67,3 +67,4 @@
 };
 
 #include "mido/msm8953-mido.dtsi"
+#include "mido/syberia-mido.dtsi"

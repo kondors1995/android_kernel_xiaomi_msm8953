@@ -1,0 +1,32 @@
+/* Copyright (c) 2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2018, NATO66613.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+&soc {
+   msm_gpu: qcom,kgsl-3d0@1c00000 {
+       /*
+        * Initial powerlevel used
+        */
+       qcom,initial-pwrlevel = <7>;
+       /*
+        * Time in microseconds for
+        * idle timeout.
+        */
+       qcom,idle-timeout = <64>;
+       /*
+        * Timeout to enter deeper power saving state
+        * from NAP.
+        */
+       qcom,deep-nap-timeout = <20>;
+       /*
+        * Context aware jump target power level
+        */
+		qcom,ca-target-pwrlevel = <1>;
+   };
+   
+    qcom,bcl {
+              /delete-property/ qcom,bcl-hotplug-list;
+             /delete-property/ qcom,bcl-soc-hotplug-list;
+    };   
+};
