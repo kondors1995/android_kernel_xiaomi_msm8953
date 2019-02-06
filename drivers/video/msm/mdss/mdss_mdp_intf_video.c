@@ -2127,7 +2127,8 @@ static int mdss_mdp_video_early_wake_up(struct mdss_mdp_ctl *ctl)
 		 */
 		if (!ctl->mfd->idle_time) {
 			ctl->mfd->idle_time = 70;
-			schedule_delayed_work(&ctl->mfd->idle_notify_work,
+			queue_delayed_work(system_power_efficient_wq,
+							&ctl->mfd->idle_notify_work,
 							msecs_to_jiffies(200));
 		} else {
 			mod_delayed_work(system_wq, &ctl->mfd->idle_notify_work,

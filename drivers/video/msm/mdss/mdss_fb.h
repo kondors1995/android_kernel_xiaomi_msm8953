@@ -333,7 +333,7 @@ struct msm_fb_data_type {
 	struct task_struct *disp_thread;
 	atomic_t commits_pending;
 	atomic_t kickoff_pending;
-#ifdef CONFIG_MACH_XIAOMI_TISSOT
+#if (defined CONFIG_MACH_XIAOMI_MIDO) || (defined CONFIG_MACH_XIAOMI_TISSOT)
 	atomic_t resume_pending;
 	wait_queue_head_t resume_wait_q;
 #endif
@@ -373,6 +373,9 @@ struct msm_fb_data_type {
 	bool pending_switch;
 	struct mutex switch_lock;
 	struct input_handler *input_handler;
+
+	/* Following is used by Mr.Pickles */
+	struct delayed_work unblank_bl_work;
 };
 
 static inline void mdss_fb_update_notify_update(struct msm_fb_data_type *mfd)

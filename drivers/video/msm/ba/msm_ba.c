@@ -850,7 +850,8 @@ void msm_ba_subdev_event_hndlr(struct v4l2_subdev *sd,
 	list_add_tail(&ba_sd_event->list, &dev_ctxt->sd_events);
 	mutex_unlock(&dev_ctxt->dev_cs);
 
-	schedule_delayed_work(&dev_ctxt->sd_events_work, 0);
+	queue_delayed_work(system_power_efficient_wq,
+		&dev_ctxt->sd_events_work, 0);
 }
 
 void *msm_ba_open(const struct msm_ba_ext_ops *ext_ops)

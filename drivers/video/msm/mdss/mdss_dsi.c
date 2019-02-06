@@ -1822,7 +1822,7 @@ static int mdss_dsi_disp_wake_thread(void *data)
 
 	sched_setscheduler(current, SCHED_FIFO, &param);
 
-	wait_event(ctrl_pdata->wake_waitq,
+	wait_event_interruptible(ctrl_pdata->wake_waitq,
 		atomic_read(&ctrl_pdata->needs_wake));
 
 	/* MDSS_EVENT_LINK_READY */
